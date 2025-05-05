@@ -6,7 +6,6 @@ export default function Home() {
   const user = getUserFromToken()
 
   const tabs = [
-    { to: 'input', label: 'Input' },
     { to: 'onboard-notification', label: 'Onboard Notification' },
     { to: 'credit-limit', label: 'Credit Limit' },
     { to: 'invoice-utr', label: 'Invoice UTR' },
@@ -14,6 +13,7 @@ export default function Home() {
 
   if (user?.role === 'admin') {
     tabs.push({ to: 'users', label: 'Users' })
+    tabs.unshift({ to: 'input', label: 'Input' })
   }
 
   return (
