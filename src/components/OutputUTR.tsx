@@ -2,6 +2,7 @@ import axios from 'axios'
 import { format } from 'date-fns'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { DateRange } from 'react-day-picker'
+import { ENV } from '../conf'
 import { cn, formatAmount, formatDate, getUserFromToken } from '../lib/utils'
 import { Button } from './ui/button'
 import { DatePickerWithRange } from './ui/DatePicker'
@@ -85,7 +86,7 @@ export default function OutputUTR() {
         params.date = format(filters.date.from, 'dd-MM-yyyy') // Handle single date selection if needed
       }
 
-      const res = await axios.get('http://localhost:3001/output-utr', {
+      const res = await axios.get(`${ENV.BACKEND_URL}/output-utr`, {
         params,
       })
       setData(res.data.data)
@@ -127,7 +128,7 @@ export default function OutputUTR() {
     const form = new FormData()
     form.append('csvfile', file)
     try {
-      await axios.post('http://localhost:3001/output-utr-upload', form, {
+      await axios.post(`${ENV.BACKEND_URL}/output-utr-upload`, form, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
       fetchData()

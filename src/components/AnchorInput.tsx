@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { FileDown } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { ENV } from '../conf'
 import { formatAmount, formatDate, handleExport } from '../lib/utils'
 import { Button } from './ui/button'
 import { Skeleton } from './ui/skeleton'
@@ -34,7 +35,7 @@ export default function AnchorInput() {
   const fetchMe = () => {
     setIsLoading(true)
     axios
-      .get('http://localhost:3001/input')
+      .get(`${ENV.BACKEND_URL}/input`)
       .then((res) => setData(res.data))
       .catch((er) => console.log(er))
       .finally(() => setIsLoading(false))

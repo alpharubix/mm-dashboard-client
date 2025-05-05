@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { useEffect, useState } from 'react'
+import { ENV } from '../conf'
 import { capitalize, getUserFromToken } from '../lib/utils'
 import {
   AlertDialog,
@@ -60,7 +61,7 @@ export default function Users() {
 
     // 3. Fire off the request
     axios
-      .put(`http://localhost:3001/user/${id}`, { role })
+      .put(`${ENV.BACKEND_URL}/user/${id}`, { role })
       .then((res) => console.log(res.data))
       .catch((err) => {
         console.error(err)
@@ -72,7 +73,7 @@ export default function Users() {
   const fetchMe = () => {
     setIsLoading(true)
     axios
-      .get('http://localhost:3001/users')
+      .get(`${ENV.BACKEND_URL}/users`)
       .then((res) => setData(res.data))
       .catch((er) => console.log(er))
       .finally(() => setIsLoading(false))

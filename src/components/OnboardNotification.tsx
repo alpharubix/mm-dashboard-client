@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { ENV } from '../conf'
 import { formatAmount, formatDate, getUserFromToken } from '../lib/utils'
 import { Button } from './ui/button'
 import { InputFile } from './ui/file-input'
@@ -47,7 +48,7 @@ export default function OnboardNotification() {
       if (filters.distributorCode)
         params.distributorCode = filters.distributorCode
       console.log({ filters })
-      const res = await axios.get('http://localhost:3001/onboard', {
+      const res = await axios.get(`${ENV.BACKEND_URL}/onboard`, {
         params,
       })
       setData(res.data.data)

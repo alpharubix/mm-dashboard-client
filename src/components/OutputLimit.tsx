@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { ENV } from '../conf'
 import { formatAmount, getUserFromToken } from '../lib/utils'
 import { Button } from './ui/button'
 import { InputFile } from './ui/file-input'
@@ -51,7 +52,7 @@ export default function OutputLimit() {
       if (filters.distributorCode)
         params.distributorCode = filters.distributorCode
 
-      const res = await axios.get('http://localhost:3001/output-limit', {
+      const res = await axios.get(`${ENV.BACKEND_URL}/output-limit`, {
         params,
       })
       setData(res.data.data)
@@ -85,7 +86,7 @@ export default function OutputLimit() {
     const form = new FormData()
     form.append('csvfile', file)
     try {
-      await axios.post('http://localhost:3001/output-limit-upload', form, {
+      await axios.post(`${ENV.BACKEND_URL}/output-limit-upload`, form, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
       setFile(null)

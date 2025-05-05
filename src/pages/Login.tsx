@@ -5,6 +5,7 @@ import { Button } from '../components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Input } from '../components/ui/input'
 import { Label } from '../components/ui/label'
+import { ENV } from '../conf'
 import { cn } from '../lib/utils'
 
 export default function Login() {
@@ -17,7 +18,7 @@ export default function Login() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
-      const res = await axios.post('http://localhost:3001/login', form)
+      const res = await axios.post(`${ENV.BACKEND_URL}/login`, form)
       // alert('Login successful')
       setForm({ email: '', password: '' })
       console.log(res.data)

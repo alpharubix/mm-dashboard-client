@@ -6,6 +6,12 @@ import App from './App.tsx'
 
 const queryClient = new QueryClient()
 
+if (process.env.NODE_ENV === 'production') {
+  console.log = () => {}
+  console.warn = () => {}
+  console.error = () => {}
+}
+
 createRoot(document.getElementById('root')!).render(
   <QueryClientProvider client={queryClient}>
     <StrictMode>

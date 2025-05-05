@@ -5,6 +5,7 @@ import { Button } from '../components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Input } from '../components/ui/input'
 import { Label } from '../components/ui/label'
+import { ENV } from '../conf'
 import { cn } from '../lib/utils'
 
 export default function Signup() {
@@ -25,7 +26,7 @@ export default function Signup() {
       return
     }
     try {
-      const res = await axios.post('http://localhost:3001/register', {
+      const res = await axios.post(`${ENV.BACKEND_URL}/register`, {
         email: form.email,
         password: form.password,
         role: 'viewer',
