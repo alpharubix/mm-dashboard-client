@@ -88,7 +88,7 @@ export default function OnboardNotification() {
     formData.append('csvfile', file)
 
     try {
-      await axios.post('http://localhost:3001/onboard-upload', formData, {
+      await axios.post(`${ENV.BACKEND_URL}/onboard-upload`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
       fetchData()

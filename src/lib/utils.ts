@@ -4,6 +4,7 @@ import { format } from 'date-fns'
 import { jwtDecode } from 'jwt-decode'
 import { unparse } from 'papaparse'
 import { twMerge } from 'tailwind-merge'
+import { ENV } from '../conf'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -40,7 +41,7 @@ export function capitalize(val: string) {
 
 export const handleExport = async () => {
   try {
-    const res = await axios.get('http://localhost:3001/input') // Replace with actual URL
+    const res = await axios.get(`${ENV.BACKEND_URL}/input`) // Replace with actual URL
     let data = res.data
 
     if (!data.length) return
