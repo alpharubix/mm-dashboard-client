@@ -5,16 +5,20 @@ import { getUserFromToken } from '../lib/utils'
 export default function Home() {
   const user = getUserFromToken()
 
-  const tabs = [
+  const baseTabs = [
     { to: 'onboard-notification', label: 'Onboard Notification' },
     { to: 'credit-limit', label: 'Credit Limit' },
     { to: 'invoice-utr', label: 'Invoice UTR' },
   ]
 
-  if (user?.role === 'admin') {
-    tabs.push({ to: 'users', label: 'Users' })
-    tabs.unshift({ to: 'input', label: 'Input' })
-  }
+  const tabs =
+    user?.role === 'admin'
+      ? [
+          { to: 'input', label: 'Input' },
+          ...baseTabs,
+          { to: 'users', label: 'Users' },
+        ]
+      : baseTabs
 
   return (
     <>

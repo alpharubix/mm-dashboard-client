@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 import { ENV } from '../conf'
 import { capitalize, getUserFromToken } from '../lib/utils'
 import {
@@ -51,7 +52,7 @@ export default function Users() {
     setIsModalOpen(true)
   }
 
-  const handleRoleChangeFetch = (id: string, role: string) => {
+  const handleRoleChangeFetch = async (id: string, role: string) => {
     // 1. Snapshot previous state
     const previousData = [...data]
 
@@ -59,15 +60,17 @@ export default function Users() {
     setData(data.map((u) => (u._id === id ? { ...u, role } : u)))
     setIsModalOpen(false)
 
-    // 3. Fire off the request
-    axios
-      .put(`${ENV.BACKEND_URL}/user/${id}`, { role })
-      .then((res) => console.log(res.data))
-      .catch((err) => {
-        console.error(err)
-        // 4. Roll back on error
-        setData(previousData)
-      })
+    try {
+      // 3. Fire off the request using async/await
+      const res = await axios.put(`${ENV.BACKEND_URL}/user/${id}`, { role })
+      console.log(res.data)
+      toast.success(`${res.data.message}`)
+    } catch (err: any) {
+      console.error(err)
+      // 4. Roll back on error
+      toast.error(`Error while changing user role: ${err.message}`)
+      setData(previousData)
+    }
   }
 
   const fetchMe = () => {

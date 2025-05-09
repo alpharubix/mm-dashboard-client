@@ -3,6 +3,7 @@ import { clsx, type ClassValue } from 'clsx'
 import { format } from 'date-fns'
 import { jwtDecode } from 'jwt-decode'
 import { unparse } from 'papaparse'
+import { toast } from 'sonner'
 import { twMerge } from 'tailwind-merge'
 import { ENV } from '../conf'
 
@@ -40,13 +41,18 @@ export function capitalize(val: string) {
 }
 
 export const handleExport = async () => {
+  let toastId: string | number | undefined
+
   try {
-    const res = await axios.get(`${ENV.BACKEND_URL}/input`) // Replace with actual URL
-    let data = res.data
+    toastId = toast.loading('Processing CSV export...')
+    const res = await axios.get(`${ENV.BACKEND_URL}/input`)
+    const data = res.data
 
-    if (!data.length) return
+    if (!data.length) {
+      toast.dismiss(toastId)
+      return toast.error('No data available to export.')
+    }
 
-    // Remove _id and format headers
     const transformed = data.map(({ _id, ...rest }: any) => ({
       'Company Name': rest.companyName,
       'Distributor Code': rest.distributorCode,
@@ -74,7 +80,11 @@ export const handleExport = async () => {
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
+
+    toast.success('Download started', { id: toastId })
   } catch (err) {
     console.error('Export failed:', err)
+    // @ts-ignore
+    toast.error(`Export failed: ${err.message}`, { id: toastId })
   }
 }

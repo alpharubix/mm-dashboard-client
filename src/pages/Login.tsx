@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
 import { Button } from '../components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Input } from '../components/ui/input'
@@ -19,14 +20,15 @@ export default function Login() {
     e.preventDefault()
     try {
       const res = await axios.post(`${ENV.BACKEND_URL}/login`, form)
-      // alert('Login successful')
       setForm({ email: '', password: '' })
       console.log(res.data)
       localStorage.setItem('mm_auth_token', res.data.token)
-      navigate('/input', { replace: true })
+      navigate('/', { replace: true })
+      toast.success('Login successful')
     } catch (err) {
       console.error(err)
-      alert('Login failed')
+      // @ts-ignore
+      toast.error(err.response.data.message)
     }
   }
 
