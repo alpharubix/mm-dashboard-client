@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
 import { Button } from '../components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Input } from '../components/ui/input'
@@ -22,7 +23,7 @@ export default function Signup() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (form.password !== form.confirmPassword) {
-      alert('Passwords do not match')
+      toast.error('Passwords do not match')
       return
     }
     try {
@@ -31,14 +32,13 @@ export default function Signup() {
         password: form.password,
         role: 'viewer',
       })
-      // alert('Signup successful')
       setForm({ email: '', password: '', confirmPassword: '' })
-      console.log(res.data)
       localStorage.setItem('mm_auth_token', res.data.token)
       navigate('/', { replace: true })
+      toast.success('Signup successful')
     } catch (err) {
-      console.error(err)
-      alert('Signup failed')
+      // @ts-ignore
+      toast.error(err.response.data.message)
     }
   }
 

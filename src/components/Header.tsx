@@ -1,6 +1,16 @@
 import { Menu } from 'lucide-react'
 import { useEffect } from 'react'
 import { getUserFromToken } from '../lib/utils'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from './ui/alert-dialog'
 import { Button } from './ui/button'
 import {
   Drawer,
@@ -40,14 +50,33 @@ export default function Header() {
           <span className='px-2 py-1 text-xs font-semibold uppercase rounded-full bg-blue-100 text-blue-800'>
             {user?.role}
           </span>
-          <Button
-            variant='outline'
-            size='sm'
-            className='text-red-500 cursor-pointer'
-            onClick={handleLogout}
-          >
-            Logout
-          </Button>
+
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant='outline'
+                className='mx-auto text-red-500 cursor-pointer'
+              >
+                Logout
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Do you want to Logout?</AlertDialogTitle>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel className='cursor-pointer'>
+                  No
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleLogout}
+                  className='cursor-pointer'
+                >
+                  Yes
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
 
         {/* Mobile drawer trigger */}
@@ -58,7 +87,7 @@ export default function Header() {
                 <Menu size={24} />
               </Button>
             </DrawerTrigger>
-            <DrawerContent className='w- bg-black'>
+            <DrawerContent className='bg-black'>
               <div className='mx-auto w-full max-w-sm'>
                 <DrawerHeader className='flex items-center justify-between'>
                   {/* <DrawerTitle>Menu</DrawerTitle> */}
@@ -72,13 +101,34 @@ export default function Header() {
                   </div>
                 </DrawerDescription>
                 <DrawerFooter>
-                  <Button
-                    variant='outline'
-                    className='mx-auto w-full max-w-20 text-red-500 cursor-pointer'
-                    onClick={handleLogout}
-                  >
-                    Logout
-                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant='outline'
+                        className='mx-auto text-red-500 cursor-pointer'
+                      >
+                        Logout
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Do you want to Logout ?
+                        </AlertDialogTitle>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel className='cursor-pointer'>
+                          No
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={handleLogout}
+                          className='cursor-pointer'
+                        >
+                          Yes
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                   <DrawerClose asChild>
                     <Button
                       variant='outline'

@@ -177,9 +177,9 @@ export default function OnboardNotification() {
                   </TableCell>
                 </TableRow>
               ))
-            : data.map((row) => (
+            : data.map((row, idx) => (
                 <TableRow key={row._id}>
-                  <TableCell>{row.sno}</TableCell>
+                  <TableCell>{idx + 1}</TableCell>
                   <TableCell>{row.companyName}</TableCell>
                   <TableCell>{row.distributorCode}</TableCell>
                   <TableCell>{row.lender}</TableCell>
