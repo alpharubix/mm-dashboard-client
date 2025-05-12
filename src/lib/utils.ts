@@ -16,7 +16,10 @@ export function formatDate(date: string) {
 }
 
 export const formatAmount = (amount: number): string => {
-  return amount.toLocaleString('en-IN')
+  return amount.toLocaleString('en-IN', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })
 }
 
 type DecodedToken = {
@@ -57,7 +60,7 @@ export const handleExport = async () => {
       'Company Name': rest.companyName,
       'Distributor Code': rest.distributorCode,
       'Beneficiary Name': rest.beneficiaryName,
-      'Beneficiary Account No': rest.beneficiaryAccountNo,
+      'Beneficiary Acc No': rest.beneficiaryAccNo,
       'Bank Name': rest.bankName,
       'IFSC Code': rest.ifscCode,
       Branch: rest.branch,

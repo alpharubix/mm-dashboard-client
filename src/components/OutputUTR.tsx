@@ -29,7 +29,7 @@ type OutputUTRType = {
   companyName: string
   distributorCode: string
   beneficiaryName: string
-  beneficiaryAccountNo: string
+  beneficiaryAccNo: string
   bankName: string
   ifscCode: string
   branch: string
@@ -251,7 +251,7 @@ export default function OutputUTR() {
                 Beneficiary Name
               </TableHead>
               <TableHead className='whitespace-nowrap'>
-                Beneficiary Account No
+                Beneficiary Acc No
               </TableHead>
               <TableHead className='whitespace-nowrap'>Bank Name</TableHead>
               <TableHead className='whitespace-nowrap'>IFSC Code</TableHead>
@@ -331,7 +331,7 @@ export default function OutputUTR() {
                       {item.beneficiaryName}
                     </TableCell>
                     <TableCell className='whitespace-nowrap'>
-                      {item.beneficiaryAccountNo}
+                      {item.beneficiaryAccNo}
                     </TableCell>
                     <TableCell className='whitespace-nowrap'>
                       {item.bankName}

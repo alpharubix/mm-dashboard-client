@@ -22,10 +22,10 @@ type InputType = {
   bankName: string
   ifscCode: string
   branch: string
-  invoiceNum: string
+  invoiceNumber: string
   invoiceAmount: number
   invoiceDate: string
-  loanAmountExclCreditBalance: number
+  loanAmount: number
   invoicePdfUrl: string
 }
 
@@ -132,7 +132,10 @@ export default function AnchorInput() {
                   </TableRow>
                 ))
               : data?.map((inv) => (
-                  <TableRow key={inv.invoiceNum}>
+                  <TableRow
+                    className='whitespace-nowrap'
+                    key={inv.invoiceNumber}
+                  >
                     <TableCell>{inv.companyName}</TableCell>
                     <TableCell>{inv.distributorCode}</TableCell>
                     <TableCell>{inv.beneficiaryName}</TableCell>
@@ -140,14 +143,12 @@ export default function AnchorInput() {
                     <TableCell>{inv.bankName}</TableCell>
                     <TableCell>{inv.ifscCode}</TableCell>
                     <TableCell>{inv.branch}</TableCell>
-                    <TableCell>{inv.invoiceNum}</TableCell>
+                    <TableCell>{inv.invoiceNumber}</TableCell>
                     <TableCell>{formatAmount(inv.invoiceAmount)}</TableCell>
                     <TableCell className='whitespace-nowrap'>
                       {formatDate(inv.invoiceDate)}
                     </TableCell>
-                    <TableCell>
-                      {formatAmount(inv.loanAmountExclCreditBalance)}
-                    </TableCell>
+                    <TableCell>{formatAmount(inv.loanAmount)}</TableCell>
                     <TableCell>
                       {inv.invoicePdfUrl ? inv.invoicePdfUrl : 'NA'}
                     </TableCell>
