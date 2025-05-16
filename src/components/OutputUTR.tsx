@@ -2,6 +2,7 @@ import axios from 'axios'
 import { format } from 'date-fns'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { DateRange } from 'react-day-picker'
+import { toast } from 'sonner'
 import { ENV } from '../conf'
 import { cn, formatAmount, formatDate, getUserFromToken } from '../lib/utils'
 import { Button } from './ui/button'
@@ -125,17 +126,35 @@ export default function OutputUTR() {
 
   const handleUpload = async () => {
     if (!file) return
+
     const form = new FormData()
     form.append('csvfile', file)
+
     try {
-      await axios.post(`${ENV.BACKEND_URL}/output-utr-upload`, form, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      })
+      const res = await axios.post(
+        `${ENV.BACKEND_URL}/output-utr-upload`,
+        form,
+        {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        }
+      )
+
+      toast.success(res.data.message || 'Upload successful')
+
       fetchData()
       setFile(null)
       if (inputRef.current) inputRef.current.value = ''
-    } catch (er) {
-      console.error(er)
+    } catch (err) {
+      // @ts-ignore
+      const { message, duplicates } = err.response?.data || {}
+
+      const duplicateInfo = duplicates?.length
+        ? ` (${duplicates.join(', ')})`
+        : ''
+
+      toast.error(`${message || `Upload failed ${message}`}${duplicateInfo}`)
+
+      console.error('Upload failed', err)
     }
   }
 

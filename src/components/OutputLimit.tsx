@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { toast } from 'sonner'
 import { ENV } from '../conf'
 import { formatAmount, getUserFromToken } from '../lib/utils'
 import { Button } from './ui/button'
@@ -83,17 +84,37 @@ export default function OutputLimit() {
 
   const handleUpload = async () => {
     if (!file) return
+
     const form = new FormData()
     form.append('csvfile', file)
+
     try {
-      await axios.post(`${ENV.BACKEND_URL}/output-limit-upload`, form, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      })
+      const res = await axios.post(
+        `${ENV.BACKEND_URL}/output-limit-upload`,
+        form,
+        {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        }
+      )
+
+      toast.success(res.data.message || 'Upload successful')
+
       setFile(null)
       if (inputRef.current) inputRef.current.value = ''
       setPage(1)
       fetchData()
     } catch (err) {
+      // @ts-ignore
+      const { message, duplicates } = err.response?.data || {}
+
+      const duplicateInfo = duplicates?.length
+        ? ` (${duplicates.join(', ')})`
+        : ''
+
+      toast.error(
+        // @ts-ignore
+        `${message || `Upload failed ${message}`}${duplicateInfo}`
+      )
       console.error(err)
     }
   }
