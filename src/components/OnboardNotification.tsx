@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { toast } from 'sonner'
 import { ENV } from '../conf'
 import { formatAmount, formatDate, getUserFromToken } from '../lib/utils'
 import { Button } from './ui/button'
@@ -84,20 +85,37 @@ export default function OnboardNotification() {
 
   const handleUpload = async () => {
     if (!file) return
+
     const formData = new FormData()
     formData.append('csvfile', file)
 
     try {
-      await axios.post(`${ENV.BACKEND_URL}/onboard-upload`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      })
+      const res = await axios.post(
+        `${ENV.BACKEND_URL}/onboard-upload`,
+        formData,
+        {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        }
+      )
+
+      toast.success(res.data.message || 'Upload successful')
+
       fetchData()
       setFile(null)
-      if (inputRef.current) {
-        inputRef.current.value = ''
-      }
-    } catch (er) {
-      console.error('Upload failed', er)
+      if (inputRef.current) inputRef.current.value = ''
+    } catch (err) {
+      // @ts-ignore
+      const { message, duplicates } = err.response?.data || {}
+
+      const duplicateInfo = duplicates?.length
+        ? ` (${duplicates.join(', ')})`
+        : ''
+      toast.error(
+        // @ts-ignore
+        `${message || `Upload failed ${err.message}`}${duplicateInfo}`
+      )
+
+      console.error('Upload failed', err)
     }
   }
 
