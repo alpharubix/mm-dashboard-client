@@ -15,9 +15,9 @@ if (process.env.NODE_ENV === 'production') {
 
 createRoot(document.getElementById('root')!).render(
   <QueryClientProvider client={queryClient}>
-    <StrictMode>
-      <App />
-      <Toaster richColors />
-    </StrictMode>
+    {/* <StrictMode> */}
+    <App />
+    <Toaster richColors />
+    {/* </StrictMode> */}
   </QueryClientProvider>
 )
