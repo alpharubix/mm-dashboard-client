@@ -72,8 +72,11 @@ export default function AnchorInput() {
   }
 
   useEffect(() => {
-    getFtpFiles()
-    fetchMe()
+    const fetchData = async () => {
+      await getFtpFiles()
+      fetchMe()
+    }
+    fetchData()
   }, [])
 
   return (
@@ -180,8 +183,21 @@ export default function AnchorInput() {
                       {formatDate(inv.invoiceDate)}
                     </TableCell>
                     <TableCell>{formatAmount(inv.loanAmount)}</TableCell>
-                    <TableCell>
-                      {inv.invoicePdfUrl ? inv.invoicePdfUrl : 'NA'}
+                    <TableCell className=''>
+                      <span className=''>
+                        {inv.invoicePdfUrl ? (
+                          <a
+                            href={inv.invoicePdfUrl}
+                            target='_blank'
+                            rel='noopener noreferrer'
+                            style={{ display: 'inline-block' }}
+                          >
+                            <FileDown className='' />
+                          </a>
+                        ) : (
+                          'NA'
+                        )}
+                      </span>
                     </TableCell>
                   </TableRow>
                 ))}

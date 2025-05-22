@@ -247,8 +247,7 @@ export default function OutputUTR() {
           filters.distributorCode ||
           filters.date ||
           filters.invoiceNumber ||
-          filters.utr ||
-          filters.status) && (
+          filters.utr) && (
           <Button
             variant='ghost'
             onClick={handleClearFilter}
