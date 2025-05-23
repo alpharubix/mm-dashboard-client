@@ -14,7 +14,7 @@ export default function Home() {
   const tabs =
     user?.role === 'admin'
       ? [
-          { to: 'input', label: 'Input' },
+          // { to: 'input', label: 'Input' },
           ...baseTabs,
           { to: 'users', label: 'Users' },
         ]

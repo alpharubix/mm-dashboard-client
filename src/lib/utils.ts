@@ -48,7 +48,7 @@ export const handleExport = async () => {
 
   try {
     toastId = toast.loading('Processing CSV export...')
-    const res = await axios.get(`${ENV.BACKEND_URL}/input`)
+    const res = await axios.get(`${ENV.BACKEND_URL}/output-utr-all`)
     const data = res.data.data
     if (!data.length) {
       toast.dismiss(toastId)
@@ -66,7 +66,12 @@ export const handleExport = async () => {
       'Invoice Number': rest.invoiceNumber,
       'Invoice Amount': rest.invoiceAmount,
       'Invoice Date': format(new Date(rest.invoiceDate), 'dd-MM-yyyy'),
-      'Loan Amount (Excl. Credit Balance)': rest.loanAmount,
+      'Loan Amount': rest.loanAmount,
+      'Loan Disbursement Date': rest.loanDisbursementDate
+        ? format(new Date(rest.loanDisbursementDate), 'dd-MM-yyyy')
+        : 'N/A',
+      UTR: rest.utr || 'N/A',
+      Status: rest.status,
     }))
 
     const csv = unparse(transformed)

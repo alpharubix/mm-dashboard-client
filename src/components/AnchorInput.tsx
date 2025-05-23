@@ -23,7 +23,7 @@ type InputType = {
   bankName: string
   ifscCode: string
   branch: string
-  invoiceNumber: string
+  invoiceNumber: number
   invoiceAmount: number
   invoiceDate: string
   loanAmount: number

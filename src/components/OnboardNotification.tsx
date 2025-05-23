@@ -48,7 +48,6 @@ export default function OnboardNotification() {
       if (filters.companyName) params.companyName = filters.companyName
       if (filters.distributorCode)
         params.distributorCode = filters.distributorCode
-      console.log({ filters })
       const res = await axios.get(`${ENV.BACKEND_URL}/onboard`, {
         params,
       })

@@ -1,5 +1,4 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import AnchorInput from './components/AnchorInput'
 import OnboardNotification from './components/OnboardNotification'
 import OutputLimit from './components/OutputLimit'
 import OutputUTR from './components/OutputUTR'
@@ -20,7 +19,7 @@ export default function App() {
         <Route element={<ProtectedRoute />}>
           <Route path='/' element={<Home />}>
             <Route element={<ProtectedRoute allowedRoles='admin' />}>
-              <Route path='input' element={<AnchorInput />} />
+              {/* <Route path='input' element={<AnchorInput />} /> */}
               <Route path='users' element={<Users />} />
             </Route>
 
