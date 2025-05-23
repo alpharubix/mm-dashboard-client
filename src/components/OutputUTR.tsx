@@ -151,10 +151,8 @@ export default function OutputUTR() {
   // Fetch data
   useEffect(() => {
     let timeout: NodeJS.Timeout | null = null
-
     const mainFetch = async () => {
       try {
-        await getFtpFiles()
         timeout = setTimeout(() => {
           fetchData()
         }, 500)
@@ -308,7 +306,6 @@ export default function OutputUTR() {
         )}
         {(filters.companyName ||
           filters.distributorCode ||
-          filters.date ||
           filters.invoiceNumber ||
           filters.utr) && (
           <Button
@@ -319,6 +316,38 @@ export default function OutputUTR() {
             Clear
           </Button>
         )}
+      </div>
+      <div className='flex gap-4 justify-between'>
+        {user?.role === 'admin' && (
+          <div className='mt-4 flex gap-4 items-center'>
+            <InputFile onChange={handleFileChange} ref={inputRef} />
+            <div>
+              <Button
+                onClick={handleUpload}
+                disabled={!file}
+                variant='outline'
+                className='cursor-pointer'
+              >
+                Upload CSV
+              </Button>
+              {file && (
+                <Button
+                  onClick={handleCancel}
+                  disabled={!file}
+                  variant='ghost'
+                  className='text-red-500 cursor-pointer'
+                >
+                  Cancel
+                </Button>
+              )}
+            </div>
+          </div>
+        )}
+        <div>
+          <Button className='cursor-pointer' onClick={getFtpFiles}>
+            Get data from FTP
+          </Button>
+        </div>
       </div>
       <div className='overflow-x-auto'>
         <Table className='text-base'>
@@ -505,32 +534,6 @@ export default function OutputUTR() {
             →
           </Button>
         </div>
-
-        {user?.role === 'admin' && (
-          <div className='mt-4 flex gap-4 flex-col'>
-            <InputFile onChange={handleFileChange} ref={inputRef} />
-            <div>
-              <Button
-                onClick={handleUpload}
-                disabled={!file}
-                variant='outline'
-                className='cursor-pointer'
-              >
-                Upload CSV
-              </Button>
-              {file && (
-                <Button
-                  onClick={handleCancel}
-                  disabled={!file}
-                  variant='ghost'
-                  className='text-red-500 cursor-pointer'
-                >
-                  Cancel
-                </Button>
-              )}
-            </div>
-          </div>
-        )}
       </div>
     </>
   )

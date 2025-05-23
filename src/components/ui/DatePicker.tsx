@@ -24,6 +24,12 @@ export function DatePickerWithRange({
     setOpen(false) // Close the popover
   }
 
+  const handleClearClick = () => {
+    setLocalDate(undefined)
+    setDate(undefined)
+    setOpen(false)
+  }
+
   return (
     <div className={cn('grid gap-2', className)}>
       <Popover open={open} onOpenChange={setOpen}>
@@ -61,6 +67,14 @@ export function DatePickerWithRange({
             numberOfMonths={2}
           />
           <div className='flex justify-end p-2'>
+            <Button
+              size='sm'
+              variant='outline'
+              onClick={handleClearClick}
+              className='cursor-pointer'
+            >
+              Clear
+            </Button>
             <Button
               size='sm'
               onClick={handleOkClick}
