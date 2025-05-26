@@ -66,7 +66,7 @@ export function DatePickerWithRange({
             onSelect={setLocalDate} // Update local date state
             numberOfMonths={2}
           />
-          <div className='flex justify-end p-2'>
+          <div className='flex justify-end p-2 gap-2'>
             <Button
               size='sm'
               variant='outline'

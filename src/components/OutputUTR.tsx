@@ -83,8 +83,9 @@ export default function OutputUTR() {
       if (filters.companyName) params.companyName = filters.companyName
       if (filters.distributorCode)
         params.distributorCode = filters.distributorCode
-      if (Number(filters.invoiceNumber))
+      if (filters.invoiceNumber && !isNaN(Number(filters.invoiceNumber))) {
         params.invoiceNumber = Number(filters.invoiceNumber)
+      }
       if (filters.utr) params.utr = filters.utr
       if (filters.status && filters.status !== 'all') {
         params.status = filters.status
@@ -133,6 +134,7 @@ export default function OutputUTR() {
       }
 
       toast.success(data.message || 'Data processed successfully')
+      fetchData()
     } catch (error: any) {
       const res = error.response?.data
       let msg = res?.message || error.message || 'Network error'
@@ -321,7 +323,7 @@ export default function OutputUTR() {
         {user?.role === 'admin' && (
           <div className='mt-4 flex gap-4 items-center'>
             <InputFile onChange={handleFileChange} ref={inputRef} />
-            <div>
+            <div className='flex gap-2'>
               <Button
                 onClick={handleUpload}
                 disabled={!file}
@@ -481,7 +483,7 @@ export default function OutputUTR() {
                     <TableCell
                       className={cn(
                         `${
-                          item.status === 'Completed'
+                          item.status.toLowerCase() === 'completed'
                             ? 'text-green-500'
                             : 'text-orange-400'
                         }`,

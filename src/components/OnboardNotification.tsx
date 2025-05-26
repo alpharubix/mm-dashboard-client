@@ -160,7 +160,7 @@ export default function OnboardNotification() {
       {user?.role === 'admin' && (
         <div className='mt-4 flex gap-4 items-center'>
           <InputFile onChange={handleFileChange} ref={inputRef} />
-          <div>
+          <div className='flex gap-2'>
             <Button
               onClick={handleUpload}
               disabled={!file}
