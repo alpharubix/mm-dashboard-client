@@ -163,7 +163,31 @@ export default function OutputLimit() {
           </Button>
         )}
       </div>
-
+      {user?.role === 'admin' && (
+        <div className='mt-6 flex items-center gap-3'>
+          <InputFile onChange={handleFileChange} ref={inputRef} />
+          <div className='flex gap-2'>
+            <Button
+              onClick={handleUpload}
+              disabled={!file}
+              variant='outline'
+              className='cursor-pointer'
+            >
+              Upload CSV
+            </Button>
+            {file && (
+              <Button
+                onClick={handleCancel}
+                disabled={!file}
+                variant='ghost'
+                className='text-red-500 cursor-pointer'
+              >
+                Cancel
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
       <Table className='text-base'>
         <TableHeader>
           <TableRow>
@@ -240,32 +264,6 @@ export default function OutputLimit() {
           →
         </Button>
       </div>
-
-      {user?.role === 'admin' && (
-        <div className='mt-6 flex flex-col gap-3'>
-          <InputFile onChange={handleFileChange} ref={inputRef} />
-          <div className='flex gap-2'>
-            <Button
-              onClick={handleUpload}
-              disabled={!file}
-              variant='outline'
-              className='cursor-pointer'
-            >
-              Upload CSV
-            </Button>
-            {file && (
-              <Button
-                onClick={handleCancel}
-                disabled={!file}
-                variant='ghost'
-                className='text-red-500 cursor-pointer'
-              >
-                Cancel
-              </Button>
-            )}
-          </div>
-        </div>
-      )}
     </>
   )
 }

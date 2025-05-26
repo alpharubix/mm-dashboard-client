@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { FileDown } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 import { ENV } from '../conf'
 import { formatAmount, formatDate, handleExport } from '../lib/utils'
 import { Button } from './ui/button'
@@ -22,7 +23,7 @@ type InputType = {
   bankName: string
   ifscCode: string
   branch: string
-  invoiceNumber: string
+  invoiceNumber: number
   invoiceAmount: number
   invoiceDate: string
   loanAmount: number
@@ -41,8 +42,41 @@ export default function AnchorInput() {
       .catch((er) => console.log(er))
       .finally(() => setIsLoading(false))
   }
+
+  const getFtpFiles = async () => {
+    setIsLoading(true)
+    try {
+      const { data, status } = await axios.get(
+        `${ENV.BACKEND_URL}/input-ftp-data`
+      )
+
+      if (status !== 200) {
+        throw { response: { data } } // force error block to handle uniformly
+      }
+
+      toast.success(data.message || 'Data processed successfully')
+      console.log(data)
+    } catch (error: any) {
+      const res = error.response?.data
+      let msg = res?.message || error.message || 'Network error'
+
+      // Specific handling for known cases
+      if (msg.includes('E11000 duplicate key error collection')) {
+        toast.info('No new data to insert.')
+      } else {
+        toast.error(msg)
+      }
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   useEffect(() => {
-    fetchMe()
+    const fetchData = async () => {
+      await getFtpFiles()
+      fetchMe()
+    }
+    fetchData()
   }, [])
 
   return (
@@ -149,8 +183,21 @@ export default function AnchorInput() {
                       {formatDate(inv.invoiceDate)}
                     </TableCell>
                     <TableCell>{formatAmount(inv.loanAmount)}</TableCell>
-                    <TableCell>
-                      {inv.invoicePdfUrl ? inv.invoicePdfUrl : 'NA'}
+                    <TableCell className=''>
+                      <span className=''>
+                        {inv.invoicePdfUrl ? (
+                          <a
+                            href={inv.invoicePdfUrl}
+                            target='_blank'
+                            rel='noopener noreferrer'
+                            style={{ display: 'inline-block' }}
+                          >
+                            <FileDown className='' />
+                          </a>
+                        ) : (
+                          'NA'
+                        )}
+                      </span>
                     </TableCell>
                   </TableRow>
                 ))}

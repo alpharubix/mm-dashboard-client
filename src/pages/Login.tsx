@@ -21,7 +21,6 @@ export default function Login() {
     try {
       const res = await axios.post(`${ENV.BACKEND_URL}/login`, form)
       setForm({ email: '', password: '' })
-      console.log(res.data)
       localStorage.setItem('mm_auth_token', res.data.token)
       navigate('/', { replace: true })
       toast.success('Login successful')

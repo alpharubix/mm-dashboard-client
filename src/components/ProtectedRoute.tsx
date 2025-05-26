@@ -30,7 +30,8 @@ export default function ProtectedRoute({
   if (location.pathname === '/') {
     return (
       <Navigate
-        to={user?.role === 'admin' ? '/input' : '/onboard-notification'}
+        // to={user?.role === 'admin' ? '/input' : '/onboard-notification'}
+        to={'/onboard-notification'}
         replace
       />
     )

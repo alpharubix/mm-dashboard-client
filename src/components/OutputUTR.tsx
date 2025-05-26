@@ -1,10 +1,17 @@
 import axios from 'axios'
 import { format } from 'date-fns'
+import { FileDown } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { DateRange } from 'react-day-picker'
 import { toast } from 'sonner'
 import { ENV } from '../conf'
-import { cn, formatAmount, formatDate, getUserFromToken } from '../lib/utils'
+import {
+  cn,
+  formatAmount,
+  formatDate,
+  getUserFromToken,
+  handleExport,
+} from '../lib/utils'
 import { Button } from './ui/button'
 import { DatePickerWithRange } from './ui/DatePicker'
 import { InputFile } from './ui/file-input'
@@ -34,13 +41,14 @@ type OutputUTRType = {
   bankName: string
   ifscCode: string
   branch: string
-  invoiceNumber: string
+  invoiceNumber: number
   invoiceAmount: number
   invoiceDate: string
   loanAmount: number
   loanDisbursementDate: string
   utr: string
   status: string
+  invoicePdfUrl: string
 }
 
 export default function OutputUTR() {
@@ -75,7 +83,9 @@ export default function OutputUTR() {
       if (filters.companyName) params.companyName = filters.companyName
       if (filters.distributorCode)
         params.distributorCode = filters.distributorCode
-      if (filters.invoiceNumber) params.invoiceNumber = filters.invoiceNumber
+      if (filters.invoiceNumber && !isNaN(Number(filters.invoiceNumber))) {
+        params.invoiceNumber = Number(filters.invoiceNumber)
+      }
       if (filters.utr) params.utr = filters.utr
       if (filters.status && filters.status !== 'all') {
         params.status = filters.status
@@ -112,12 +122,52 @@ export default function OutputUTR() {
     ]
   )
 
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      fetchData()
-    }, 500)
+  const getFtpFiles = async () => {
+    setIsLoading(true)
+    try {
+      const { data, status } = await axios.get(
+        `${ENV.BACKEND_URL}/output-utr-ftp-data`
+      )
 
-    return () => clearTimeout(timeout)
+      if (status !== 200) {
+        throw { response: { data } } // force error block to handle uniformly
+      }
+
+      toast.success(data.message || 'Data processed successfully')
+      fetchData()
+    } catch (error: any) {
+      const res = error.response?.data
+      let msg = res?.message || error.message || 'Network error'
+
+      // Specific handling for known cases
+      if (msg.includes('E11000 duplicate key error collection')) {
+        toast.info('No new data to insert.')
+      } else {
+        toast.error(msg)
+      }
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  // Fetch data
+  useEffect(() => {
+    let timeout: NodeJS.Timeout | null = null
+    const mainFetch = async () => {
+      try {
+        timeout = setTimeout(() => {
+          fetchData()
+        }, 500)
+      } catch (err) {
+        console.error('Failed to fetch FTP files:', err)
+      }
+    }
+
+    mainFetch()
+
+    return () => {
+      if (timeout) clearTimeout(timeout)
+    }
   }, [stableFilters, page])
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -174,7 +224,6 @@ export default function OutputUTR() {
     setPage(1)
   }
 
-  console.log({ filters })
   return (
     <>
       <div className='flex flex-wrap sm:flex-nowrap gap-2 mb-4 max-w-full'>
@@ -243,12 +292,24 @@ export default function OutputUTR() {
         >
           Apply
         </Button> */}
+        {user?.role === 'admin' && (
+          <div className='flex justify-end'>
+            <Button
+              onClick={handleExport}
+              variant='link'
+              className='cursor-pointer text-gray-400'
+            >
+              <div>
+                <FileDown />
+              </div>
+              Export CSV
+            </Button>
+          </div>
+        )}
         {(filters.companyName ||
           filters.distributorCode ||
-          filters.date ||
           filters.invoiceNumber ||
-          filters.utr ||
-          filters.status) && (
+          filters.utr) && (
           <Button
             variant='ghost'
             onClick={handleClearFilter}
@@ -257,6 +318,38 @@ export default function OutputUTR() {
             Clear
           </Button>
         )}
+      </div>
+      <div className='flex gap-4 justify-between'>
+        {user?.role === 'admin' && (
+          <div className='mt-4 flex gap-4 items-center'>
+            <InputFile onChange={handleFileChange} ref={inputRef} />
+            <div className='flex gap-2'>
+              <Button
+                onClick={handleUpload}
+                disabled={!file}
+                variant='outline'
+                className='cursor-pointer'
+              >
+                Upload CSV
+              </Button>
+              {file && (
+                <Button
+                  onClick={handleCancel}
+                  disabled={!file}
+                  variant='ghost'
+                  className='text-red-500 cursor-pointer'
+                >
+                  Cancel
+                </Button>
+              )}
+            </div>
+          </div>
+        )}
+        <div>
+          <Button className='cursor-pointer' onClick={getFtpFiles}>
+            Get data from FTP
+          </Button>
+        </div>
       </div>
       <div className='overflow-x-auto'>
         <Table className='text-base'>
@@ -288,6 +381,11 @@ export default function OutputUTR() {
               </TableHead>
               <TableHead className='whitespace-nowrap'>UTR</TableHead>
               <TableHead className='whitespace-nowrap'>Status</TableHead>
+              {user?.role === 'admin' && (
+                <TableHead className='whitespace-nowrap'>
+                  Invoice File
+                </TableHead>
+              )}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -338,7 +436,7 @@ export default function OutputUTR() {
                     </TableCell>
                   </TableRow>
                 ))
-              : data.map((item) => (
+              : data?.map((item) => (
                   <TableRow key={item._id}>
                     <TableCell className='whitespace-nowrap'>
                       {item.companyName}
@@ -374,23 +472,45 @@ export default function OutputUTR() {
                       {formatAmount(item.loanAmount)}
                     </TableCell>
                     <TableCell className='whitespace-nowrap'>
-                      {formatDate(item.loanDisbursementDate)}
+                      {item.loanDisbursementDate
+                        ? formatDate(item.loanDisbursementDate)
+                        : 'N/A'}
                     </TableCell>
                     <TableCell className='whitespace-nowrap'>
-                      {item.utr}
+                      {item.utr ? item.utr : 'N/A'}
                     </TableCell>
+
                     <TableCell
                       className={cn(
                         `${
-                          item.status === 'Completed'
+                          item.status.toLowerCase() === 'completed'
                             ? 'text-green-500'
                             : 'text-orange-400'
                         }`,
                         'whitespace-nowrap'
                       )}
                     >
-                      {item.status}
+                      {item.status.charAt(0).toUpperCase() +
+                        item.status.slice(1)}
                     </TableCell>
+                    {user?.role === 'admin' && (
+                      <TableCell className=''>
+                        <span className=''>
+                          {item.invoicePdfUrl ? (
+                            <a
+                              href={item.invoicePdfUrl}
+                              target='_blank'
+                              rel='noopener noreferrer'
+                              style={{ display: 'inline-block' }}
+                            >
+                              <FileDown className='' />
+                            </a>
+                          ) : (
+                            'NA'
+                          )}
+                        </span>
+                      </TableCell>
+                    )}
                   </TableRow>
                 ))}
           </TableBody>
@@ -416,32 +536,6 @@ export default function OutputUTR() {
             →
           </Button>
         </div>
-
-        {user?.role === 'admin' && (
-          <div className='mt-4 flex gap-4 flex-col'>
-            <InputFile onChange={handleFileChange} ref={inputRef} />
-            <div>
-              <Button
-                onClick={handleUpload}
-                disabled={!file}
-                variant='outline'
-                className='cursor-pointer'
-              >
-                Upload CSV
-              </Button>
-              {file && (
-                <Button
-                  onClick={handleCancel}
-                  disabled={!file}
-                  variant='ghost'
-                  className='text-red-500 cursor-pointer'
-                >
-                  Cancel
-                </Button>
-              )}
-            </div>
-          </div>
-        )}
       </div>
     </>
   )

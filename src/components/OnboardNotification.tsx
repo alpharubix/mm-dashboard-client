@@ -48,7 +48,6 @@ export default function OnboardNotification() {
       if (filters.companyName) params.companyName = filters.companyName
       if (filters.distributorCode)
         params.distributorCode = filters.distributorCode
-      console.log({ filters })
       const res = await axios.get(`${ENV.BACKEND_URL}/onboard`, {
         params,
       })
@@ -158,6 +157,31 @@ export default function OnboardNotification() {
           </Button>
         )}
       </div>
+      {user?.role === 'admin' && (
+        <div className='mt-4 flex gap-4 items-center'>
+          <InputFile onChange={handleFileChange} ref={inputRef} />
+          <div className='flex gap-2'>
+            <Button
+              onClick={handleUpload}
+              disabled={!file}
+              variant='outline'
+              className='cursor-pointer'
+            >
+              Upload CSV
+            </Button>
+            {file && (
+              <Button
+                onClick={handleCancel}
+                disabled={!file}
+                variant='ghost'
+                className='text-red-500 cursor-pointer'
+              >
+                Cancel
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
       <Table className='text-base'>
         <TableHeader>
           <TableRow>
@@ -228,31 +252,6 @@ export default function OnboardNotification() {
           →
         </Button>
       </div>
-      {user?.role === 'admin' && (
-        <div className='mt-4 flex gap-4 flex-col'>
-          <InputFile onChange={handleFileChange} ref={inputRef} />
-          <div>
-            <Button
-              onClick={handleUpload}
-              disabled={!file}
-              variant='outline'
-              className='cursor-pointer'
-            >
-              Upload CSV
-            </Button>
-            {file && (
-              <Button
-                onClick={handleCancel}
-                disabled={!file}
-                variant='ghost'
-                className='text-red-500 cursor-pointer'
-              >
-                Cancel
-              </Button>
-            )}
-          </div>
-        </div>
-      )}
     </>
   )
 }
