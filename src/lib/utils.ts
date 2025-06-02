@@ -16,6 +16,7 @@ export function formatDate(date: string) {
 }
 
 export const formatAmount = (amount: number): string => {
+  if (amount === null || amount === undefined) return '0.00'
   return amount.toLocaleString('en-IN', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
@@ -36,6 +37,30 @@ export function getUserFromToken(): DecodedToken | null {
     return jwtDecode<DecodedToken>(token)
   } catch {
     return null
+  }
+}
+
+export function getAuthToken(): string | null {
+  return localStorage.getItem('mm_auth_token')
+}
+
+export function camelCaseToWords(s: string) {
+  const result = s.replace(/([A-Z])/g, ' $1')
+  return result.charAt(0).toUpperCase() + result.slice(1)
+}
+
+export const getCompanyName = (companyId: string) => {
+  switch (companyId) {
+    case 'CKPL':
+      return 'CavinKare'
+    case 'HWC':
+      return 'Himalayan'
+    case '1234':
+      return 'Agency'
+    case 'mm123':
+      return 'MeraMerchant'
+    default:
+      return companyId // or u.companyName if you have the name field
   }
 }
 

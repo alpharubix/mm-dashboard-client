@@ -163,7 +163,7 @@ export default function OutputLimit() {
           </Button>
         )}
       </div>
-      {user?.role === 'admin' && (
+      {user?.role === 'superAdmin' && (
         <div className='mt-6 flex items-center gap-3'>
           <InputFile onChange={handleFileChange} ref={inputRef} />
           <div className='flex gap-2'>
@@ -242,28 +242,33 @@ export default function OutputLimit() {
               ))}
         </TableBody>
       </Table>
-
-      <div className='mt-4 flex justify-center gap-4 items-center'>
-        <Button
-          onClick={() => setPage((p) => Math.max(p - 1, 1))}
-          disabled={page === 1}
-          className='cursor-pointer text-2xl'
-          variant={'outline'}
-        >
-          ←
-        </Button>
-        <span className='font-bold'>
-          Page {page} of {totalPages}
-        </span>
-        <Button
-          onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
-          disabled={page === totalPages}
-          className='cursor-pointer text-2xl'
-          variant={'outline'}
-        >
-          →
-        </Button>
-      </div>
+      {data.length !== 0 ? (
+        <>
+          <div className='mt-4 flex justify-center gap-4 items-center'>
+            <Button
+              onClick={() => setPage((p) => Math.max(p - 1, 1))}
+              disabled={page === 1}
+              className='cursor-pointer text-2xl'
+              variant={'outline'}
+            >
+              ←
+            </Button>
+            <span className='font-bold'>
+              Page {page} of {totalPages}
+            </span>
+            <Button
+              onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
+              disabled={page === totalPages}
+              className='cursor-pointer text-2xl'
+              variant={'outline'}
+            >
+              →
+            </Button>
+          </div>
+        </>
+      ) : (
+        <div className='text-center text-2xl m-3'>No Data Found</div>
+      )}
     </>
   )
 }

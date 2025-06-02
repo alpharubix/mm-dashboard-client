@@ -8,6 +8,7 @@ import Home from './pages/Home'
 import Login from './pages/Login'
 import NotFound from './pages/NotFound'
 import Signup from './pages/Signup'
+import Viewer from './pages/Viewer'
 
 export default function App() {
   return (
@@ -18,7 +19,7 @@ export default function App() {
 
         <Route element={<ProtectedRoute />}>
           <Route path='/' element={<Home />}>
-            <Route element={<ProtectedRoute allowedRoles='admin' />}>
+            <Route element={<ProtectedRoute allowedRoles='superAdmin' />}>
               {/* <Route path='input' element={<AnchorInput />} /> */}
               <Route path='users' element={<Users />} />
             </Route>
@@ -29,6 +30,7 @@ export default function App() {
             />
             <Route path='credit-limit' element={<OutputLimit />} />
             <Route path='invoice-utr' element={<OutputUTR />} />
+            <Route path='viewer' element={<Viewer />} />
 
             <Route path='*' element={<NotFound />} />
           </Route>

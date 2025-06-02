@@ -292,7 +292,7 @@ export default function OutputUTR() {
         >
           Apply
         </Button> */}
-        {user?.role === 'admin' && (
+        {user?.role === 'superAdmin' && (
           <div className='flex justify-end'>
             <Button
               onClick={handleExport}
@@ -320,7 +320,7 @@ export default function OutputUTR() {
         )}
       </div>
       <div className='flex gap-4 justify-between'>
-        {user?.role === 'admin' && (
+        {user?.role === 'superAdmin' && (
           <div className='mt-4 flex gap-4 items-center'>
             <InputFile onChange={handleFileChange} ref={inputRef} />
             <div className='flex gap-2'>
@@ -381,7 +381,7 @@ export default function OutputUTR() {
               </TableHead>
               <TableHead className='whitespace-nowrap'>UTR</TableHead>
               <TableHead className='whitespace-nowrap'>Status</TableHead>
-              {user?.role === 'admin' && (
+              {user?.role === 'superAdmin' && (
                 <TableHead className='whitespace-nowrap'>
                   Invoice File
                 </TableHead>
@@ -493,7 +493,7 @@ export default function OutputUTR() {
                       {item.status.charAt(0).toUpperCase() +
                         item.status.slice(1)}
                     </TableCell>
-                    {user?.role === 'admin' && (
+                    {user?.role === 'superAdmin' && (
                       <TableCell className=''>
                         <span className=''>
                           {item.invoicePdfUrl ? (
@@ -515,27 +515,33 @@ export default function OutputUTR() {
                 ))}
           </TableBody>
         </Table>
-        <div className='mt-4 flex justify-center gap-4 items-center'>
-          <Button
-            onClick={() => setPage((p) => Math.max(p - 1, 1))}
-            disabled={page === 1}
-            className='cursor-pointer text-2xl'
-            variant={'outline'}
-          >
-            ←
-          </Button>
-          <span className='font-bold'>
-            Page {page} of {totalPages}
-          </span>
-          <Button
-            onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
-            disabled={page === totalPages}
-            className='cursor-pointer text-2xl'
-            variant={'outline'}
-          >
-            →
-          </Button>
-        </div>
+        {data.length !== 0 ? (
+          <>
+            <div className='mt-4 flex justify-center gap-4 items-center'>
+              <Button
+                onClick={() => setPage((p) => Math.max(p - 1, 1))}
+                disabled={page === 1}
+                className='cursor-pointer text-2xl'
+                variant={'outline'}
+              >
+                ←
+              </Button>
+              <span className='font-bold'>
+                Page {page} of {totalPages}
+              </span>
+              <Button
+                onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
+                disabled={page === totalPages}
+                className='cursor-pointer text-2xl'
+                variant={'outline'}
+              >
+                →
+              </Button>
+            </div>
+          </>
+        ) : (
+          <div className='text-center text-2xl m-3'>No Data Found</div>
+        )}
       </div>
     </>
   )

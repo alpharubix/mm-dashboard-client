@@ -12,7 +12,7 @@ export default function Home() {
   ]
 
   const tabs =
-    user?.role === 'admin'
+    user?.role === 'superAdmin'
       ? [
           // { to: 'input', label: 'Input' },
           ...baseTabs,

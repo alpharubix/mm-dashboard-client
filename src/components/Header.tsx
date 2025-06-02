@@ -1,6 +1,6 @@
 import { Menu } from 'lucide-react'
 import { useEffect } from 'react'
-import { getUserFromToken } from '../lib/utils'
+import { camelCaseToWords, getUserFromToken } from '../lib/utils'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -48,7 +48,7 @@ export default function Header() {
         <div className='hidden md:flex items-center space-x-4'>
           <span className='text-sm font-medium'>{user?.email}</span>
           <span className='px-2 py-1 text-xs font-semibold uppercase rounded-full bg-blue-100 text-blue-800'>
-            {user?.role}
+            {camelCaseToWords(user?.role || '')}
           </span>
 
           <AlertDialog>
