@@ -91,10 +91,10 @@ export default function OutputUTR() {
         params.status = filters.status
       }
       if (filters.date?.from && filters.date?.to) {
-        params.fromDate = format(filters.date.from, 'dd-MM-yyyy') // Or your desired format
-        params.toDate = format(filters.date.to, 'dd-MM-yyyy') // Or your desired format
+        params.fromDate = format(filters.date.from, 'dd-MM-yy') // Or your desired format
+        params.toDate = format(filters.date.to, 'dd-MM-yy') // Or your desired format
       } else if (filters.date?.from) {
-        params.date = format(filters.date.from, 'dd-MM-yyyy') // Handle single date selection if needed
+        params.date = format(filters.date.from, 'dd-MM-yy') // Handle single date selection if needed
       }
 
       const res = await axios.get(`${ENV.BACKEND_URL}/output-utr`, {
@@ -347,7 +347,7 @@ export default function OutputUTR() {
         )}
         <div>
           <Button className='cursor-pointer' onClick={getFtpFiles}>
-            Get data from FTP
+            Refresh Latest Data
           </Button>
         </div>
       </div>

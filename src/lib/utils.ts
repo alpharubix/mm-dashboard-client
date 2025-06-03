@@ -12,7 +12,16 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatDate(date: string) {
-  return format(date, 'dd-MM-yyyy')
+  return format(date, 'dd-MM-yy')
+}
+
+export function setAuthToken() {
+  const token = getAuthToken()
+  if (token) {
+    axios.defaults.headers.common['Authorization'] = `${token}`
+  } else {
+    delete axios.defaults.headers.common['Authorization']
+  }
 }
 
 export const formatAmount = (amount: number): string => {
@@ -90,10 +99,10 @@ export const handleExport = async () => {
       Branch: rest.branch,
       'Invoice Number': rest.invoiceNumber,
       'Invoice Amount': rest.invoiceAmount,
-      'Invoice Date': format(new Date(rest.invoiceDate), 'dd-MM-yyyy'),
+      'Invoice Date': format(new Date(rest.invoiceDate), 'dd-MM-yy'),
       'Loan Amount': rest.loanAmount,
       'Loan Disbursement Date': rest.loanDisbursementDate
-        ? format(new Date(rest.loanDisbursementDate), 'dd-MM-yyyy')
+        ? format(new Date(rest.loanDisbursementDate), 'dd-MM-yy')
         : 'N/A',
       UTR: rest.utr || 'N/A',
       Status: rest.status,
@@ -107,7 +116,7 @@ export const handleExport = async () => {
     link.href = url
     link.setAttribute(
       'download',
-      `anchor_input_${format(new Date(), 'dd-MM-yyyy')}.csv`
+      `anchor_input_${format(new Date(), 'dd-MM-yy')}.csv`
     )
     document.body.appendChild(link)
     link.click()

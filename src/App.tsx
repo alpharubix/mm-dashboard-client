@@ -7,15 +7,19 @@ import Users from './components/Users'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import NotFound from './pages/NotFound'
-import Signup from './pages/Signup'
 import Viewer from './pages/Viewer'
+import { getAuthToken } from './lib/utils'
+import axios from 'axios'
 
 export default function App() {
+  const token = getAuthToken()
+
+  axios.defaults.headers.common['Authorization'] = `${token}`
   return (
     <BrowserRouter>
       <Routes>
         <Route path='/login' element={<Login />} />
-        <Route path='/signup' element={<Signup />} />
+        {/* <Route path='/signup' element={<Signup />} /> */}
 
         <Route element={<ProtectedRoute />}>
           <Route path='/' element={<Home />}>
