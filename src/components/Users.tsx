@@ -34,13 +34,7 @@ import {
   TableHeader,
   TableRow,
 } from './ui/table'
-
-type UserType = {
-  _id: string
-  email: string
-  companyId: string
-  role: string
-}
+import type { UserType } from '../types'
 
 export default function Users() {
   const [data, setData] = useState<UserType[]>([])
@@ -93,7 +87,7 @@ export default function Users() {
 
   return (
     <>
-      <Table className='text-base'>
+      <Table className='text-base whitespace-nowrap'>
         <TableHeader>
           <TableRow>
             <TableHead>S.No</TableHead>
@@ -165,10 +159,7 @@ export default function Users() {
                         >
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent
-                          side='top'
-                          className='bg-black text-white'
-                        >
+                        <SelectContent side='top' className=''>
                           <SelectGroup>
                             <SelectItem value='admin'>Admin</SelectItem>
                             <SelectItem value='viewer'>Viewer</SelectItem>

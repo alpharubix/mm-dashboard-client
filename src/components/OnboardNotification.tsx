@@ -15,16 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from './ui/table'
-
-type OnboardNotificationType = {
-  _id: string
-  sno: number
-  companyName: string
-  distributorCode: string
-  lender: string
-  sanctionLimit: number
-  limitLiveDate: string
-}
+import type { OnboardNotificationType } from '../types'
 
 export default function OnboardNotification() {
   const [data, setData] = useState<OnboardNotificationType[]>([])
@@ -160,16 +151,15 @@ export default function OnboardNotification() {
       {user?.role === 'superAdmin' && (
         <div className='mt-4 flex gap-4 items-center'>
           <InputFile onChange={handleFileChange} ref={inputRef} />
-          <div className='flex gap-2'>
-            <Button
-              onClick={handleUpload}
-              disabled={!file}
-              variant='outline'
-              className='cursor-pointer'
-            >
-              Upload CSV
-            </Button>
-            {file && (
+          {file && (
+            <div className='flex gap-2'>
+              <Button
+                onClick={handleUpload}
+                disabled={!file}
+                className='cursor-pointer'
+              >
+                Upload CSV
+              </Button>
               <Button
                 onClick={handleCancel}
                 disabled={!file}
@@ -178,22 +168,20 @@ export default function OnboardNotification() {
               >
                 Cancel
               </Button>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       )}
 
-      <Table className='text-base'>
+      <Table className='text-base whitespace-nowrap'>
         <TableHeader>
           <TableRow>
-            <TableHead className='whitespace-nowrap'>S.No</TableHead>
-            <TableHead className='whitespace-nowrap'>Company Name</TableHead>
-            <TableHead className='whitespace-nowrap'>
-              Distributor Code
-            </TableHead>
-            <TableHead className='whitespace-nowrap'>Lender</TableHead>
-            <TableHead className='whitespace-nowrap'>Sanction Limit</TableHead>
-            <TableHead className='whitespace-nowrap'>Limit Live Date</TableHead>
+            <TableHead>S.No</TableHead>
+            <TableHead>Company Name</TableHead>
+            <TableHead>Distributor Code</TableHead>
+            <TableHead>Lender</TableHead>
+            <TableHead>Sanction Limit</TableHead>
+            <TableHead>Limit Live Date</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -257,7 +245,9 @@ export default function OnboardNotification() {
           </div>
         </>
       ) : (
-        <div className='text-center text-2xl m-3'>No Data Found</div>
+        <div className='text-center text-2xl m-3'>
+          {isLoading ? null : 'No Data Found'}
+        </div>
       )}
     </>
   )

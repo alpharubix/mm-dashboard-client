@@ -11,19 +11,7 @@ import {
   TableRow,
 } from '../components/ui/table'
 import { formatAmount, formatDate } from '../lib/utils'
-
-type ViewerDataType = {
-  _id: string
-  companyName: string
-  distributorCode: string
-  invoiceNumber: number
-  invoiceAmount: number
-  invoiceDate: string
-  loanAmount: number
-  loanDisbursementDate: string
-  utr: string
-  status: string
-}
+import type { ViewerDataType } from '../types'
 
 const viewerData: ViewerDataType[] = [
   {

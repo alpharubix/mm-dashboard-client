@@ -32,24 +32,7 @@ import {
   TableHeader,
   TableRow,
 } from './ui/table'
-type OutputUTRType = {
-  _id: string
-  companyName: string
-  distributorCode: string
-  beneficiaryName: string
-  beneficiaryAccNo: string
-  bankName: string
-  ifscCode: string
-  branch: string
-  invoiceNumber: number
-  invoiceAmount: number
-  invoiceDate: string
-  loanAmount: number
-  loanDisbursementDate: string
-  utr: string
-  status: string
-  invoicePdfUrl: string
-}
+import type { OutputUTRType } from '../types'
 
 export default function OutputUTR() {
   const [data, setData] = useState<OutputUTRType[]>([])
@@ -262,7 +245,7 @@ export default function OutputUTR() {
           <SelectTrigger className='w-[60rem]'>
             <SelectValue placeholder='Select status' />
           </SelectTrigger>
-          <SelectContent className='bg-black'>
+          <SelectContent className=''>
             <SelectItem value='all'>All</SelectItem>
             <SelectItem value='Completed'>Completed</SelectItem>
             <SelectItem value='Pending'>Pending</SelectItem>
@@ -352,39 +335,26 @@ export default function OutputUTR() {
         </div>
       </div>
       <div className='overflow-x-auto'>
-        <Table className='text-base'>
+        <Table className='text-base whitespace-nowrap'>
           <TableHeader>
             <TableRow>
-              <TableHead className='whitespace-nowrap'>Company Name</TableHead>
-              <TableHead className='whitespace-nowrap'>
-                Distributor Code
-              </TableHead>
-              <TableHead className='whitespace-nowrap'>
-                Beneficiary Name
-              </TableHead>
-              <TableHead className='whitespace-nowrap'>
-                Beneficiary Acc No
-              </TableHead>
-              <TableHead className='whitespace-nowrap'>Bank Name</TableHead>
-              <TableHead className='whitespace-nowrap'>IFSC Code</TableHead>
-              <TableHead className='whitespace-nowrap'>Branch</TableHead>
-              <TableHead className='whitespace-nowrap'>
-                Invoice Number
-              </TableHead>
-              <TableHead className='whitespace-nowrap'>
-                Invoice Amount
-              </TableHead>
-              <TableHead className='whitespace-nowrap'>Invoice Date</TableHead>
-              <TableHead className='whitespace-nowrap'>Loan Amount</TableHead>
-              <TableHead className='whitespace-nowrap'>
-                Loan Disbursement Date
-              </TableHead>
-              <TableHead className='whitespace-nowrap'>UTR</TableHead>
-              <TableHead className='whitespace-nowrap'>Status</TableHead>
+              <TableHead>S.No</TableHead>
+              <TableHead>Company Name</TableHead>
+              <TableHead>Distributor Code</TableHead>
+              <TableHead>Beneficiary Name</TableHead>
+              <TableHead>Beneficiary Acc No</TableHead>
+              <TableHead>Bank Name</TableHead>
+              <TableHead>IFSC Code</TableHead>
+              <TableHead>Branch</TableHead>
+              <TableHead>Invoice Number</TableHead>
+              <TableHead>Invoice Amount</TableHead>
+              <TableHead>Invoice Date</TableHead>
+              <TableHead>Loan Amount</TableHead>
+              <TableHead>Loan Disbursement Date</TableHead>
+              <TableHead>UTR</TableHead>
+              <TableHead>Status</TableHead>
               {user?.role === 'superAdmin' && (
-                <TableHead className='whitespace-nowrap'>
-                  Invoice File
-                </TableHead>
+                <TableHead>Invoice File</TableHead>
               )}
             </TableRow>
           </TableHeader>
@@ -392,6 +362,9 @@ export default function OutputUTR() {
             {isLoading
               ? Array.from({ length: 10 }).map((_, i) => (
                   <TableRow key={i}>
+                    <TableCell>
+                      <Skeleton className='h-4 w-32' />
+                    </TableCell>
                     <TableCell>
                       <Skeleton className='h-4 w-32' />
                     </TableCell>
@@ -436,56 +409,33 @@ export default function OutputUTR() {
                     </TableCell>
                   </TableRow>
                 ))
-              : data?.map((item) => (
+              : data?.map((item, idx) => (
                   <TableRow key={item._id}>
-                    <TableCell className='whitespace-nowrap'>
-                      {item.companyName}
-                    </TableCell>
-                    <TableCell className='whitespace-nowrap'>
-                      {item.distributorCode}
-                    </TableCell>
-                    <TableCell className='whitespace-nowrap'>
-                      {item.beneficiaryName}
-                    </TableCell>
-                    <TableCell className='whitespace-nowrap'>
-                      {item.beneficiaryAccNo}
-                    </TableCell>
-                    <TableCell className='whitespace-nowrap'>
-                      {item.bankName}
-                    </TableCell>
-                    <TableCell className='whitespace-nowrap'>
-                      {item.ifscCode}
-                    </TableCell>
-                    <TableCell className='whitespace-nowrap'>
-                      {item.branch}
-                    </TableCell>
-                    <TableCell className='whitespace-nowrap'>
-                      {item.invoiceNumber}
-                    </TableCell>
-                    <TableCell className='whitespace-nowrap'>
-                      {formatAmount(item.invoiceAmount)}
-                    </TableCell>
-                    <TableCell className='whitespace-nowrap'>
-                      {formatDate(item.invoiceDate)}
-                    </TableCell>
-                    <TableCell className='whitespace-nowrap'>
-                      {formatAmount(item.loanAmount)}
-                    </TableCell>
-                    <TableCell className='whitespace-nowrap'>
+                    <TableCell>{idx + 1}</TableCell>
+                    <TableCell>{item.companyName}</TableCell>
+                    <TableCell>{item.distributorCode}</TableCell>
+                    <TableCell>{item.beneficiaryName}</TableCell>
+                    <TableCell>{item.beneficiaryAccNo}</TableCell>
+                    <TableCell>{item.bankName}</TableCell>
+                    <TableCell>{item.ifscCode}</TableCell>
+                    <TableCell>{item.branch}</TableCell>
+                    <TableCell>{item.invoiceNumber}</TableCell>
+                    <TableCell>{formatAmount(item.invoiceAmount)}</TableCell>
+                    <TableCell>{formatDate(item.invoiceDate)}</TableCell>
+                    <TableCell>{formatAmount(item.loanAmount)}</TableCell>
+                    <TableCell>
                       {item.loanDisbursementDate
                         ? formatDate(item.loanDisbursementDate)
                         : 'N/A'}
                     </TableCell>
-                    <TableCell className='whitespace-nowrap'>
-                      {item.utr ? item.utr : 'N/A'}
-                    </TableCell>
+                    <TableCell>{item.utr ? item.utr : 'N/A'}</TableCell>
 
                     <TableCell
                       className={cn(
                         `${
                           item.status.toLowerCase() === 'completed'
                             ? 'text-green-500'
-                            : 'text-orange-400'
+                            : 'text-orange-500'
                         }`,
                         'whitespace-nowrap'
                       )}
@@ -506,7 +456,7 @@ export default function OutputUTR() {
                               <FileDown className='' />
                             </a>
                           ) : (
-                            'NA'
+                            'N/A'
                           )}
                         </span>
                       </TableCell>
@@ -540,7 +490,9 @@ export default function OutputUTR() {
             </div>
           </>
         ) : (
-          <div className='text-center text-2xl m-3'>No Data Found</div>
+          <div className='text-center text-2xl m-3'>
+            {isLoading ? null : 'No Data Found'}
+          </div>
         )}
       </div>
     </>

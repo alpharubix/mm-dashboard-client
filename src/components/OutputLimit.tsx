@@ -2,7 +2,12 @@ import axios from 'axios'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { ENV } from '../conf'
-import { formatAmount, getUserFromToken } from '../lib/utils'
+import {
+  camelCaseToWords,
+  cn,
+  formatAmount,
+  getUserFromToken,
+} from '../lib/utils'
 import { Button } from './ui/button'
 import { InputFile } from './ui/file-input'
 import { Input } from './ui/input'
@@ -15,22 +20,7 @@ import {
   TableHeader,
   TableRow,
 } from './ui/table'
-
-type OutputLimitType = {
-  _id: string
-  sno: number
-  companyName: string
-  distributorCode: string
-  city: string
-  state: string
-  lender: string
-  sanctionLimit: number
-  operativeLimit: number
-  utilisedLimit: number
-  availableLimit: number
-  overdue: number
-  billingStatus: string
-}
+import type { OutputLimitType } from '../types'
 
 export default function OutputLimit() {
   const [data, setData] = useState<OutputLimitType[]>([])
@@ -188,7 +178,7 @@ export default function OutputLimit() {
           </div>
         </div>
       )}
-      <Table className='text-base'>
+      <Table className='text-base whitespace-nowrap'>
         <TableHeader>
           <TableRow>
             {[
@@ -205,9 +195,7 @@ export default function OutputLimit() {
               'Overdue',
               'Billing Status',
             ].map((h) => (
-              <TableHead key={h} className='whitespace-nowrap'>
-                {h}
-              </TableHead>
+              <TableHead key={h}>{h}</TableHead>
             ))}
           </TableRow>
         </TableHeader>
@@ -224,9 +212,9 @@ export default function OutputLimit() {
                     ))}
                 </TableRow>
               ))
-            : data?.map((item) => (
+            : data?.map((item, idx) => (
                 <TableRow key={item._id}>
-                  <TableCell>{item.sno}</TableCell>
+                  <TableCell>{idx + 1}</TableCell>
                   <TableCell>{item.companyName}</TableCell>
                   <TableCell>{item.distributorCode}</TableCell>
                   <TableCell>{item.city}</TableCell>
@@ -237,7 +225,17 @@ export default function OutputLimit() {
                   <TableCell>{formatAmount(item.utilisedLimit)}</TableCell>
                   <TableCell>{formatAmount(item.availableLimit)}</TableCell>
                   <TableCell>{formatAmount(item.overdue)}</TableCell>
-                  <TableCell>{item.billingStatus}</TableCell>
+                  <TableCell
+                    className={cn(
+                      `${
+                        item.billingStatus.toLowerCase() === 'positive'
+                          ? 'text-green-500'
+                          : 'text-orange-500'
+                      }`
+                    )}
+                  >
+                    {camelCaseToWords(item.billingStatus)}
+                  </TableCell>
                 </TableRow>
               ))}
         </TableBody>
@@ -267,7 +265,9 @@ export default function OutputLimit() {
           </div>
         </>
       ) : (
-        <div className='text-center text-2xl m-3'>No Data Found</div>
+        <div className='text-center text-2xl m-3'>
+          {isLoading ? null : 'No Data Found'}
+        </div>
       )}
     </>
   )
