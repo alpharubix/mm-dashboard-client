@@ -1,12 +1,12 @@
 import axios from 'axios'
 import { format } from 'date-fns'
-import { FileDown } from 'lucide-react'
+import { ChevronLeft, ChevronRight, FileDown } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { DateRange } from 'react-day-picker'
 import { toast } from 'sonner'
 import { ENV } from '../conf'
 import {
-  cn,
+  camelCaseToWords,
   formatAmount,
   formatDate,
   getUserFromToken,
@@ -32,24 +32,9 @@ import {
   TableHeader,
   TableRow,
 } from './ui/table'
-type OutputUTRType = {
-  _id: string
-  companyName: string
-  distributorCode: string
-  beneficiaryName: string
-  beneficiaryAccNo: string
-  bankName: string
-  ifscCode: string
-  branch: string
-  invoiceNumber: number
-  invoiceAmount: number
-  invoiceDate: string
-  loanAmount: number
-  loanDisbursementDate: string
-  utr: string
-  status: string
-  invoicePdfUrl: string
-}
+import type { OutputUTRType } from '../types'
+import { Card, CardContent } from './ui/card'
+import { Label } from './ui/label'
 
 export default function OutputUTR() {
   const [data, setData] = useState<OutputUTRType[]>([])
@@ -91,13 +76,13 @@ export default function OutputUTR() {
         params.status = filters.status
       }
       if (filters.date?.from && filters.date?.to) {
-        params.fromDate = format(filters.date.from, 'dd-MM-yyyy') // Or your desired format
-        params.toDate = format(filters.date.to, 'dd-MM-yyyy') // Or your desired format
+        params.fromDate = format(filters.date.from, 'dd-MM-yy') // Or your desired format
+        params.toDate = format(filters.date.to, 'dd-MM-yy') // Or your desired format
       } else if (filters.date?.from) {
-        params.date = format(filters.date.from, 'dd-MM-yyyy') // Handle single date selection if needed
+        params.date = format(filters.date.from, 'dd-MM-yy') // Handle single date selection if needed
       }
 
-      const res = await axios.get(`${ENV.BACKEND_URL}/output-utr`, {
+      const res = await axios.get(`${ENV.BACKEND_URL}/invoice-input`, {
         params,
       })
       setData(res.data.data)
@@ -122,33 +107,33 @@ export default function OutputUTR() {
     ]
   )
 
-  const getFtpFiles = async () => {
-    setIsLoading(true)
-    try {
-      const { data, status } = await axios.get(
-        `${ENV.BACKEND_URL}/output-utr-ftp-data`
-      )
+  // const getFtpFiles = async () => {
+  //   setIsLoading(true)
+  //   try {
+  //     const { data, status } = await axios.get(
+  //       `${ENV.BACKEND_URL}/output-utr-ftp-data`
+  //     )
 
-      if (status !== 200) {
-        throw { response: { data } } // force error block to handle uniformly
-      }
+  //     if (status !== 200) {
+  //       throw { response: { data } } // force error block to handle uniformly
+  //     }
 
-      toast.success(data.message || 'Data processed successfully')
-      fetchData()
-    } catch (error: any) {
-      const res = error.response?.data
-      let msg = res?.message || error.message || 'Network error'
+  //     toast.success(data.message || 'Data processed successfully')
+  //     fetchData()
+  //   } catch (error: any) {
+  //     const res = error.response?.data
+  //     let msg = res?.message || error.message || 'Network error'
 
-      // Specific handling for known cases
-      if (msg.includes('E11000 duplicate key error collection')) {
-        toast.info('No new data to insert.')
-      } else {
-        toast.error(msg)
-      }
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  //     // Specific handling for known cases
+  //     if (msg.includes('E11000 duplicate key error collection')) {
+  //       toast.info('No new data to insert.')
+  //     } else {
+  //       toast.error(msg)
+  //     }
+  //   } finally {
+  //     setIsLoading(false)
+  //   }
+  // }
 
   // Fetch data
   useEffect(() => {
@@ -182,7 +167,7 @@ export default function OutputUTR() {
 
     try {
       const res = await axios.post(
-        `${ENV.BACKEND_URL}/output-utr-upload`,
+        `${ENV.BACKEND_URL}/invoice-utr-upload`,
         form,
         {
           headers: { 'Content-Type': 'multipart/form-data' },
@@ -226,317 +211,375 @@ export default function OutputUTR() {
 
   return (
     <>
-      <div className='flex flex-wrap sm:flex-nowrap gap-2 mb-4 max-w-full'>
-        <Input
-          placeholder='Company name'
-          value={filters.companyName}
-          onChange={(e) =>
-            setFilters((f) => ({ ...f, companyName: e.target.value }))
-          }
-        />
-        <Input
-          placeholder='Distributor code'
-          value={filters.distributorCode}
-          onChange={(e) =>
-            setFilters((f) => ({ ...f, distributorCode: e.target.value }))
-          }
-        />
-        <Input
-          placeholder='Invoice No.'
-          value={filters.invoiceNumber}
-          onChange={(e) =>
-            setFilters((f) => ({ ...f, invoiceNumber: e.target.value }))
-          }
-        />
-        <Input
-          placeholder='UTR'
-          value={filters.utr}
-          onChange={(e) => setFilters((f) => ({ ...f, utr: e.target.value }))}
-        />
-        <Select
-          onValueChange={(value) =>
-            setFilters((f) => ({ ...f, status: value === 'all' ? '' : value }))
-          }
-          defaultValue='all'
-        >
-          <SelectTrigger className='w-[60rem]'>
-            <SelectValue placeholder='Select status' />
-          </SelectTrigger>
-          <SelectContent className='bg-black'>
-            <SelectItem value='all'>All</SelectItem>
-            <SelectItem value='Completed'>Completed</SelectItem>
-            <SelectItem value='Pending'>Pending</SelectItem>
-          </SelectContent>
-        </Select>
-        <DatePickerWithRange
-          date={filters.date}
-          setDate={(range) =>
-            setFilters((prevFilters) => ({
-              ...prevFilters,
-              date: range, // Set the date in the filters state (now only on "OK" click)
-            }))
-          }
-        />
-        {/* <DateRangePicker
-          onUpdate={(range) => setFilters((f) => ({ ...f, date: range }))}
-          initialDateFrom={filters.date.from}
-          initialDateTo={filters.date.to}
-          align='start'
-          locale='en-US'
-          showCompare={false}
-        /> */}
-        {/* <Button
-          onClick={fetchData}
-          variant={'outline'}
-          className='cursor-pointer'
-        >
-          Apply
-        </Button> */}
-        {user?.role === 'admin' && (
-          <div className='flex justify-end'>
-            <Button
-              onClick={handleExport}
-              variant='link'
-              className='cursor-pointer text-gray-400'
+      <Card>
+        <div className='flex items-center justify-between flex-wrap px-4 gap-2'>
+          <div className='space-y-2'>
+            <Label
+              htmlFor='company-name'
+              className='text-sm font-medium text-gray-700'
             >
-              <div>
-                <FileDown />
-              </div>
-              Export CSV
+              Company name
+            </Label>
+            <Input
+              id='company-name'
+              placeholder='Example company'
+              value={filters.companyName}
+              onChange={(e) =>
+                setFilters((f) => ({ ...f, companyName: e.target.value }))
+              }
+              className='h-10'
+            />
+          </div>
+
+          <div className='space-y-2'>
+            <Label
+              htmlFor='distributor-code'
+              className='text-sm font-medium text-gray-700'
+            >
+              Distributor code
+            </Label>
+            <Input
+              id='distributor-code'
+              placeholder='ex: 123456'
+              value={filters.distributorCode}
+              onChange={(e) =>
+                setFilters((f) => ({ ...f, distributorCode: e.target.value }))
+              }
+              className='h-10'
+            />
+          </div>
+
+          <div className='space-y-2'>
+            <Label className='text-sm font-medium text-gray-700'>
+              Invoice No.
+            </Label>
+            <Input
+              placeholder='Invoice No.'
+              value={filters.invoiceNumber}
+              onChange={(e) =>
+                setFilters((f) => ({ ...f, invoiceNumber: e.target.value }))
+              }
+              className='h-10'
+            />
+          </div>
+
+          <div className='space-y-2'>
+            <Label className='text-sm font-medium text-gray-700'>UTR</Label>
+            <Input
+              placeholder='UTR'
+              value={filters.utr}
+              onChange={(e) =>
+                setFilters((f) => ({ ...f, utr: e.target.value }))
+              }
+              className='h-10'
+            />
+          </div>
+
+          <div className='space-y-2'>
+            <Label className='text-sm font-medium text-gray-700'>Status</Label>
+            <Select
+              onValueChange={(value) =>
+                setFilters((f) => ({
+                  ...f,
+                  status: value === 'all' ? '' : value,
+                }))
+              }
+              defaultValue='all'
+            >
+              <SelectTrigger className='h-10'>
+                <SelectValue placeholder='Select status' />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value='all'>All</SelectItem>
+                <SelectItem value='yetToProcess'>Yet To Process</SelectItem>
+                <SelectItem value='inProgress'>In Progress</SelectItem>
+                <SelectItem value='processed'>Processed</SelectItem>
+                <SelectItem value='pendingWithCustomer'>
+                  Pending With Customer
+                </SelectItem>
+                <SelectItem value='pendingWithLender'>
+                  Pending With Lender
+                </SelectItem>
+                <SelectItem value='notProcessed'>Not Processed</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className='space-y-2'>
+            <Label className='text-sm font-medium text-gray-700'>
+              Date Range
+            </Label>
+            <DatePickerWithRange
+              date={filters.date}
+              setDate={(range) =>
+                setFilters((prevFilters) => ({
+                  ...prevFilters,
+                  date: range,
+                }))
+              }
+            />
+          </div>
+
+          <div className='space-y-2'>
+            <Label className='text-sm font-medium text-gray-700 opacity-0'>
+              Clear
+            </Label>
+            <Button
+              variant='ghost'
+              onClick={handleClearFilter}
+              size='sm'
+              className='text-red-600 hover:text-red-700 hover:bg-red-50 cursor-pointer'
+            >
+              Clear
             </Button>
           </div>
-        )}
-        {(filters.companyName ||
-          filters.distributorCode ||
-          filters.invoiceNumber ||
-          filters.utr) && (
-          <Button
-            variant='ghost'
-            onClick={handleClearFilter}
-            className='text-red-500 cursor-pointer'
-          >
-            Clear
-          </Button>
-        )}
-      </div>
-      <div className='flex gap-4 justify-between'>
-        {user?.role === 'admin' && (
-          <div className='mt-4 flex gap-4 items-center'>
-            <InputFile onChange={handleFileChange} ref={inputRef} />
-            <div className='flex gap-2'>
+        </div>
+
+        {/* File Upload */}
+        {user?.role === 'superAdmin' && (
+          <div className='flex  items-center justify-between mx-5 gap-2 flex-wrap'>
+            <div className='space-y-2 max-w-lg'>
+              <Label className='text-sm font-medium text-gray-700'>
+                Upload File
+              </Label>
+              <div className='flex gap-4 items-center'>
+                <InputFile
+                  onChange={handleFileChange}
+                  ref={inputRef}
+                  file={file}
+                />
+                {file && (
+                  <div className='flex gap-2'>
+                    <Button onClick={handleUpload} disabled={!file}>
+                      Upload CSV
+                    </Button>
+                    <Button
+                      onClick={handleCancel}
+                      variant='ghost'
+                      className='text-red-500'
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className='space-y-2'>
               <Button
-                onClick={handleUpload}
-                disabled={!file}
+                onClick={handleExport}
                 variant='outline'
-                className='cursor-pointer'
+                size='sm'
+                className='h-10 w-full'
               >
-                Upload CSV
+                <FileDown className='h-4 w-4 mr-1' />
+                Export
               </Button>
-              {file && (
-                <Button
-                  onClick={handleCancel}
-                  disabled={!file}
-                  variant='ghost'
-                  className='text-red-500 cursor-pointer'
-                >
-                  Cancel
-                </Button>
-              )}
             </div>
           </div>
         )}
-        <div>
-          <Button className='cursor-pointer' onClick={getFtpFiles}>
-            Get data from FTP
-          </Button>
-        </div>
-      </div>
-      <div className='overflow-x-auto'>
-        <Table className='text-base'>
-          <TableHeader>
-            <TableRow>
-              <TableHead className='whitespace-nowrap'>Company Name</TableHead>
-              <TableHead className='whitespace-nowrap'>
-                Distributor Code
-              </TableHead>
-              <TableHead className='whitespace-nowrap'>
-                Beneficiary Name
-              </TableHead>
-              <TableHead className='whitespace-nowrap'>
-                Beneficiary Acc No
-              </TableHead>
-              <TableHead className='whitespace-nowrap'>Bank Name</TableHead>
-              <TableHead className='whitespace-nowrap'>IFSC Code</TableHead>
-              <TableHead className='whitespace-nowrap'>Branch</TableHead>
-              <TableHead className='whitespace-nowrap'>
-                Invoice Number
-              </TableHead>
-              <TableHead className='whitespace-nowrap'>
-                Invoice Amount
-              </TableHead>
-              <TableHead className='whitespace-nowrap'>Invoice Date</TableHead>
-              <TableHead className='whitespace-nowrap'>Loan Amount</TableHead>
-              <TableHead className='whitespace-nowrap'>
-                Loan Disbursement Date
-              </TableHead>
-              <TableHead className='whitespace-nowrap'>UTR</TableHead>
-              <TableHead className='whitespace-nowrap'>Status</TableHead>
-              {user?.role === 'admin' && (
-                <TableHead className='whitespace-nowrap'>
-                  Invoice File
-                </TableHead>
-              )}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading
-              ? Array.from({ length: 10 }).map((_, i) => (
-                  <TableRow key={i}>
-                    <TableCell>
-                      <Skeleton className='h-4 w-32' />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className='h-4 w-24' />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className='h-4 w-32' />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className='h-4 w-40' />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className='h-4 w-24' />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className='h-4 w-20' />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className='h-4 w-20' />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className='h-4 w-28' />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className='h-4 w-16' />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className='h-4 w-24' />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className='h-4 w-16' />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className='h-4 w-24' />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className='h-4 w-20' />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className='h-4 w-16' />
-                    </TableCell>
-                  </TableRow>
-                ))
-              : data?.map((item) => (
-                  <TableRow key={item._id}>
-                    <TableCell className='whitespace-nowrap'>
-                      {item.companyName}
-                    </TableCell>
-                    <TableCell className='whitespace-nowrap'>
-                      {item.distributorCode}
-                    </TableCell>
-                    <TableCell className='whitespace-nowrap'>
-                      {item.beneficiaryName}
-                    </TableCell>
-                    <TableCell className='whitespace-nowrap'>
-                      {item.beneficiaryAccNo}
-                    </TableCell>
-                    <TableCell className='whitespace-nowrap'>
-                      {item.bankName}
-                    </TableCell>
-                    <TableCell className='whitespace-nowrap'>
-                      {item.ifscCode}
-                    </TableCell>
-                    <TableCell className='whitespace-nowrap'>
-                      {item.branch}
-                    </TableCell>
-                    <TableCell className='whitespace-nowrap'>
-                      {item.invoiceNumber}
-                    </TableCell>
-                    <TableCell className='whitespace-nowrap'>
-                      {formatAmount(item.invoiceAmount)}
-                    </TableCell>
-                    <TableCell className='whitespace-nowrap'>
-                      {formatDate(item.invoiceDate)}
-                    </TableCell>
-                    <TableCell className='whitespace-nowrap'>
-                      {formatAmount(item.loanAmount)}
-                    </TableCell>
-                    <TableCell className='whitespace-nowrap'>
-                      {item.loanDisbursementDate
-                        ? formatDate(item.loanDisbursementDate)
-                        : 'N/A'}
-                    </TableCell>
-                    <TableCell className='whitespace-nowrap'>
-                      {item.utr ? item.utr : 'N/A'}
-                    </TableCell>
 
-                    <TableCell
-                      className={cn(
-                        `${
-                          item.status.toLowerCase() === 'completed'
-                            ? 'text-green-500'
-                            : 'text-orange-400'
-                        }`,
-                        'whitespace-nowrap'
-                      )}
-                    >
-                      {item.status.charAt(0).toUpperCase() +
-                        item.status.slice(1)}
-                    </TableCell>
-                    {user?.role === 'admin' && (
-                      <TableCell className=''>
-                        <span className=''>
-                          {item.invoicePdfUrl ? (
-                            <a
-                              href={item.invoicePdfUrl}
-                              target='_blank'
-                              rel='noopener noreferrer'
-                              style={{ display: 'inline-block' }}
-                            >
-                              <FileDown className='' />
-                            </a>
-                          ) : (
-                            'NA'
-                          )}
-                        </span>
-                      </TableCell>
-                    )}
-                  </TableRow>
-                ))}
-          </TableBody>
-        </Table>
-        <div className='mt-4 flex justify-center gap-4 items-center'>
-          <Button
-            onClick={() => setPage((p) => Math.max(p - 1, 1))}
-            disabled={page === 1}
-            className='cursor-pointer text-2xl'
-            variant={'outline'}
-          >
-            ←
-          </Button>
-          <span className='font-bold'>
-            Page {page} of {totalPages}
-          </span>
-          <Button
-            onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
-            disabled={page === totalPages}
-            className='cursor-pointer text-2xl'
-            variant={'outline'}
-          >
-            →
-          </Button>
-        </div>
-      </div>
+        <CardContent>
+          <div className='overflow-x-auto'>
+            <Table className='text-base whitespace-nowrap'>
+              <TableHeader>
+                <TableRow className='bg-gray-50'>
+                  <TableHead className='font-semibold text-gray-900'>
+                    S.No
+                  </TableHead>
+                  <TableHead className='font-semibold text-gray-900'>
+                    Company Name
+                  </TableHead>
+                  <TableHead className='font-semibold text-gray-900'>
+                    Distributor Code
+                  </TableHead>
+                  <TableHead className='font-semibold text-gray-900'>
+                    Beneficiary Name
+                  </TableHead>
+                  <TableHead className='font-semibold text-gray-900'>
+                    Beneficiary Acc No
+                  </TableHead>
+                  <TableHead className='font-semibold text-gray-900'>
+                    Bank Name
+                  </TableHead>
+                  <TableHead className='font-semibold text-gray-900'>
+                    IFSC Code
+                  </TableHead>
+                  <TableHead className='font-semibold text-gray-900'>
+                    Branch
+                  </TableHead>
+                  <TableHead className='font-semibold text-gray-900'>
+                    Invoice Number
+                  </TableHead>
+                  <TableHead className='font-semibold text-gray-900'>
+                    Invoice Amount
+                  </TableHead>
+                  <TableHead className='font-semibold text-gray-900'>
+                    Invoice Date
+                  </TableHead>
+                  <TableHead className='font-semibold text-gray-900'>
+                    Loan Amount
+                  </TableHead>
+                  <TableHead className='font-semibold text-gray-900'>
+                    Loan Disbursement Date
+                  </TableHead>
+                  <TableHead className='font-semibold text-gray-900'>
+                    UTR
+                  </TableHead>
+                  <TableHead className='font-semibold text-gray-900'>
+                    Status
+                  </TableHead>
+                  {user?.role === 'superAdmin' && (
+                    <TableHead className='font-semibold text-gray-900'>
+                      Invoice File
+                    </TableHead>
+                  )}
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {isLoading
+                  ? Array.from({ length: 10 }).map((_, i) => (
+                      <TableRow key={i}>
+                        <TableCell>
+                          <Skeleton className='h-4 w-32' />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className='h-4 w-32' />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className='h-4 w-24' />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className='h-4 w-32' />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className='h-4 w-40' />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className='h-4 w-24' />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className='h-4 w-20' />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className='h-4 w-20' />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className='h-4 w-28' />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className='h-4 w-16' />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className='h-4 w-24' />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className='h-4 w-16' />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className='h-4 w-24' />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className='h-4 w-20' />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className='h-4 w-16' />
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  : data?.map((item, idx) => (
+                      <TableRow key={item._id}>
+                        <TableCell>{idx + 1}</TableCell>
+                        <TableCell>{item.companyName}</TableCell>
+                        <TableCell>{item.distributorCode}</TableCell>
+                        <TableCell>{item.beneficiaryName}</TableCell>
+                        <TableCell>{item.beneficiaryAccNo}</TableCell>
+                        <TableCell>{item.bankName}</TableCell>
+                        <TableCell>{item.ifscCode}</TableCell>
+                        <TableCell>{item.branch}</TableCell>
+                        <TableCell>{item.invoiceNumber}</TableCell>
+                        <TableCell className='font-mono'>
+                          {formatAmount(item.invoiceAmount)}
+                        </TableCell>
+                        <TableCell>{formatDate(item.invoiceDate)}</TableCell>
+                        <TableCell className='font-mono'>
+                          {formatAmount(item.loanAmount)}
+                        </TableCell>
+                        <TableCell>
+                          {item.loanDisbursementDate
+                            ? formatDate(item.loanDisbursementDate)
+                            : 'NA'}
+                        </TableCell>
+                        <TableCell>{item.utr ? item.utr : 'NA'}</TableCell>
+
+                        <TableCell
+                        // className={cn(
+                        //   `${
+                        //     item.status.toLowerCase() === 'completed'
+                        //       ? 'text-green-500'
+                        //       : 'text-orange-500'
+                        //   }`,
+                        //   'whitespace-nowrap'
+                        // )}
+                        >
+                          {/* {item.status.charAt(0).toUpperCase() +
+                            item.status.slice(1)} */}
+                          {camelCaseToWords(item.status)}
+                        </TableCell>
+                        {user?.role === 'superAdmin' && (
+                          <TableCell className=''>
+                            <span className=''>
+                              {item.invoicePdfUrl ? (
+                                <a
+                                  href={item.invoicePdfUrl}
+                                  target='_blank'
+                                  rel='noopener noreferrer'
+                                  style={{ display: 'inline-block' }}
+                                >
+                                  <FileDown className='' />
+                                </a>
+                              ) : (
+                                'NA'
+                              )}
+                            </span>
+                          </TableCell>
+                        )}
+                      </TableRow>
+                    ))}
+              </TableBody>
+            </Table>
+            {data.length !== 0 ? (
+              <>
+                <div className='mt-4 flex justify-center gap-4 items-center'>
+                  <Button
+                    onClick={() => setPage((p) => Math.max(p - 1, 1))}
+                    disabled={page === 1}
+                    className='cursor-pointer text-2xl'
+                    variant={'outline'}
+                  >
+                    <ChevronLeft className='h-4 w-4' />
+                  </Button>
+                  <span className='text-sm text-gray-600'>
+                    Page {page} of {totalPages}
+                  </span>
+                  <Button
+                    onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
+                    disabled={page === totalPages}
+                    className='cursor-pointer text-2xl'
+                    variant={'outline'}
+                  >
+                    <ChevronRight className='h-4 w-4' />
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <div className='text-center text-2xl m-3'>
+                {isLoading ? null : 'No Data Found'}
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
     </>
   )
 }

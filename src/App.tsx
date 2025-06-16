@@ -7,18 +7,23 @@ import Users from './components/Users'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import NotFound from './pages/NotFound'
-import Signup from './pages/Signup'
+import Viewer from './pages/Viewer'
+import { getAuthToken } from './lib/utils'
+import axios from 'axios'
 
 export default function App() {
+  const token = getAuthToken()
+
+  axios.defaults.headers.common['Authorization'] = `${token}`
   return (
     <BrowserRouter>
       <Routes>
         <Route path='/login' element={<Login />} />
-        <Route path='/signup' element={<Signup />} />
+        {/* <Route path='/signup' element={<Signup />} /> */}
 
         <Route element={<ProtectedRoute />}>
           <Route path='/' element={<Home />}>
-            <Route element={<ProtectedRoute allowedRoles='admin' />}>
+            <Route element={<ProtectedRoute allowedRoles='superAdmin' />}>
               {/* <Route path='input' element={<AnchorInput />} /> */}
               <Route path='users' element={<Users />} />
             </Route>
@@ -29,6 +34,7 @@ export default function App() {
             />
             <Route path='credit-limit' element={<OutputLimit />} />
             <Route path='invoice-utr' element={<OutputUTR />} />
+            <Route path='viewer' element={<Viewer />} />
 
             <Route path='*' element={<NotFound />} />
           </Route>

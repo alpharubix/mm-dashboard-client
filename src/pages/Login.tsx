@@ -1,16 +1,16 @@
 import axios from 'axios'
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { Button } from '../components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Input } from '../components/ui/input'
 import { Label } from '../components/ui/label'
 import { ENV } from '../conf'
-import { cn } from '../lib/utils'
+import { cn, setAuthToken } from '../lib/utils'
 
 export default function Login() {
-  const [form, setForm] = useState({ email: '', password: '' })
+  const [form, setForm] = useState({ username: '', password: '' })
   const navigate = useNavigate()
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.id]: e.target.value })
@@ -20,10 +20,12 @@ export default function Login() {
     e.preventDefault()
     try {
       const res = await axios.post(`${ENV.BACKEND_URL}/login`, form)
-      setForm({ email: '', password: '' })
       localStorage.setItem('mm_auth_token', res.data.token)
-      navigate('/', { replace: true })
+      setAuthToken()
+      setForm({ username: '', password: '' })
+
       toast.success('Login successful')
+      navigate('/', { replace: true })
     } catch (err) {
       console.error(err)
       // @ts-ignore
@@ -43,11 +45,11 @@ export default function Login() {
               <form onSubmit={handleSubmit}>
                 <div className='flex flex-col gap-6'>
                   <div className='grid gap-3'>
-                    <Label htmlFor='email'>Email</Label>
+                    <Label htmlFor='username'>Username</Label>
                     <Input
-                      id='email'
-                      type='email'
-                      value={form.email}
+                      id='username'
+                      type='username'
+                      value={form.username}
                       onChange={handleChange}
                       required
                     />
@@ -73,10 +75,13 @@ export default function Login() {
                   </div>
                 </div>
                 <div className='mt-4 text-center text-sm'>
-                  Don&apos;t have an account?{' '}
-                  <Link to='/signup' className='underline underline-offset-4'>
-                    Sign up
-                  </Link>
+                  Don&apos;t have an account? Contact Admin <br />
+                  <a
+                    href='mailto:prathap@meramerchant.com'
+                    className='font-bold'
+                  >
+                    prathap@meramerchant.com
+                  </a>
                 </div>
               </form>
             </CardContent>

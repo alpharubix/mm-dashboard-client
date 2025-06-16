@@ -2,7 +2,11 @@ import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { ENV } from '../conf'
-import { capitalize, getUserFromToken } from '../lib/utils'
+import {
+  camelCaseToWords,
+  getCompanyName,
+  getUserFromToken,
+} from '../lib/utils'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -30,12 +34,7 @@ import {
   TableHeader,
   TableRow,
 } from './ui/table'
-
-type UserType = {
-  _id: string
-  email: string
-  role: string
-}
+import type { UserType } from '../types'
 
 export default function Users() {
   const [data, setData] = useState<UserType[]>([])
@@ -88,11 +87,13 @@ export default function Users() {
 
   return (
     <>
-      <Table className='text-base'>
+      <Table className='text-base whitespace-nowrap'>
         <TableHeader>
           <TableRow>
             <TableHead>S.No</TableHead>
-            <TableHead>Email</TableHead>
+            <TableHead>Organisation Name</TableHead>
+            <TableHead>Who</TableHead>
+            <TableHead>Username</TableHead>
             <TableHead>Role</TableHead>
             <TableHead>Change Role</TableHead>
           </TableRow>
@@ -113,37 +114,53 @@ export default function Users() {
                   <TableCell>
                     <Skeleton className='h-4 w-32' />
                   </TableCell>
+                  <TableCell>
+                    <Skeleton className='h-4 w-32' />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className='h-4 w-32' />
+                  </TableCell>
                 </TableRow>
               ))
             : data.map((u, idx) => (
                 <TableRow key={u._id}>
                   <TableCell>{idx + 1}</TableCell>
-                  <TableCell>{u.email}</TableCell>
+                  <TableCell>{getCompanyName(u.companyId)}</TableCell>
+                  <TableCell>
+                    {['CKPL', 'HWC'].includes(u.companyId) ? (
+                      <span className='bg-green-400 rounded-full p-1 text-base'>
+                        Anchor
+                      </span>
+                    ) : (
+                      <span className='bg-blue-400 rounded-full p-1 text-sm'>
+                        Distributor
+                      </span>
+                    )}
+                  </TableCell>
+                  <TableCell>{u.username}</TableCell>
+
                   <TableCell
                     className={u.role === 'admin' ? 'text-red-400' : ''}
                   >
-                    {capitalize(u.role)}
+                    {camelCaseToWords(u.role)}
                   </TableCell>
                   <TableCell>
-                    {u.email !== user?.email ? (
+                    {u.username !== user?.username ? (
                       <Select
                         value={u.role}
                         onValueChange={(v) => handleRoleChange(u._id, v)}
-                        disabled={u.email === user?.email}
+                        disabled={u.username === user?.username}
                       >
                         <SelectTrigger
                           className={`w-[180px] ${
-                            u.email === user?.email
+                            u.username === user?.username
                               ? 'opacity-50 cursor-not-allowed'
                               : ''
                           }`}
                         >
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent
-                          side='top'
-                          className='bg-black text-white'
-                        >
+                        <SelectContent side='top' className=''>
                           <SelectGroup>
                             <SelectItem value='admin'>Admin</SelectItem>
                             <SelectItem value='viewer'>Viewer</SelectItem>

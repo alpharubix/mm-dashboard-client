@@ -12,10 +12,20 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatDate(date: string) {
-  return format(date, 'dd-MM-yyyy')
+  return format(date, 'dd-MM-yy')
+}
+
+export function setAuthToken() {
+  const token = getAuthToken()
+  if (token) {
+    axios.defaults.headers.common['Authorization'] = `${token}`
+  } else {
+    delete axios.defaults.headers.common['Authorization']
+  }
 }
 
 export const formatAmount = (amount: number): string => {
+  if (amount === null || amount === undefined) return '0.00'
   return amount.toLocaleString('en-IN', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
@@ -24,7 +34,9 @@ export const formatAmount = (amount: number): string => {
 
 type DecodedToken = {
   id?: string
-  email?: string
+  username?: string
+  companyId?: string
+  companyName?: string
   role?: string
 }
 
@@ -36,6 +48,30 @@ export function getUserFromToken(): DecodedToken | null {
     return jwtDecode<DecodedToken>(token)
   } catch {
     return null
+  }
+}
+
+export function getAuthToken(): string | null {
+  return localStorage.getItem('mm_auth_token')
+}
+
+export function camelCaseToWords(s: string) {
+  const result = s.replace(/([A-Z])/g, ' $1')
+  return result.charAt(0).toUpperCase() + result.slice(1)
+}
+
+export const getCompanyName = (companyId: string) => {
+  switch (companyId) {
+    case 'CKPL':
+      return 'CavinKare'
+    case 'HWC':
+      return 'Himalayan'
+    case '1234':
+      return 'Agency'
+    case 'mm123':
+      return 'MeraMerchant'
+    default:
+      return companyId // or u.companyName if you have the name field
   }
 }
 
@@ -65,12 +101,12 @@ export const handleExport = async () => {
       Branch: rest.branch,
       'Invoice Number': rest.invoiceNumber,
       'Invoice Amount': rest.invoiceAmount,
-      'Invoice Date': format(new Date(rest.invoiceDate), 'dd-MM-yyyy'),
+      'Invoice Date': format(new Date(rest.invoiceDate), 'dd-MM-yy'),
       'Loan Amount': rest.loanAmount,
       'Loan Disbursement Date': rest.loanDisbursementDate
-        ? format(new Date(rest.loanDisbursementDate), 'dd-MM-yyyy')
-        : 'N/A',
-      UTR: rest.utr || 'N/A',
+        ? format(new Date(rest.loanDisbursementDate), 'dd-MM-yy')
+        : 'NA',
+      UTR: rest.utr || 'NA',
       Status: rest.status,
     }))
 
@@ -82,7 +118,7 @@ export const handleExport = async () => {
     link.href = url
     link.setAttribute(
       'download',
-      `anchor_input_${format(new Date(), 'dd-MM-yyyy')}.csv`
+      `anchor_input_${format(new Date(), 'dd-MM-yy')}.csv`
     )
     document.body.appendChild(link)
     link.click()

@@ -12,7 +12,7 @@ export default function Home() {
   ]
 
   const tabs =
-    user?.role === 'admin'
+    user?.role === 'superAdmin'
       ? [
           // { to: 'input', label: 'Input' },
           ...baseTabs,
@@ -21,26 +21,30 @@ export default function Home() {
       : baseTabs
 
   return (
-    <>
+    <main className='min-h-screen bg-gray-50 '>
       <Header />
-      <div className='p-10'>
-        <div className='flex space-x-4 pb-2 whitespace-nowrap overflow-auto'>
-          {tabs.map((tab) => (
-            <NavLink
-              key={tab.to}
-              to={tab.to}
-              className={({ isActive }) =>
-                isActive ? 'border-b-2 border-blue-500' : 'text-gray-500'
-              }
-            >
-              {tab.label}
-            </NavLink>
-          ))}
-        </div>
-        <div className='pt-6'>
-          <Outlet />
+      <div className='container mx-auto px-4 sm:px-6 lg:px-8'>
+        <div className=''>
+          <div className='flex space-x-4 whitespace-nowrap overflow-auto w-full bg-gray-100 mt-4 p-1'>
+            {tabs.map((tab) => (
+              <NavLink
+                key={tab.to}
+                to={tab.to}
+                className={({ isActive }) =>
+                  `px-4 py-2 rounded transition-all ${
+                    isActive ? 'bg-blue-600 text-white' : 'text-gray-500'
+                  }`
+                }
+              >
+                {tab.label}
+              </NavLink>
+            ))}
+          </div>
+          <div className='pt-4'>
+            <Outlet />
+          </div>
         </div>
       </div>
-    </>
+    </main>
   )
 }
