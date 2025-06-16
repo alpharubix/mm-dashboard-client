@@ -21,6 +21,7 @@ import {
   DrawerHeader,
   DrawerTrigger,
 } from './ui/drawer'
+import { Badge } from './ui/badge'
 
 export default function Header() {
   const user = getUserFromToken()
@@ -37,25 +38,26 @@ export default function Header() {
   }
 
   return (
-    <>
-      <header className='flex items-center justify-between px-6 py-4'>
+    <header className='bg-white shadow-sm border-b'>
+      <div className='flex items-center justify-between px-6 py-4'>
         {/* Logo */}
-        <div className='text-2xl font-extrabold tracking-wide'>
-          Meramerchant
-        </div>
+        <h1 className='text-2xl font-bold text-gray-900'>Meramerchant</h1>
 
         {/* Desktop user info */}
         <div className='hidden md:flex items-center space-x-4'>
-          <span className='text-sm font-medium'>{user?.email}</span>
-          <span className='px-2 py-1 text-xs font-semibold uppercase rounded-full bg-blue-100 text-blue-800'>
+          <span className='text-sm text-gray-600'>{user?.username}</span>
+          <Badge
+            variant='outline'
+            className='bg-blue-50 text-blue-700 border-blue-200 uppercase'
+          >
             {camelCaseToWords(user?.role || '')}
-          </span>
+          </Badge>
 
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button
-                variant='outline'
-                className='mx-auto text-red-500 cursor-pointer'
+                variant='ghost'
+                className='text-red-600 hover:text-red-700 hover:bg-red-50 cursor-pointer'
               >
                 Logout
               </Button>
@@ -87,16 +89,16 @@ export default function Header() {
                 <Menu size={24} />
               </Button>
             </DrawerTrigger>
-            <DrawerContent className='bg-black'>
+            <DrawerContent className=''>
               <div className='mx-auto w-full max-w-sm'>
                 <DrawerHeader className='flex items-center justify-between'>
                   {/* <DrawerTitle>Menu</DrawerTitle> */}
                 </DrawerHeader>
                 <DrawerDescription>
                   <div className='flex gap-2 mt-4 items-center justify-center'>
-                    <span className='text-lg font-bold'>{user?.email}</span>
+                    <span className='text-lg font-bold'>{user?.username}</span>
                     <span className='px-2 py-1 text-xs font-semibold uppercase rounded-full bg-blue-100 text-blue-800'>
-                      {user?.role}
+                      {camelCaseToWords(user?.role || '')}
                     </span>
                   </div>
                 </DrawerDescription>
@@ -143,7 +145,27 @@ export default function Header() {
             </DrawerContent>
           </Drawer>
         </div>
-      </header>
-    </>
+      </div>
+    </header>
+    // <header className='bg-white border-b border-gray-200 px-6 py-4'>
+    //   <div className='flex items-center justify-between'>
+    //     <h1 className='text-2xl font-bold text-gray-900'>Meramerchant</h1>
+    //     <div className='flex items-center gap-4'>
+    //       <span className='text-sm text-gray-600'>tester@gmail.com</span>
+    //       <Badge
+    //         variant='outline'
+    //         className='bg-blue-50 text-blue-700 border-blue-200'
+    //       >
+    //         SUPER ADMIN
+    //       </Badge>
+    //       <Button
+    //         variant='ghost'
+    //         className='text-red-600 hover:text-red-700 hover:bg-red-50'
+    //       >
+    //         Logout
+    //       </Button>
+    //     </div>
+    //   </div>
+    // </header>
   )
 }

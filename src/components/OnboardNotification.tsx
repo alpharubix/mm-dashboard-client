@@ -16,6 +16,9 @@ import {
   TableRow,
 } from './ui/table'
 import type { OnboardNotificationType } from '../types'
+import { Card, CardContent } from './ui/card'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { Label } from './ui/label'
 
 export default function OnboardNotification() {
   const [data, setData] = useState<OnboardNotificationType[]>([])
@@ -65,7 +68,9 @@ export default function OnboardNotification() {
   }, [stableFilters, page])
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.[0]) setFile(e.target.files[0])
+    if (e.target.files?.[0]) {
+      setFile(e.target.files[0])
+    }
   }
 
   const handleCancel = () => {
@@ -116,139 +121,175 @@ export default function OnboardNotification() {
 
   return (
     <>
-      <div className='flex gap-2 mb-4 max-w-md'>
-        <Input
-          placeholder='Company name'
-          value={filters.companyName}
-          onChange={(e) =>
-            setFilters((f) => ({ ...f, companyName: e.target.value }))
-          }
-        />
-        <Input
-          placeholder='Distributor code'
-          value={filters.distributorCode}
-          onChange={(e) =>
-            setFilters((f) => ({ ...f, distributorCode: e.target.value }))
-          }
-        />
-        {/* <Button
-          onClick={fetchData}
-          variant={'outline'}
-          className='cursor-pointer'
-        >
-          Apply
-        </Button> */}
-        {(filters.companyName || filters.distributorCode) && (
+      <Card className=''>
+        <div className='flex gap-6 flex-wrap max-w-5xl items-end px-6'>
+          <div className='flex items-start flex-col gap-2'>
+            <Label
+              htmlFor='company-name'
+              className='text-sm font-medium text-gray-700'
+            >
+              Company name
+            </Label>
+            <Input
+              id='company-name'
+              placeholder='Example company'
+              value={filters.companyName}
+              onChange={(e) =>
+                setFilters((f) => ({ ...f, companyName: e.target.value }))
+              }
+              className='border py-5 text-base'
+            />
+          </div>
+          <div className='flex items-start flex-col gap-2 '>
+            <Label
+              htmlFor='distributor-code'
+              className='text-sm font-medium text-gray-700'
+            >
+              Distributor code
+            </Label>
+            <Input
+              id='distributor-code'
+              placeholder='ex: 123456'
+              value={filters.distributorCode}
+              onChange={(e) =>
+                setFilters((f) => ({ ...f, distributorCode: e.target.value }))
+              }
+              className='border py-5 text-base'
+            />
+          </div>
           <Button
-            variant='ghost'
+            variant='outline'
             onClick={handleClearFilter}
-            className='text-red-500 cursor-pointer'
+            className='text-red-600 hover:text-red-700 hover:bg-red-50 cursor-pointer mb-px'
           >
             Clear
           </Button>
+        </div>
+
+        {user?.role === 'superAdmin' && (
+          <div className='space-y-2 max-w-lg mx-6'>
+            <Label className='text-sm font-medium text-gray-700'>
+              Upload File
+            </Label>
+            <div className='flex gap-4 items-center'>
+              <InputFile
+                onChange={handleFileChange}
+                ref={inputRef}
+                file={file}
+              />
+              {file && (
+                <div className='flex gap-2'>
+                  <Button onClick={handleUpload} disabled={!file}>
+                    Upload CSV
+                  </Button>
+                  <Button
+                    onClick={handleCancel}
+                    variant='ghost'
+                    className='text-red-500'
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              )}
+            </div>
+          </div>
         )}
-      </div>
-      {user?.role === 'superAdmin' && (
-        <div className='mt-4 flex gap-4 items-center'>
-          <InputFile onChange={handleFileChange} ref={inputRef} />
-          {file && (
-            <div className='flex gap-2'>
-              <Button
-                onClick={handleUpload}
-                disabled={!file}
-                className='cursor-pointer'
-              >
-                Upload CSV
-              </Button>
-              <Button
-                onClick={handleCancel}
-                disabled={!file}
-                variant='ghost'
-                className='text-red-500 cursor-pointer'
-              >
-                Cancel
-              </Button>
+
+        <CardContent>
+          <Table className='text-base whitespace-nowrap'>
+            <TableHeader>
+              <TableRow className='bg-gray-50'>
+                <TableHead className='font-semibold text-gray-900'>
+                  S.No
+                </TableHead>
+                <TableHead className='font-semibold text-gray-900'>
+                  Company Name
+                </TableHead>
+                <TableHead className='font-semibold text-gray-900'>
+                  Distributor Code
+                </TableHead>
+                <TableHead className='font-semibold text-gray-900'>
+                  Lender
+                </TableHead>
+                <TableHead className='font-semibold text-gray-900'>
+                  Sanction Limit
+                </TableHead>
+                <TableHead className='font-semibold text-gray-900'>
+                  Limit Live Date
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {isLoading
+                ? Array.from({ length: 10 }).map((_, i) => (
+                    <TableRow key={i}>
+                      <TableCell>
+                        <Skeleton className='h-4 w-6' />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className='h-4 w-32' />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className='h-4 w-24' />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className='h-4 w-20' />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className='h-4 w-16' />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className='h-4 w-24' />
+                      </TableCell>
+                    </TableRow>
+                  ))
+                : data.map((row, idx) => (
+                    <TableRow key={row._id}>
+                      <TableCell>{idx + 1}</TableCell>
+                      <TableCell>{row.companyName}</TableCell>
+                      <TableCell>{row.distributorCode}</TableCell>
+                      <TableCell>{row.lender}</TableCell>
+                      <TableCell className='font-mono'>
+                        {formatAmount(row.sanctionLimit)}
+                      </TableCell>
+                      <TableCell>{formatDate(row.limitLiveDate)}</TableCell>
+                    </TableRow>
+                  ))}
+            </TableBody>
+          </Table>
+
+          {data.length !== 0 ? (
+            <>
+              <div className='pt-4 flex justify-center gap-4 items-center'>
+                <Button
+                  onClick={() => setPage((p) => Math.max(p - 1, 1))}
+                  disabled={page === 1}
+                  className='cursor-pointer text-2xl'
+                  variant={'outline'}
+                  size={'sm'}
+                >
+                  <ChevronLeft className='h-4 w-4' />
+                </Button>
+                <span className='text-sm text-gray-600'>
+                  Page {page} of {totalPages}
+                </span>
+                <Button
+                  onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
+                  disabled={page === totalPages}
+                  className='cursor-pointer text-2xl'
+                  variant={'outline'}
+                >
+                  <ChevronRight className='h-4 w-4' />
+                </Button>
+              </div>
+            </>
+          ) : (
+            <div className='text-center text-2xl m-3'>
+              {isLoading ? null : 'No Data Found'}
             </div>
           )}
-        </div>
-      )}
-
-      <Table className='text-base whitespace-nowrap'>
-        <TableHeader>
-          <TableRow>
-            <TableHead>S.No</TableHead>
-            <TableHead>Company Name</TableHead>
-            <TableHead>Distributor Code</TableHead>
-            <TableHead>Lender</TableHead>
-            <TableHead>Sanction Limit</TableHead>
-            <TableHead>Limit Live Date</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {isLoading
-            ? Array.from({ length: 10 }).map((_, i) => (
-                <TableRow key={i}>
-                  <TableCell>
-                    <Skeleton className='h-4 w-6' />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className='h-4 w-32' />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className='h-4 w-24' />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className='h-4 w-20' />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className='h-4 w-16' />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className='h-4 w-24' />
-                  </TableCell>
-                </TableRow>
-              ))
-            : data.map((row, idx) => (
-                <TableRow key={row._id}>
-                  <TableCell>{idx + 1}</TableCell>
-                  <TableCell>{row.companyName}</TableCell>
-                  <TableCell>{row.distributorCode}</TableCell>
-                  <TableCell>{row.lender}</TableCell>
-                  <TableCell>{formatAmount(row.sanctionLimit)}</TableCell>
-                  <TableCell>{formatDate(row.limitLiveDate)}</TableCell>
-                </TableRow>
-              ))}
-        </TableBody>
-      </Table>
-      {data.length !== 0 ? (
-        <>
-          <div className='mt-4 flex justify-center gap-4 items-center'>
-            <Button
-              onClick={() => setPage((p) => Math.max(p - 1, 1))}
-              disabled={page === 1}
-              className='cursor-pointer text-2xl'
-              variant={'outline'}
-            >
-              ←
-            </Button>
-            <span className='font-bold'>
-              Page {page} of {totalPages}
-            </span>
-            <Button
-              onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
-              disabled={page === totalPages}
-              className='cursor-pointer text-2xl'
-              variant={'outline'}
-            >
-              →
-            </Button>
-          </div>
-        </>
-      ) : (
-        <div className='text-center text-2xl m-3'>
-          {isLoading ? null : 'No Data Found'}
-        </div>
-      )}
+        </CardContent>
+      </Card>
     </>
   )
 }

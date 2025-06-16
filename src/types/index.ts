@@ -45,15 +45,14 @@ export type OutputUTRType = {
 
 export type UserType = {
   _id: string
-  email: string
+  username: string
   companyId: string
+  companyName: string
   role: string
 }
 
 export type ViewerDataType = {
   _id: string
-  companyName: string
-  distributorCode: string
   invoiceNumber: number
   invoiceAmount: number
   invoiceDate: string

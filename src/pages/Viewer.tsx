@@ -16,9 +16,7 @@ import type { ViewerDataType } from '../types'
 const viewerData: ViewerDataType[] = [
   {
     _id: '1',
-    companyName: 'Cavinkare Ltd',
-    distributorCode: '8970',
-    invoiceNumber: 1,
+    invoiceNumber: 235235,
     invoiceAmount: 85000,
     invoiceDate: '2024-03-15',
     loanAmount: 65000,
@@ -28,9 +26,7 @@ const viewerData: ViewerDataType[] = [
   },
   {
     _id: '2',
-    companyName: 'Cavinkare Ltd',
-    distributorCode: '8970',
-    invoiceNumber: 2,
+    invoiceNumber: 642343,
     invoiceAmount: 120000,
     invoiceDate: '2024-03-10',
     loanAmount: 95000,
@@ -40,9 +36,7 @@ const viewerData: ViewerDataType[] = [
   },
   {
     _id: '3',
-    companyName: 'Cavinkare Ltd',
-    distributorCode: '8970',
-    invoiceNumber: 3,
+    invoiceNumber: 345253,
     invoiceAmount: 75000,
     invoiceDate: '2024-03-08',
     loanAmount: 58000,
@@ -141,45 +135,17 @@ export default function Viewer() {
             </CardHeader>
             <CardContent>
               <div className='overflow-x-auto'>
-                <Table className='text-base'>
+                <Table className='text-base whitespace-nowrap'>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className='whitespace-nowrap'>
-                        Company Name
-                      </TableHead>
-                      <TableHead className='whitespace-nowrap'>
-                        Distributor Code
-                      </TableHead>
-                      <TableHead className='whitespace-nowrap'>
-                        Beneficiary Name
-                      </TableHead>
-                      <TableHead className='whitespace-nowrap'>
-                        Beneficiary Acc No
-                      </TableHead>
-                      <TableHead className='whitespace-nowrap'>
-                        Bank Name
-                      </TableHead>
-                      <TableHead className='whitespace-nowrap'>
-                        IFSC Code
-                      </TableHead>
-                      <TableHead className='whitespace-nowrap'>
-                        Branch
-                      </TableHead>
-                      <TableHead className='whitespace-nowrap'>
-                        Invoice Number
-                      </TableHead>
-                      <TableHead className='whitespace-nowrap'>
-                        Invoice Amount
-                      </TableHead>
-                      <TableHead className='whitespace-nowrap'>
-                        Invoice Date
-                      </TableHead>
-                      <TableHead className='whitespace-nowrap'>
-                        Loan Amount (Excl. Credit Balance)
-                      </TableHead>
-                      <TableHead className='whitespace-nowrap'>
-                        Invoice PDF
-                      </TableHead>
+                      <TableHead>Invoice Number</TableHead>
+                      <TableHead>Invoice Amount</TableHead>
+                      <TableHead>Invoice Date</TableHead>
+                      <TableHead>Loan Amount</TableHead>
+                      <TableHead>Loan Disbursement Date</TableHead>
+                      <TableHead>UTR</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Invoice PDF</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -227,22 +193,20 @@ export default function Viewer() {
                         ))
                       : // Actual data rows
                         viewerData?.map((inv: any) => (
-                          <TableRow
-                            className='whitespace-nowrap'
-                            key={inv.invoiceNumber}
-                          >
-                            <TableCell>{inv.companyName}</TableCell>
-                            <TableCell>{inv.distributorCode}</TableCell>
+                          <TableRow key={inv.invoiceNumber}>
                             <TableCell>{inv.invoiceNumber}</TableCell>
                             <TableCell>
                               {formatAmount(inv.invoiceAmount)}
                             </TableCell>
-                            <TableCell className='whitespace-nowrap'>
-                              {formatDate(inv.invoiceDate)}
-                            </TableCell>
+                            <TableCell>{formatDate(inv.invoiceDate)}</TableCell>
                             <TableCell>
                               {formatAmount(inv.loanAmount)}
                             </TableCell>
+                            <TableCell>
+                              {formatDate(inv.loanDisbursementDate)}
+                            </TableCell>
+                            <TableCell>{inv.utr}</TableCell>
+                            <TableCell>{inv.status}</TableCell>
                             <TableCell>
                               {inv.invoicePdfUrl ? (
                                 <a

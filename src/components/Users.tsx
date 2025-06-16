@@ -91,9 +91,9 @@ export default function Users() {
         <TableHeader>
           <TableRow>
             <TableHead>S.No</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Who</TableHead>
             <TableHead>Organisation Name</TableHead>
+            <TableHead>Who</TableHead>
+            <TableHead>Username</TableHead>
             <TableHead>Role</TableHead>
             <TableHead>Change Role</TableHead>
           </TableRow>
@@ -125,7 +125,7 @@ export default function Users() {
             : data.map((u, idx) => (
                 <TableRow key={u._id}>
                   <TableCell>{idx + 1}</TableCell>
-                  <TableCell>{u.email}</TableCell>
+                  <TableCell>{getCompanyName(u.companyId)}</TableCell>
                   <TableCell>
                     {['CKPL', 'HWC'].includes(u.companyId) ? (
                       <span className='bg-green-400 rounded-full p-1 text-base'>
@@ -137,22 +137,23 @@ export default function Users() {
                       </span>
                     )}
                   </TableCell>
-                  <TableCell>{getCompanyName(u.companyId)}</TableCell>
+                  <TableCell>{u.username}</TableCell>
+
                   <TableCell
                     className={u.role === 'admin' ? 'text-red-400' : ''}
                   >
                     {camelCaseToWords(u.role)}
                   </TableCell>
                   <TableCell>
-                    {u.email !== user?.email ? (
+                    {u.username !== user?.username ? (
                       <Select
                         value={u.role}
                         onValueChange={(v) => handleRoleChange(u._id, v)}
-                        disabled={u.email === user?.email}
+                        disabled={u.username === user?.username}
                       >
                         <SelectTrigger
                           className={`w-[180px] ${
-                            u.email === user?.email
+                            u.username === user?.username
                               ? 'opacity-50 cursor-not-allowed'
                               : ''
                           }`}

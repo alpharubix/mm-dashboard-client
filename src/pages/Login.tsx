@@ -10,7 +10,7 @@ import { ENV } from '../conf'
 import { cn, setAuthToken } from '../lib/utils'
 
 export default function Login() {
-  const [form, setForm] = useState({ email: '', password: '' })
+  const [form, setForm] = useState({ username: '', password: '' })
   const navigate = useNavigate()
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.id]: e.target.value })
@@ -22,7 +22,7 @@ export default function Login() {
       const res = await axios.post(`${ENV.BACKEND_URL}/login`, form)
       localStorage.setItem('mm_auth_token', res.data.token)
       setAuthToken()
-      setForm({ email: '', password: '' })
+      setForm({ username: '', password: '' })
 
       toast.success('Login successful')
       navigate('/', { replace: true })
@@ -45,11 +45,11 @@ export default function Login() {
               <form onSubmit={handleSubmit}>
                 <div className='flex flex-col gap-6'>
                   <div className='grid gap-3'>
-                    <Label htmlFor='email'>Email</Label>
+                    <Label htmlFor='username'>Username</Label>
                     <Input
-                      id='email'
-                      type='email'
-                      value={form.email}
+                      id='username'
+                      type='username'
+                      value={form.username}
                       onChange={handleChange}
                       required
                     />

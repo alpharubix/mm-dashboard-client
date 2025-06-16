@@ -34,7 +34,9 @@ export const formatAmount = (amount: number): string => {
 
 type DecodedToken = {
   id?: string
-  email?: string
+  username?: string
+  companyId?: string
+  companyName?: string
   role?: string
 }
 
@@ -103,8 +105,8 @@ export const handleExport = async () => {
       'Loan Amount': rest.loanAmount,
       'Loan Disbursement Date': rest.loanDisbursementDate
         ? format(new Date(rest.loanDisbursementDate), 'dd-MM-yy')
-        : 'N/A',
-      UTR: rest.utr || 'N/A',
+        : 'NA',
+      UTR: rest.utr || 'NA',
       Status: rest.status,
     }))
 
