@@ -1,5 +1,5 @@
 import { FileDown } from 'lucide-react'
-import { useState } from 'react'
+// import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Skeleton } from '../components/ui/skeleton'
 import {
@@ -47,7 +47,8 @@ const viewerData: ViewerDataType[] = [
 ]
 
 export default function Viewer() {
-  const [isLoading, setIsLoading] = useState(false)
+  // const [isLoading, setIsLoading] = useState(false)
+  const isLoading = true
 
   return (
     <>

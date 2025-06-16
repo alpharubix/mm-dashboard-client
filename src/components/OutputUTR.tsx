@@ -7,7 +7,6 @@ import { toast } from 'sonner'
 import { ENV } from '../conf'
 import {
   camelCaseToWords,
-  cn,
   formatAmount,
   formatDate,
   getUserFromToken,
@@ -108,33 +107,33 @@ export default function OutputUTR() {
     ]
   )
 
-  const getFtpFiles = async () => {
-    setIsLoading(true)
-    try {
-      const { data, status } = await axios.get(
-        `${ENV.BACKEND_URL}/output-utr-ftp-data`
-      )
+  // const getFtpFiles = async () => {
+  //   setIsLoading(true)
+  //   try {
+  //     const { data, status } = await axios.get(
+  //       `${ENV.BACKEND_URL}/output-utr-ftp-data`
+  //     )
 
-      if (status !== 200) {
-        throw { response: { data } } // force error block to handle uniformly
-      }
+  //     if (status !== 200) {
+  //       throw { response: { data } } // force error block to handle uniformly
+  //     }
 
-      toast.success(data.message || 'Data processed successfully')
-      fetchData()
-    } catch (error: any) {
-      const res = error.response?.data
-      let msg = res?.message || error.message || 'Network error'
+  //     toast.success(data.message || 'Data processed successfully')
+  //     fetchData()
+  //   } catch (error: any) {
+  //     const res = error.response?.data
+  //     let msg = res?.message || error.message || 'Network error'
 
-      // Specific handling for known cases
-      if (msg.includes('E11000 duplicate key error collection')) {
-        toast.info('No new data to insert.')
-      } else {
-        toast.error(msg)
-      }
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  //     // Specific handling for known cases
+  //     if (msg.includes('E11000 duplicate key error collection')) {
+  //       toast.info('No new data to insert.')
+  //     } else {
+  //       toast.error(msg)
+  //     }
+  //   } finally {
+  //     setIsLoading(false)
+  //   }
+  // }
 
   // Fetch data
   useEffect(() => {
