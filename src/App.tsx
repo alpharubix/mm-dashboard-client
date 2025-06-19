@@ -2,7 +2,6 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { getAuthToken } from './lib/utils'
 import axios from 'axios'
 import { lazy } from 'react'
-import { ProtectedRoute } from './components/ProtectedRoute'
 import { usePermissions } from './hooks/use-permissions'
 
 // Lazy imports
@@ -17,6 +16,7 @@ const OnboardNotification = lazy(
 )
 const OutputLimit = lazy(() => import('./components/OutputLimit'))
 const OutputUTR = lazy(() => import('./components/OutputUTR'))
+const ProtectedRoute = lazy(() => import('./components/ProtectedRoute'))
 
 const RoleBasedRedirect = () => {
   const { user } = usePermissions()

@@ -7,10 +7,10 @@ type ProtectedRouteProps = {
   requiredRoute?: string
 }
 
-export const ProtectedRoute = ({
+export default function ProtectedRoute({
   children,
   requiredRoute,
-}: ProtectedRouteProps) => {
+}: ProtectedRouteProps) {
   const { hasRouteAccess, user } = usePermissions()
   const location = useLocation()
 
