@@ -53,24 +53,6 @@ export default function Viewer() {
   return (
     <>
       <div className='min-h-screen bg-gray-50'>
-        {/* Header */}
-        <div className='bg-white shadow-sm border-b'>
-          <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-            <div className='flex justify-between items-center py-4'>
-              <h1 className='text-2xl font-bold text-gray-900'>MeraMerchant</h1>
-              <div className='flex items-center space-x-6'>
-                <span className='text-sm text-gray-600'>
-                  Dist Name - Someone's Agency
-                </span>
-                <span className='text-sm text-gray-600'>Dist Code - 8970</span>
-                <button className='px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'>
-                  Logout
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* Main Content */}
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
           {/* Dashboard Cards */}

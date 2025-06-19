@@ -384,53 +384,35 @@ export default function OutputUTR() {
             <Table className='text-base whitespace-nowrap'>
               <TableHeader>
                 <TableRow className='bg-gray-50'>
-                  <TableHead className='font-semibold text-gray-900'>
-                    S.No
-                  </TableHead>
-                  <TableHead className='font-semibold text-gray-900'>
-                    Company Name
-                  </TableHead>
-                  <TableHead className='font-semibold text-gray-900'>
+                  <TableHead className='font-semibold '>S.No</TableHead>
+                  <TableHead className='font-semibold '>Company Name</TableHead>
+                  <TableHead className='font-semibold '>
                     Distributor Code
                   </TableHead>
-                  <TableHead className='font-semibold text-gray-900'>
+                  <TableHead className='font-semibold '>
                     Beneficiary Name
                   </TableHead>
-                  <TableHead className='font-semibold text-gray-900'>
+                  <TableHead className='font-semibold '>
                     Beneficiary Acc No
                   </TableHead>
-                  <TableHead className='font-semibold text-gray-900'>
-                    Bank Name
-                  </TableHead>
-                  <TableHead className='font-semibold text-gray-900'>
-                    IFSC Code
-                  </TableHead>
-                  <TableHead className='font-semibold text-gray-900'>
-                    Branch
-                  </TableHead>
-                  <TableHead className='font-semibold text-gray-900'>
+                  <TableHead className='font-semibold '>Bank Name</TableHead>
+                  <TableHead className='font-semibold '>IFSC Code</TableHead>
+                  <TableHead className='font-semibold '>Branch</TableHead>
+                  <TableHead className='font-semibold '>
                     Invoice Number
                   </TableHead>
-                  <TableHead className='font-semibold text-gray-900'>
+                  <TableHead className='font-semibold '>
                     Invoice Amount
                   </TableHead>
-                  <TableHead className='font-semibold text-gray-900'>
-                    Invoice Date
-                  </TableHead>
-                  <TableHead className='font-semibold text-gray-900'>
-                    Loan Amount
-                  </TableHead>
-                  <TableHead className='font-semibold text-gray-900'>
+                  <TableHead className='font-semibold '>Invoice Date</TableHead>
+                  <TableHead className='font-semibold '>Loan Amount</TableHead>
+                  <TableHead className='font-semibold '>
                     Loan Disbursement Date
                   </TableHead>
-                  <TableHead className='font-semibold text-gray-900'>
-                    UTR
-                  </TableHead>
-                  <TableHead className='font-semibold text-gray-900'>
-                    Status
-                  </TableHead>
+                  <TableHead className='font-semibold '>UTR</TableHead>
+                  <TableHead className='font-semibold '>Status</TableHead>
                   {user?.role === 'superAdmin' && (
-                    <TableHead className='font-semibold text-gray-900'>
+                    <TableHead className='font-semibold '>
                       Invoice File
                     </TableHead>
                   )}
@@ -488,7 +470,7 @@ export default function OutputUTR() {
                       </TableRow>
                     ))
                   : data?.map((item, idx) => (
-                      <TableRow key={item._id}>
+                      <TableRow className='font-semibold' key={item._id}>
                         <TableCell>{idx + 1}</TableCell>
                         <TableCell>{item.companyName}</TableCell>
                         <TableCell>{item.distributorCode}</TableCell>

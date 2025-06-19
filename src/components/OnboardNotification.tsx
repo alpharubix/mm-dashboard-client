@@ -121,7 +121,7 @@ export default function OnboardNotification() {
 
   return (
     <>
-      <Card className=''>
+      <Card>
         <div className='flex gap-6 flex-wrap max-w-5xl items-end px-6'>
           <div className='flex items-start flex-col gap-2'>
             <Label
@@ -199,24 +199,14 @@ export default function OnboardNotification() {
           <Table className='text-base whitespace-nowrap'>
             <TableHeader>
               <TableRow className='bg-gray-50'>
-                <TableHead className='font-semibold text-gray-900'>
-                  S.No
-                </TableHead>
-                <TableHead className='font-semibold text-gray-900'>
-                  Company Name
-                </TableHead>
-                <TableHead className='font-semibold text-gray-900'>
+                <TableHead className='font-semibold'>S.No</TableHead>
+                <TableHead className='font-semibold'>Company Name</TableHead>
+                <TableHead className='font-semibold'>
                   Distributor Code
                 </TableHead>
-                <TableHead className='font-semibold text-gray-900'>
-                  Lender
-                </TableHead>
-                <TableHead className='font-semibold text-gray-900'>
-                  Sanction Limit
-                </TableHead>
-                <TableHead className='font-semibold text-gray-900'>
-                  Limit Live Date
-                </TableHead>
+                <TableHead className='font-semibold'>Lender</TableHead>
+                <TableHead className='font-semibold'>Sanction Limit</TableHead>
+                <TableHead className='font-semibold'>Limit Live Date</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -244,7 +234,7 @@ export default function OnboardNotification() {
                     </TableRow>
                   ))
                 : data.map((row, idx) => (
-                    <TableRow key={row._id}>
+                    <TableRow key={row._id} className='font-semibold'>
                       <TableCell>{idx + 1}</TableCell>
                       <TableCell>{row.companyName}</TableCell>
                       <TableCell>{row.distributorCode}</TableCell>

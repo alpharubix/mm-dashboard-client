@@ -240,7 +240,7 @@ export default function OutputLimit() {
                   'Overdue',
                   'Billing Status',
                 ].map((h) => (
-                  <TableHead className='font-semibold text-gray-900' key={h}>
+                  <TableHead className='font-semibold' key={h}>
                     {h}
                   </TableHead>
                 ))}
@@ -260,7 +260,7 @@ export default function OutputLimit() {
                     </TableRow>
                   ))
                 : data?.map((item, idx) => (
-                    <TableRow key={item._id}>
+                    <TableRow className='font-semibold' key={item._id}>
                       <TableCell>{idx + 1}</TableCell>
                       <TableCell>{item.companyName}</TableCell>
                       <TableCell>{item.distributorCode}</TableCell>

@@ -45,7 +45,7 @@ export default function Header() {
 
         {/* Desktop user info */}
         <div className='hidden md:flex items-center space-x-4'>
-          <span className='text-sm text-gray-600'>{user?.username}</span>
+          <span className='text-sm text-gray-600'>{user?.companyName}</span>
           <Badge
             variant='outline'
             className='bg-blue-50 text-blue-700 border-blue-200 uppercase'
