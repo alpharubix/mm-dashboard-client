@@ -436,20 +436,7 @@ export default function OutputUTR() {
                         </TableCell>
                         <TableCell>{item.utr ? item.utr : 'NA'}</TableCell>
 
-                        <TableCell
-                        // className={cn(
-                        //   `${
-                        //     item.status.toLowerCase() === 'completed'
-                        //       ? 'text-green-500'
-                        //       : 'text-orange-500'
-                        //   }`,
-                        //   'whitespace-nowrap'
-                        // )}
-                        >
-                          {/* {item.status.charAt(0).toUpperCase() +
-                            item.status.slice(1)} */}
-                          {camelCaseToWords(item.status)}
-                        </TableCell>
+                        <TableCell>{camelCaseToWords(item.status)}</TableCell>
                         {user?.role === 'superAdmin' && (
                           <TableCell className=''>
                             <span className=''>

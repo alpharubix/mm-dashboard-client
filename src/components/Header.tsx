@@ -147,25 +147,5 @@ export default function Header() {
         </div>
       </div>
     </header>
-    // <header className='bg-white border-b border-gray-200 px-6 py-4'>
-    //   <div className='flex items-center justify-between'>
-    //     <h1 className='text-2xl font-bold text-gray-900'>Meramerchant</h1>
-    //     <div className='flex items-center gap-4'>
-    //       <span className='text-sm text-gray-600'>tester@gmail.com</span>
-    //       <Badge
-    //         variant='outline'
-    //         className='bg-blue-50 text-blue-700 border-blue-200'
-    //       >
-    //         SUPER ADMIN
-    //       </Badge>
-    //       <Button
-    //         variant='ghost'
-    //         className='text-red-600 hover:text-red-700 hover:bg-red-50'
-    //       >
-    //         Logout
-    //       </Button>
-    //     </div>
-    //   </div>
-    // </header>
   )
 }

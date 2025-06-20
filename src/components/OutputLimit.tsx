@@ -156,31 +156,6 @@ export default function OutputLimit() {
             Clear
           </Button>
         </div>
-        {/* {user?.role === 'superAdmin' && (
-          <div className='mt-6 flex items-center gap-3'>
-            <InputFile onChange={handleFileChange} ref={inputRef} />
-            <div className='flex gap-2'>
-              <Button
-                onClick={handleUpload}
-                disabled={!file}
-                variant='outline'
-                className='cursor-pointer'
-              >
-                Upload CSV
-              </Button>
-              {file && (
-                <Button
-                  onClick={handleCancel}
-                  disabled={!file}
-                  variant='ghost'
-                  className='text-red-500 cursor-pointer'
-                >
-                  Cancel
-                </Button>
-              )}
-            </div>
-          </div>
-        )} */}
         {user?.role === 'superAdmin' && (
           <div className='space-y-2 max-w-lg mx-6'>
             <Label className='text-sm font-medium text-gray-700'>
