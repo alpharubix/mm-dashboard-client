@@ -7,11 +7,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Input } from '../components/ui/input'
 import { Label } from '../components/ui/label'
 import { ENV } from '../conf'
-import { cn, setAuthToken } from '../lib/utils'
+import { cn, getDefaultRoute, setAuthToken } from '../lib/utils'
+import { jwtDecode } from 'jwt-decode'
 
 export default function Login() {
   const [form, setForm] = useState({ username: '', password: '' })
   const navigate = useNavigate()
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.id]: e.target.value })
   }
@@ -25,7 +27,9 @@ export default function Login() {
       setForm({ username: '', password: '' })
 
       toast.success('Login successful')
-      navigate('/', { replace: true })
+      const user = jwtDecode(res.data.token)
+      // @ts-ignore
+      navigate(getDefaultRoute(user?.role), { replace: true })
     } catch (err) {
       console.error(err)
       // @ts-ignore

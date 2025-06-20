@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { ENV } from '../conf'
 import { formatAmount, formatDate, getUserFromToken } from '../lib/utils'
@@ -19,53 +19,43 @@ import type { OnboardNotificationType } from '../types'
 import { Card, CardContent } from './ui/card'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Label } from './ui/label'
+import { useApiQuery } from '../api/hooks'
+import useDebounce from '../hooks/use-debounce'
 
 export default function OnboardNotification() {
-  const [data, setData] = useState<OnboardNotificationType[]>([])
-  const [isLoading, setIsLoading] = useState(true)
   const [file, setFile] = useState<File | null>(null)
   const [filters, setFilters] = useState({
     companyName: '',
     distributorCode: '',
   })
   const [page, setPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(1)
 
   const user = getUserFromToken()
   const inputRef = useRef<HTMLInputElement>(null)
+  const debouncedFilters = useDebounce(filters, 500)
 
-  const fetchData = async () => {
-    setIsLoading(true)
+  // Memoized query params
+  const queryParams = useMemo(() => {
+    const params: any = { page, limit: 10 }
+    if (debouncedFilters.companyName)
+      params.companyName = debouncedFilters.companyName
+    if (debouncedFilters.distributorCode)
+      params.distributorCode = debouncedFilters.distributorCode
+    return params
+  }, [debouncedFilters, page])
 
-    try {
-      const params: any = { page, limit: 10 }
-      if (filters.companyName) params.companyName = filters.companyName
-      if (filters.distributorCode)
-        params.distributorCode = filters.distributorCode
-      const res = await axios.get(`${ENV.BACKEND_URL}/onboard`, {
-        params,
-      })
-      setData(res.data.data)
-      setTotalPages(res.data.totalPages)
-    } catch (error) {
-      console.error(error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  const stableFilters = useMemo(
-    () => filters,
-    [filters.companyName, filters.distributorCode]
+  const { data, isPending, error, refetch } = useApiQuery(
+    '/onboard',
+    queryParams
   )
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      fetchData()
-    }, 500)
-
-    return () => clearTimeout(timeout)
-  }, [stableFilters, page])
+  const totalPages = data?.totalPages || 1
+  if (error) {
+    return (
+      <div className='flex justify-center items-center h-screen text-red-500'>
+        {error.message}
+      </div>
+    )
+  }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
@@ -95,7 +85,8 @@ export default function OnboardNotification() {
 
       toast.success(res.data.message || 'Upload successful')
 
-      fetchData()
+      // fetchData()
+      refetch()
       setFile(null)
       if (inputRef.current) inputRef.current.value = ''
     } catch (err) {
@@ -121,7 +112,7 @@ export default function OnboardNotification() {
 
   return (
     <>
-      <Card className=''>
+      <Card>
         <div className='flex gap-6 flex-wrap max-w-5xl items-end px-6'>
           <div className='flex items-start flex-col gap-2'>
             <Label
@@ -199,28 +190,18 @@ export default function OnboardNotification() {
           <Table className='text-base whitespace-nowrap'>
             <TableHeader>
               <TableRow className='bg-gray-50'>
-                <TableHead className='font-semibold text-gray-900'>
-                  S.No
-                </TableHead>
-                <TableHead className='font-semibold text-gray-900'>
-                  Company Name
-                </TableHead>
-                <TableHead className='font-semibold text-gray-900'>
+                <TableHead className='font-semibold'>S.No</TableHead>
+                <TableHead className='font-semibold'>Company Name</TableHead>
+                <TableHead className='font-semibold'>
                   Distributor Code
                 </TableHead>
-                <TableHead className='font-semibold text-gray-900'>
-                  Lender
-                </TableHead>
-                <TableHead className='font-semibold text-gray-900'>
-                  Sanction Limit
-                </TableHead>
-                <TableHead className='font-semibold text-gray-900'>
-                  Limit Live Date
-                </TableHead>
+                <TableHead className='font-semibold'>Lender</TableHead>
+                <TableHead className='font-semibold'>Sanction Limit</TableHead>
+                <TableHead className='font-semibold'>Limit Live Date</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {isLoading
+              {isPending
                 ? Array.from({ length: 10 }).map((_, i) => (
                     <TableRow key={i}>
                       <TableCell>
@@ -243,8 +224,8 @@ export default function OnboardNotification() {
                       </TableCell>
                     </TableRow>
                   ))
-                : data.map((row, idx) => (
-                    <TableRow key={row._id}>
+                : data.data.map((row: OnboardNotificationType, idx: number) => (
+                    <TableRow key={row._id} className='font-semibold'>
                       <TableCell>{idx + 1}</TableCell>
                       <TableCell>{row.companyName}</TableCell>
                       <TableCell>{row.distributorCode}</TableCell>
@@ -258,7 +239,7 @@ export default function OnboardNotification() {
             </TableBody>
           </Table>
 
-          {data.length !== 0 ? (
+          {data?.data?.length !== 0 ? (
             <>
               <div className='pt-4 flex justify-center gap-4 items-center'>
                 <Button
@@ -285,7 +266,7 @@ export default function OnboardNotification() {
             </>
           ) : (
             <div className='text-center text-2xl m-3'>
-              {isLoading ? null : 'No Data Found'}
+              {isPending ? null : 'No Data Found'}
             </div>
           )}
         </CardContent>

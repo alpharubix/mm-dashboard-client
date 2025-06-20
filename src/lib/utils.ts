@@ -131,3 +131,15 @@ export const handleExport = async () => {
     toast.error(`Export failed: ${err.message}`, { id: toastId })
   }
 }
+
+export const getDefaultRoute = (role: string) => {
+  switch (role) {
+    case 'superAdmin':
+    case 'admin':
+      return '/onboard-notification'
+    case 'viewer':
+      return '/viewer'
+    default:
+      return '/unauthorized'
+  }
+}
