@@ -4,13 +4,18 @@ import { api } from './index'
 export const useApiQuery = (endpoint: string, params = {}) => {
   return useQuery({
     queryKey: [endpoint, params],
-    queryFn: () => api.get(endpoint, { params }),
+    queryFn: async () => {
+      const res = await api.get(endpoint, { params })
+      return res.data
+    },
   })
 }
 
 export const useApiPost = (endpoint: string) => {
   return useMutation({
-    mutationFn: (data) => api.post(endpoint, data),
+    mutationFn: (data: any) => {
+      return api.post(endpoint, data)
+    },
   })
 }
 
@@ -22,7 +27,7 @@ export const useApiPut = (endpoint: string) => {
 
 export const useApiCsv = (endpoint: string) => {
   return useMutation({
-    mutationFn: (data) =>
+    mutationFn: (data: any) =>
       api.post(endpoint, data, {
         headers: {
           'Content-Type': 'multipart/form-data',

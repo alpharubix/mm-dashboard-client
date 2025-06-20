@@ -6,6 +6,18 @@ export type OnboardNotificationType = {
   lender: string
   sanctionLimit: number
   limitLiveDate: string
+  status: string
+  anchorId: string
+  fundingType: string
+}
+
+export type OnboardNotificationResponse = {
+  message: string
+  data: OnboardNotificationType[]
+  skip: number
+  page: number
+  totalPages: number
+  total: number
 }
 
 export type OutputLimitType = {

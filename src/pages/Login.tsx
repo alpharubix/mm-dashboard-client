@@ -29,7 +29,7 @@ export default function Login() {
       toast.success('Login successful')
       const user = jwtDecode(res.data.token)
       // @ts-ignore
-      navigate(getDefaultRoute(user.role), { replace: true })
+      navigate(getDefaultRoute(user?.role), { replace: true })
     } catch (err) {
       console.error(err)
       // @ts-ignore

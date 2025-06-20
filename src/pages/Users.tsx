@@ -27,56 +27,65 @@ import type { UserType } from '../types'
 import { Card, CardContent } from '../components/ui/card'
 import RoleBadge from '../components/ui/role-badge'
 import CompanyType from '../components/ui/company-type'
+import { useApiQuery } from '../api/hooks'
 
 export default function Users() {
-  const [data, setData] = useState<UserType[]>([])
+  // const [data, setData] = useState<UserType[]>([])
   const [selectedUser, setSelectedUser] = useState<{
     id: string
     role: string
   } | null>(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
+  // const [isModalOpen, setIsModalOpen] = useState(false)
+  // const [isLoading, setIsLoading] = useState(true)
   const user = getUserFromToken()
+  const { data, isPending, error } = useApiQuery('/users')
 
-  const handleRoleChange = (userId: string, newRole: string) => {
-    setSelectedUser({ id: userId, role: newRole })
-    setIsModalOpen(true)
+  // const handleRoleChange = (userId: string, newRole: string) => {
+  //   setSelectedUser({ id: userId, role: newRole })
+  //   setIsModalOpen(true)
+  // }
+
+  // const handleRoleChangeFetch = async (id: string, role: string) => {
+  //   // 1. Snapshot previous state
+  //   const previousData = [...data]
+
+  //   // 2. Optimistically update UI
+  //   setData(data.map((u) => (u._id === id ? { ...u, role } : u)))
+  //   setIsModalOpen(false)
+
+  //   try {
+  //     // 3. Fire off the request using async/await
+  //     const res = await axios.put(`${ENV.BACKEND_URL}/user/${id}`, { role })
+  //     console.log(res.data)
+  //     toast.success(`${res.data.message}`)
+  //   } catch (err: any) {
+  //     console.error(err)
+  //     // 4. Roll back on error
+  //     toast.error(`Error while changing user role: ${err.message}`)
+  //     setData(previousData)
+  //   }
+  // }
+
+  // const fetchMe = () => {
+  //   setIsLoading(true)
+  //   axios
+  //     .get(`${ENV.BACKEND_URL}/users`)
+  //     .then((res) => setData(res.data))
+  //     .catch((er) => console.log(er))
+  //     .finally(() => setIsLoading(false))
+  // }
+
+  // useEffect(() => {
+  //   fetchMe()
+  // }, [])
+
+  if (error) {
+    return (
+      <div className='flex justify-center items-center h-screen text-red-500'>
+        {error.message}
+      </div>
+    )
   }
-
-  const handleRoleChangeFetch = async (id: string, role: string) => {
-    // 1. Snapshot previous state
-    const previousData = [...data]
-
-    // 2. Optimistically update UI
-    setData(data.map((u) => (u._id === id ? { ...u, role } : u)))
-    setIsModalOpen(false)
-
-    try {
-      // 3. Fire off the request using async/await
-      const res = await axios.put(`${ENV.BACKEND_URL}/user/${id}`, { role })
-      console.log(res.data)
-      toast.success(`${res.data.message}`)
-    } catch (err: any) {
-      console.error(err)
-      // 4. Roll back on error
-      toast.error(`Error while changing user role: ${err.message}`)
-      setData(previousData)
-    }
-  }
-
-  const fetchMe = () => {
-    setIsLoading(true)
-    axios
-      .get(`${ENV.BACKEND_URL}/users`)
-      .then((res) => setData(res.data))
-      .catch((er) => console.log(er))
-      .finally(() => setIsLoading(false))
-  }
-
-  useEffect(() => {
-    fetchMe()
-  }, [])
-
   return (
     <>
       <Card>
@@ -93,7 +102,7 @@ export default function Users() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {isLoading
+              {isPending
                 ? Array.from({ length: 10 }).map((_, i) => (
                     <TableRow key={i}>
                       <TableCell>
@@ -116,7 +125,7 @@ export default function Users() {
                   </TableCell> */}
                     </TableRow>
                   ))
-                : data.map((u, idx) => (
+                : data?.map((u: UserType, idx: number) => (
                     <TableRow key={u._id} className='font-semibold'>
                       <TableCell>{idx + 1}</TableCell>
                       <TableCell>{u.companyName}</TableCell>
@@ -180,7 +189,7 @@ export default function Users() {
                   ))}
             </TableBody>
           </Table>
-          {isModalOpen && selectedUser && (
+          {/* {isModalOpen && selectedUser && (
             <AlertDialog open={isModalOpen} onOpenChange={setIsModalOpen}>
               <AlertDialogContent className='bg-black'>
                 <AlertDialogHeader>
@@ -207,7 +216,7 @@ export default function Users() {
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
-          )}
+          )} */}
         </CardContent>
       </Card>
     </>

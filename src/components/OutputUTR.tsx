@@ -35,15 +35,14 @@ import {
 import type { OutputUTRType } from '../types'
 import { Card, CardContent } from './ui/card'
 import { Label } from './ui/label'
+import useDebounce from '../hooks/use-debounce'
+import { useApiQuery } from '../api/hooks'
 
 export default function OutputUTR() {
-  const [data, setData] = useState<OutputUTRType[]>([])
   const [file, setFile] = useState<File | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const user = getUserFromToken()
-  const [isLoading, setIsLoading] = useState(true)
   const [page, setPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(1)
 
   const [filters, setFilters] = useState<{
     companyName: string
@@ -60,100 +59,35 @@ export default function OutputUTR() {
     date: undefined,
     status: '',
   })
-
-  const fetchData = async () => {
-    setIsLoading(true)
-    try {
-      const params: any = { page, limit: 10 }
-      if (filters.companyName) params.companyName = filters.companyName
-      if (filters.distributorCode)
-        params.distributorCode = filters.distributorCode
-      if (filters.invoiceNumber && !isNaN(Number(filters.invoiceNumber))) {
-        params.invoiceNumber = Number(filters.invoiceNumber)
-      }
-      if (filters.utr) params.utr = filters.utr
-      if (filters.status && filters.status !== 'all') {
-        params.status = filters.status
-      }
-      if (filters.date?.from && filters.date?.to) {
-        params.fromDate = format(filters.date.from, 'dd-MM-yy') // Or your desired format
-        params.toDate = format(filters.date.to, 'dd-MM-yy') // Or your desired format
-      } else if (filters.date?.from) {
-        params.date = format(filters.date.from, 'dd-MM-yy') // Handle single date selection if needed
-      }
-
-      const res = await axios.get(`${ENV.BACKEND_URL}/invoice-input`, {
-        params,
-      })
-      setData(res.data.data)
-      setTotalPages(res.data.totalPages)
-    } catch (err) {
-      console.error(err)
-    } finally {
-      setIsLoading(false)
+  const debouncedFilters = useDebounce(filters, 500)
+  const queryParams = useMemo(() => {
+    const params: any = { page, limit: 10 }
+    if (debouncedFilters.companyName)
+      params.companyName = debouncedFilters.companyName
+    if (debouncedFilters.distributorCode)
+      params.distributorCode = debouncedFilters.distributorCode
+    if (
+      debouncedFilters.invoiceNumber &&
+      !isNaN(Number(debouncedFilters.invoiceNumber))
+    ) {
+      params.invoiceNumber = Number(debouncedFilters.invoiceNumber)
     }
-  }
+    if (debouncedFilters.utr) params.utr = debouncedFilters.utr
+    if (debouncedFilters.status && debouncedFilters.status !== 'all') {
+      params.status = debouncedFilters.status
+    }
+    if (debouncedFilters.date?.from && debouncedFilters.date?.to) {
+      params.fromDate = format(debouncedFilters.date.from, 'dd-MM-yy') // Or your desired format
+      params.toDate = format(debouncedFilters.date.to, 'dd-MM-yy')
+    }
+    return params
+  }, [debouncedFilters, page])
 
-  const stableFilters = useMemo(
-    () => filters,
-    [
-      filters.companyName,
-      filters.distributorCode,
-      filters.invoiceNumber,
-      filters.utr,
-      filters.status,
-      filters.date?.from,
-      filters.date?.to,
-    ]
+  const { data, isPending, error, refetch } = useApiQuery(
+    '/invoice-input',
+    queryParams
   )
-
-  // const getFtpFiles = async () => {
-  //   setIsLoading(true)
-  //   try {
-  //     const { data, status } = await axios.get(
-  //       `${ENV.BACKEND_URL}/output-utr-ftp-data`
-  //     )
-
-  //     if (status !== 200) {
-  //       throw { response: { data } } // force error block to handle uniformly
-  //     }
-
-  //     toast.success(data.message || 'Data processed successfully')
-  //     fetchData()
-  //   } catch (error: any) {
-  //     const res = error.response?.data
-  //     let msg = res?.message || error.message || 'Network error'
-
-  //     // Specific handling for known cases
-  //     if (msg.includes('E11000 duplicate key error collection')) {
-  //       toast.info('No new data to insert.')
-  //     } else {
-  //       toast.error(msg)
-  //     }
-  //   } finally {
-  //     setIsLoading(false)
-  //   }
-  // }
-
-  // Fetch data
-  useEffect(() => {
-    let timeout: NodeJS.Timeout | null = null
-    const mainFetch = async () => {
-      try {
-        timeout = setTimeout(() => {
-          fetchData()
-        }, 500)
-      } catch (err) {
-        console.error('Failed to fetch FTP files:', err)
-      }
-    }
-
-    mainFetch()
-
-    return () => {
-      if (timeout) clearTimeout(timeout)
-    }
-  }, [stableFilters, page])
+  const totalPages = data?.totalPages || 1
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) setFile(e.target.files[0])
@@ -176,7 +110,7 @@ export default function OutputUTR() {
 
       toast.success(res.data.message || 'Upload successful')
 
-      fetchData()
+      refetch()
       setFile(null)
       if (inputRef.current) inputRef.current.value = ''
     } catch (err) {
@@ -207,6 +141,14 @@ export default function OutputUTR() {
       utr: '',
     })
     setPage(1)
+  }
+
+  if (error) {
+    return (
+      <div className='flex justify-center items-center h-screen text-red-500'>
+        {error.message}
+      </div>
+    )
   }
 
   return (
@@ -419,7 +361,7 @@ export default function OutputUTR() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {isLoading
+                {isPending
                   ? Array.from({ length: 10 }).map((_, i) => (
                       <TableRow key={i}>
                         <TableCell>
@@ -469,7 +411,7 @@ export default function OutputUTR() {
                         </TableCell>
                       </TableRow>
                     ))
-                  : data?.map((item, idx) => (
+                  : data?.data?.map((item: OutputUTRType, idx: number) => (
                       <TableRow className='font-semibold' key={item._id}>
                         <TableCell>{idx + 1}</TableCell>
                         <TableCell>{item.companyName}</TableCell>
@@ -530,7 +472,7 @@ export default function OutputUTR() {
                     ))}
               </TableBody>
             </Table>
-            {data.length !== 0 ? (
+            {data?.data?.length !== 0 ? (
               <>
                 <div className='mt-4 flex justify-center gap-4 items-center'>
                   <Button
@@ -556,7 +498,7 @@ export default function OutputUTR() {
               </>
             ) : (
               <div className='text-center text-2xl m-3'>
-                {isLoading ? null : 'No Data Found'}
+                {isPending ? null : 'No Data Found'}
               </div>
             )}
           </div>
