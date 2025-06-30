@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { ENV } from '../conf'
 import { formatAmount, formatDate, getUserFromToken } from '../lib/utils'
@@ -110,6 +110,10 @@ export default function OnboardNotification() {
     setPage(1)
   }
 
+  useEffect(() => {
+    setPage(1)
+  }, [debouncedFilters.companyName, debouncedFilters.distributorCode])
+
   return (
     <>
       <Card>
@@ -126,7 +130,9 @@ export default function OnboardNotification() {
               placeholder='Example company'
               value={filters.companyName}
               onChange={(e) =>
-                setFilters((f) => ({ ...f, companyName: e.target.value }))
+                setFilters((f) => {
+                  return { ...f, companyName: e.target.value }
+                })
               }
               className='border py-5 text-base'
             />
@@ -143,7 +149,9 @@ export default function OnboardNotification() {
               placeholder='ex: 123456'
               value={filters.distributorCode}
               onChange={(e) =>
-                setFilters((f) => ({ ...f, distributorCode: e.target.value }))
+                setFilters((f) => {
+                  return { ...f, distributorCode: e.target.value }
+                })
               }
               className='border py-5 text-base'
             />

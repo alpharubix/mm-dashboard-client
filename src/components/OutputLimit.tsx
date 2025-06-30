@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { ENV } from '../conf'
 import {
@@ -37,7 +37,7 @@ export default function OutputLimit() {
   const inputRef = useRef<HTMLInputElement>(null)
   const user = getUserFromToken()
   const debouncedFilters = useDebounce(filters, 500)
-  
+
   const queryParams = useMemo(() => {
     const params: any = { page, limit: 10 }
     if (debouncedFilters.companyName)
@@ -109,6 +109,10 @@ export default function OutputLimit() {
     setFilters({ companyName: '', distributorCode: '' })
     setPage(1)
   }
+
+  useEffect(() => {
+    setPage(1)
+  }, [debouncedFilters.companyName, debouncedFilters.distributorCode])
 
   return (
     <>
