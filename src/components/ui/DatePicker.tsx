@@ -1,6 +1,6 @@
 import { format } from 'date-fns'
 import { Calendar as CalendarIcon } from 'lucide-react'
-import { useState } from 'react' // Import useState
+import { useState } from 'react'
 import { DateRange } from 'react-day-picker'
 import { cn } from '../../lib/utils'
 import { Button } from './button'
@@ -9,7 +9,7 @@ import { Popover, PopoverContent, PopoverTrigger } from './popover'
 
 export function DatePickerWithRange({
   className,
-  date: initialDate, // Rename prop to avoid confusion with local state
+  date: initialDate,
   setDate,
 }: {
   className?: string
@@ -21,7 +21,7 @@ export function DatePickerWithRange({
 
   const handleOkClick = () => {
     setDate(localDate) // Update parent filters state
-    setOpen(false) // Close the popover
+    setOpen(false)
   }
 
   const handleClearClick = () => {
@@ -38,7 +38,7 @@ export function DatePickerWithRange({
             id='date'
             variant={'outline'}
             className={cn(
-              'w-full justify-start text-left font-normal',
+              'w-full justify-start text-left font-normal min-w-[220px]',
               !localDate && 'text-muted-foreground'
             )}
           >

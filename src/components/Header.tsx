@@ -1,5 +1,5 @@
 import { Menu } from 'lucide-react'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { camelCaseToWords, getUserFromToken } from '../lib/utils'
 import {
   AlertDialog,
@@ -22,15 +22,44 @@ import {
   DrawerTrigger,
 } from './ui/drawer'
 import { Badge } from './ui/badge'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from './ui/select'
 
 export default function Header() {
   const user = getUserFromToken()
+  const isSuperAdmin = user?.role === 'superAdmin' || false
+
+  const [anchor, setAnchor] = useState(() => {
+    // Only set anchor for superAdmin
+    if (isSuperAdmin) {
+      return localStorage.getItem('mm_anchor') || 'ckpl'
+    }
+    return '' // or empty string for non-superAdmin
+  })
 
   useEffect(() => {
     if (!localStorage.getItem('mm_auth_token')) {
       window.location.href = '/login'
+      return
     }
-  }, [])
+
+    // Only handle mm_anchor for superAdmin
+    if (isSuperAdmin) {
+      if (!localStorage.getItem('mm_anchor')) {
+        localStorage.setItem('mm_anchor', 'ckpl')
+        setAnchor('ckpl')
+      }
+    } else {
+      // Clean up anchor for non-superAdmin users
+      localStorage.removeItem('mm_anchor')
+      setAnchor('')
+    }
+  }, [isSuperAdmin])
 
   const handleLogout = () => {
     localStorage.removeItem('mm_auth_token')
@@ -45,6 +74,24 @@ export default function Header() {
 
         {/* Desktop user info */}
         <div className='hidden md:flex items-center space-x-4'>
+          {user?.role === 'superAdmin' ? (
+            <Select
+              value={anchor}
+              onValueChange={(value) => {
+                setAnchor(value)
+                localStorage.setItem('mm_anchor', value)
+              }}
+            >
+              <SelectTrigger className='h-10'>
+                <SelectValue placeholder='Select status' />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value='ckpl'>CavinKare</SelectItem>
+                <SelectItem value='hwc'>Himalaya</SelectItem>
+              </SelectContent>
+            </Select>
+          ) : null}
+
           <span className='text-sm text-gray-600'>{user?.companyName}</span>
           <Badge
             variant='outline'
@@ -96,6 +143,23 @@ export default function Header() {
                 </DrawerHeader>
                 <DrawerDescription>
                   <div className='flex gap-2 mt-4 items-center justify-center'>
+                    {user?.role === 'superAdmin' ? (
+                      <Select
+                        value={anchor}
+                        onValueChange={(value) => {
+                          setAnchor(value)
+                          localStorage.setItem('mm_anchor', value)
+                        }}
+                      >
+                        <SelectTrigger className='h-10'>
+                          <SelectValue placeholder='Select status' />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value='ckpl'>CavinKare</SelectItem>
+                          <SelectItem value='hwc'>Himalaya</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    ) : null}
                     <span className='text-lg font-bold'>{user?.username}</span>
                     <span className='px-2 py-1 text-xs font-semibold uppercase rounded-full bg-blue-100 text-blue-800'>
                       {camelCaseToWords(user?.role || '')}

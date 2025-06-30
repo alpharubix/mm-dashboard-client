@@ -77,7 +77,7 @@ export default function OutputUTR() {
       params.status = debouncedFilters.status
     }
     if (debouncedFilters.date?.from && debouncedFilters.date?.to) {
-      params.fromDate = format(debouncedFilters.date.from, 'dd-MM-yy') // Or your desired format
+      params.fromDate = format(debouncedFilters.date.from, 'dd-MM-yy')
       params.toDate = format(debouncedFilters.date.to, 'dd-MM-yy')
     }
     return params
@@ -142,6 +142,18 @@ export default function OutputUTR() {
     })
     setPage(1)
   }
+
+  useEffect(() => {
+    setPage(1)
+  }, [
+    debouncedFilters.companyName,
+    debouncedFilters.distributorCode,
+    debouncedFilters.date?.from,
+    debouncedFilters.date?.to,
+    debouncedFilters.invoiceNumber,
+    debouncedFilters.status,
+    debouncedFilters.utr,
+  ])
 
   if (error) {
     return (

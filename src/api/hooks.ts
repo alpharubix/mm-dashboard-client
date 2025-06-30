@@ -1,9 +1,12 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { api } from './index'
 
-export const useApiQuery = (endpoint: string, params = {}) => {
+export const useApiQuery = (endpoint: string, params: any = {}) => {
+  const anchorId = localStorage.getItem('mm_anchor')
+  params.anchorId = anchorId
+
   return useQuery({
-    queryKey: [endpoint, params],
+    queryKey: [endpoint, params, anchorId],
     queryFn: async () => {
       const res = await api.get(endpoint, { params })
       return res.data
