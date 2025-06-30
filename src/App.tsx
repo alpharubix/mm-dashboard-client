@@ -1,8 +1,7 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { getAuthToken } from './lib/utils'
 import axios from 'axios'
 import { lazy } from 'react'
-import { usePermissions } from './hooks/use-permissions'
 
 // Lazy imports
 const Login = lazy(() => import('./pages/Login'))
@@ -17,15 +16,7 @@ const OnboardNotification = lazy(
 const OutputLimit = lazy(() => import('./components/OutputLimit'))
 const OutputUTR = lazy(() => import('./components/OutputUTR'))
 const ProtectedRoute = lazy(() => import('./components/ProtectedRoute'))
-
-const RoleBasedRedirect = () => {
-  const { user } = usePermissions()
-
-  const defaultRoute =
-    user?.role === 'viewer' ? '/viewer' : '/onboard-notification'
-
-  return <Navigate to={defaultRoute} />
-}
+const RootRedirect = lazy(() => import('./components/RootRedirect'))
 
 export default function App() {
   const token = getAuthToken()
@@ -34,19 +25,9 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path='/' element={<RootRedirect />} />
         <Route path='/login' element={<Login />} />
-        {/* <Route path='/unauthorized' element={<NotFound />} /> */}
-        {/* TODO: Redirect from '/' route */}
-        {/* Protected Routes */}
-        <Route
-          path='/'
-          element={
-            <ProtectedRoute>
-              <Home />
-            </ProtectedRoute>
-          }
-        >
-          {/* SuperAdmin only routes */}
+        <Route path='/' element={<Home />}>
           <Route
             path='users'
             element={

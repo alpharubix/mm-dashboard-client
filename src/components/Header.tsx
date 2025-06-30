@@ -63,6 +63,7 @@ export default function Header() {
 
   const handleLogout = () => {
     localStorage.removeItem('mm_auth_token')
+    localStorage.removeItem('mm_anchor')
     window.location.href = '/login'
   }
 
