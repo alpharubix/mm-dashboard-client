@@ -9,6 +9,7 @@ export type OnboardNotificationType = {
   status: string
   anchorId: string
   fundingType: string
+  limitExpiryDate: string
 }
 
 export type OnboardNotificationResponse = {
@@ -33,6 +34,7 @@ export type OutputLimitType = {
   utilisedLimit: number
   availableLimit: number
   overdue: number
+  limitExpiryDate: string
   billingStatus: string
 }
 

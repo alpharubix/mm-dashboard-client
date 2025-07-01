@@ -6,6 +6,7 @@ import {
   camelCaseToWords,
   cn,
   formatAmount,
+  formatDate,
   getUserFromToken,
 } from '../lib/utils'
 import { Button } from './ui/button'
@@ -205,6 +206,7 @@ export default function OutputLimit() {
                   'Utilised Limit',
                   'Available Limit',
                   'Overdue',
+                  'Limit Expiry Date',
                   'Billing Status',
                 ].map((h) => (
                   <TableHead className='font-semibold' key={h}>
@@ -217,7 +219,7 @@ export default function OutputLimit() {
               {isPending
                 ? Array.from({ length: 10 }).map((_, i) => (
                     <TableRow key={i}>
-                      {Array(12)
+                      {Array(13)
                         .fill(0)
                         .map((_, j) => (
                           <TableCell key={j}>
@@ -248,6 +250,11 @@ export default function OutputLimit() {
                       </TableCell>
                       <TableCell className='font-mono'>
                         {formatAmount(item.overdue)}
+                      </TableCell>
+                      <TableCell>
+                        {item.limitExpiryDate
+                          ? formatDate(item.limitExpiryDate)
+                          : null}
                       </TableCell>
                       <TableCell
                         className={cn(

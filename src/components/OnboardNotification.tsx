@@ -206,6 +206,9 @@ export default function OnboardNotification() {
                 <TableHead className='font-semibold'>Lender</TableHead>
                 <TableHead className='font-semibold'>Sanction Limit</TableHead>
                 <TableHead className='font-semibold'>Limit Live Date</TableHead>
+                <TableHead className='font-semibold'>
+                  Limit Expiry Date
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -230,6 +233,9 @@ export default function OnboardNotification() {
                       <TableCell>
                         <Skeleton className='h-4 w-24' />
                       </TableCell>
+                      <TableCell>
+                        <Skeleton className='h-4 w-24' />
+                      </TableCell>
                     </TableRow>
                   ))
                 : data.data.map((row: OnboardNotificationType, idx: number) => (
@@ -241,7 +247,16 @@ export default function OnboardNotification() {
                       <TableCell className='font-mono'>
                         {formatAmount(row.sanctionLimit)}
                       </TableCell>
-                      <TableCell>{formatDate(row.limitLiveDate)}</TableCell>
+                      <TableCell>
+                        {row.limitLiveDate
+                          ? formatDate(row.limitLiveDate)
+                          : null}
+                      </TableCell>
+                      <TableCell>
+                        {row.limitExpiryDate
+                          ? formatDate(row.limitExpiryDate)
+                          : null}
+                      </TableCell>
                     </TableRow>
                   ))}
             </TableBody>
