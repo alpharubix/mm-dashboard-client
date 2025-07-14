@@ -32,13 +32,13 @@ import {
   TableHeader,
   TableRow,
 } from './ui/table'
-import type { OutputUTRType } from '../types'
+import type { InvoiceType } from '../types'
 import { Card, CardContent } from './ui/card'
 import { Label } from './ui/label'
 import useDebounce from '../hooks/use-debounce'
 import { useApiQuery } from '../api/hooks'
 
-export default function OutputUTR() {
+export default function Invoice() {
   const [file, setFile] = useState<File | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const user = getUserFromToken()
@@ -423,7 +423,7 @@ export default function OutputUTR() {
                         </TableCell>
                       </TableRow>
                     ))
-                  : data?.data?.map((item: OutputUTRType, idx: number) => (
+                  : data?.data?.map((item: InvoiceType, idx: number) => (
                       <TableRow className='font-semibold' key={item._id}>
                         <TableCell>{idx + 1}</TableCell>
                         <TableCell>{item.companyName}</TableCell>

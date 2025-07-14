@@ -1,4 +1,4 @@
-export type OnboardNotificationType = {
+export type OnboardType = {
   _id: string
   sno: number
   companyName: string
@@ -12,16 +12,16 @@ export type OnboardNotificationType = {
   limitExpiryDate: string
 }
 
-export type OnboardNotificationResponse = {
+export type OnboardResponse = {
   message: string
-  data: OnboardNotificationType[]
+  data: OnboardType[]
   skip: number
   page: number
   totalPages: number
   total: number
 }
 
-export type OutputLimitType = {
+export type CreditLimitType = {
   _id: string
   sno: number
   companyName: string
@@ -38,7 +38,7 @@ export type OutputLimitType = {
   billingStatus: string
 }
 
-export type OutputUTRType = {
+export type InvoiceType = {
   _id: string
   companyName: string
   distributorCode: string

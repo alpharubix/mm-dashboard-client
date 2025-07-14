@@ -21,14 +21,14 @@ import {
   TableHeader,
   TableRow,
 } from './ui/table'
-import type { OutputLimitType } from '../types'
+import type { CreditLimitType } from '../types'
 import { Card, CardContent } from './ui/card'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Label } from './ui/label'
 import useDebounce from '../hooks/use-debounce'
 import { useApiQuery } from '../api/hooks'
 
-export default function OutputLimit() {
+export default function CreditLimit() {
   const [page, setPage] = useState(1)
   const [filters, setFilters] = useState({
     companyName: '',
@@ -228,7 +228,7 @@ export default function OutputLimit() {
                         ))}
                     </TableRow>
                   ))
-                : data?.data?.map((item: OutputLimitType, idx: number) => (
+                : data?.data?.map((item: CreditLimitType, idx: number) => (
                     <TableRow className='font-semibold' key={item._id}>
                       <TableCell>{idx + 1}</TableCell>
                       <TableCell>{item.companyName}</TableCell>

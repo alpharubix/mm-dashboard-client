@@ -10,11 +10,9 @@ const NotFound = lazy(() => import('./pages/NotFound'))
 const Viewer = lazy(() => import('./pages/Viewer'))
 const Users = lazy(() => import('./pages/Users'))
 
-const OnboardNotification = lazy(
-  () => import('./components/OnboardNotification')
-)
-const OutputLimit = lazy(() => import('./components/OutputLimit'))
-const OutputUTR = lazy(() => import('./components/OutputUTR'))
+const Onboard = lazy(() => import('./components/Onboard'))
+const CreditLimit = lazy(() => import('./components/CreditLimit'))
+const Invoice = lazy(() => import('./components/invoice'))
 const ProtectedRoute = lazy(() => import('./components/ProtectedRoute'))
 const RootRedirect = lazy(() => import('./components/RootRedirect'))
 
@@ -42,7 +40,7 @@ export default function App() {
             path='credit-limit'
             element={
               <ProtectedRoute requiredRoute='credit-limit'>
-                <OutputLimit />
+                <CreditLimit />
               </ProtectedRoute>
             }
           />
@@ -51,7 +49,7 @@ export default function App() {
             path='invoice-utr'
             element={
               <ProtectedRoute requiredRoute='invoice-utr'>
-                <OutputUTR />
+                <Invoice />
               </ProtectedRoute>
             }
           />
@@ -66,10 +64,7 @@ export default function App() {
             }
           />
 
-          <Route
-            path='onboard-notification'
-            element={<OnboardNotification />}
-          />
+          <Route path='onboard-notification' element={<Onboard />} />
           <Route path='*' element={<NotFound />} />
         </Route>
       </Routes>
