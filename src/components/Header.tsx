@@ -1,6 +1,7 @@
 import { Menu } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { camelCaseToWords, getUserFromToken } from '../lib/utils'
+import logo from '../assets/logo.png'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -33,6 +34,7 @@ import {
 export default function Header() {
   const user = getUserFromToken()
   const isSuperAdmin = user?.role === 'superAdmin' || false
+  const [showLoader, setShowLoader] = useState(false)
 
   const [anchor, setAnchor] = useState(() => {
     // Only set anchor for superAdmin
@@ -69,28 +71,59 @@ export default function Header() {
 
   return (
     <header className='bg-white shadow-sm border-b'>
-      <div className='flex items-center justify-between px-6 py-4'>
+      <div className='flex items-center justify-between px-6 py-1'>
         {/* Logo */}
-        <h1 className='text-2xl font-bold text-gray-900'>Meramerchant</h1>
+        <div>
+          <img
+            src={logo}
+            alt='R1Xchange Logo'
+            style={{
+              width: '170px',
+            }}
+          />
+        </div>
+        {/* <h1 className='text-2xl font-bold text-gray-900'>R1Xchange</h1> */}
 
         {/* Desktop user info */}
         <div className='hidden md:flex items-center space-x-4'>
           {user?.role === 'superAdmin' ? (
-            <Select
-              value={anchor}
-              onValueChange={(value) => {
-                setAnchor(value)
-                localStorage.setItem('mm_anchor', value)
-              }}
-            >
-              <SelectTrigger className='h-10'>
-                <SelectValue placeholder='Select status' />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value='ckpl'>CavinKare</SelectItem>
-                <SelectItem value='hwc'>Himalaya</SelectItem>
-              </SelectContent>
-            </Select>
+            <>
+              {showLoader ? (
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  width='20'
+                  height='20'
+                  viewBox='0 0 24 24'
+                  fill='none'
+                  stroke='currentColor'
+                  stroke-width='2'
+                  stroke-linecap='round'
+                  stroke-linejoin='round'
+                  className='lucide lucide-rotate-icon-icon lucide-rotate-icon cursor-pointer size-4'
+                  data-v-c31f8f1d=''
+                  onClick={() => window.location.reload()}
+                >
+                  <path d='M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8'></path>
+                  <path d='M21 3v5h-5'></path>
+                </svg>
+              ) : null}
+              <Select
+                value={anchor}
+                onValueChange={(value) => {
+                  setShowLoader(true)
+                  setAnchor(value)
+                  localStorage.setItem('mm_anchor', value)
+                }}
+              >
+                <SelectTrigger className='h-10'>
+                  <SelectValue placeholder='Select status' />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value='ckpl'>CavinKare</SelectItem>
+                  <SelectItem value='hwc'>Himalaya</SelectItem>
+                </SelectContent>
+              </Select>
+            </>
           ) : null}
 
           <span className='text-sm text-gray-600'>{user?.companyName}</span>

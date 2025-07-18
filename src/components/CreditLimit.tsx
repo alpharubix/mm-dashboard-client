@@ -21,14 +21,14 @@ import {
   TableHeader,
   TableRow,
 } from './ui/table'
-import type { OutputLimitType } from '../types'
+import type { CreditLimitType } from '../types'
 import { Card, CardContent } from './ui/card'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Label } from './ui/label'
 import useDebounce from '../hooks/use-debounce'
 import { useApiQuery } from '../api/hooks'
 
-export default function OutputLimit() {
+export default function CreditLimit() {
   const [page, setPage] = useState(1)
   const [filters, setFilters] = useState({
     companyName: '',
@@ -153,39 +153,41 @@ export default function OutputLimit() {
               className='border py-5 text-base'
             />
           </div>
-          <Button
+          {/* <Button
             variant='outline'
             onClick={handleClearFilter}
             className='text-red-600 hover:text-red-700 hover:bg-red-50 cursor-pointer mb-px'
           >
             Clear
-          </Button>
+          </Button> */}
         </div>
         {user?.role === 'superAdmin' && (
-          <div className='space-y-2 max-w-lg mx-6'>
-            <Label className='text-sm font-medium text-gray-700'>
-              Upload File
-            </Label>
-            <div className='flex gap-4 items-center'>
-              <InputFile
-                onChange={handleFileChange}
-                ref={inputRef}
-                file={file}
-              />
-              {file && (
-                <div className='flex gap-2'>
-                  <Button onClick={handleUpload} disabled={!file}>
-                    Upload CSV
-                  </Button>
-                  <Button
-                    onClick={handleCancel}
-                    variant='ghost'
-                    className='text-red-500'
-                  >
-                    Cancel
-                  </Button>
-                </div>
-              )}
+          <div className='flex items-center mx-6 gap-4 flex-wrap'>
+            <div className='space-y-2 max-w-lg'>
+              <Label className='text-sm font-medium text-gray-700'>
+                Upload File
+              </Label>
+              <div className='flex gap-4 items-center'>
+                <InputFile
+                  onChange={handleFileChange}
+                  ref={inputRef}
+                  file={file}
+                />
+                {file && (
+                  <div className='flex gap-2'>
+                    <Button onClick={handleUpload} disabled={!file}>
+                      Upload CSV
+                    </Button>
+                    <Button
+                      onClick={handleCancel}
+                      variant='ghost'
+                      className='text-red-500'
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}
@@ -228,7 +230,7 @@ export default function OutputLimit() {
                         ))}
                     </TableRow>
                   ))
-                : data?.data?.map((item: OutputLimitType, idx: number) => (
+                : data?.data?.map((item: CreditLimitType, idx: number) => (
                     <TableRow className='font-semibold' key={item._id}>
                       <TableCell>{idx + 1}</TableCell>
                       <TableCell>{item.companyName}</TableCell>

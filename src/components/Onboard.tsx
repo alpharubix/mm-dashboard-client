@@ -2,7 +2,12 @@ import axios from 'axios'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { ENV } from '../conf'
-import { formatAmount, formatDate, getUserFromToken } from '../lib/utils'
+import {
+  camelCaseToWords,
+  formatAmount,
+  formatDate,
+  getUserFromToken,
+} from '../lib/utils'
 import { Button } from './ui/button'
 import { InputFile } from './ui/file-input'
 import { Input } from './ui/input'
@@ -15,14 +20,14 @@ import {
   TableHeader,
   TableRow,
 } from './ui/table'
-import type { OnboardNotificationType } from '../types'
+import type { OnboardType } from '../types'
 import { Card, CardContent } from './ui/card'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Label } from './ui/label'
 import { useApiQuery } from '../api/hooks'
 import useDebounce from '../hooks/use-debounce'
 
-export default function OnboardNotification() {
+export default function Onboard() {
   const [file, setFile] = useState<File | null>(null)
   const [filters, setFilters] = useState({
     companyName: '',
@@ -156,40 +161,42 @@ export default function OnboardNotification() {
               className='border py-5 text-base'
             />
           </div>
-          <Button
+          {/* <Button
             variant='outline'
             onClick={handleClearFilter}
             className='text-red-600 hover:text-red-700 hover:bg-red-50 cursor-pointer mb-px'
           >
             Clear
-          </Button>
+          </Button> */}
         </div>
 
         {user?.role === 'superAdmin' && (
-          <div className='space-y-2 max-w-lg mx-6'>
-            <Label className='text-sm font-medium text-gray-700'>
-              Upload File
-            </Label>
-            <div className='flex gap-4 items-center'>
-              <InputFile
-                onChange={handleFileChange}
-                ref={inputRef}
-                file={file}
-              />
-              {file && (
-                <div className='flex gap-2'>
-                  <Button onClick={handleUpload} disabled={!file}>
-                    Upload CSV
-                  </Button>
-                  <Button
-                    onClick={handleCancel}
-                    variant='ghost'
-                    className='text-red-500'
-                  >
-                    Cancel
-                  </Button>
-                </div>
-              )}
+          <div className='flex items-center mx-6 gap-4 flex-wrap'>
+            <div className='space-y-2 max-w-lg'>
+              <Label className='text-sm font-medium text-gray-700'>
+                Upload File
+              </Label>
+              <div className='flex gap-4 items-center'>
+                <InputFile
+                  onChange={handleFileChange}
+                  ref={inputRef}
+                  file={file}
+                />
+                {file && (
+                  <div className='flex gap-2'>
+                    <Button onClick={handleUpload} disabled={!file}>
+                      Upload CSV
+                    </Button>
+                    <Button
+                      onClick={handleCancel}
+                      variant='ghost'
+                      className='text-red-500'
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}
@@ -209,6 +216,7 @@ export default function OnboardNotification() {
                 <TableHead className='font-semibold'>
                   Limit Expiry Date
                 </TableHead>
+                <TableHead className='font-semibold'>Status</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -236,9 +244,12 @@ export default function OnboardNotification() {
                       <TableCell>
                         <Skeleton className='h-4 w-24' />
                       </TableCell>
+                      <TableCell>
+                        <Skeleton className='h-4 w-24' />
+                      </TableCell>
                     </TableRow>
                   ))
-                : data.data.map((row: OnboardNotificationType, idx: number) => (
+                : data.data.map((row: OnboardType, idx: number) => (
                     <TableRow key={row._id} className='font-semibold'>
                       <TableCell>{idx + 1}</TableCell>
                       <TableCell>{row.companyName}</TableCell>
@@ -256,6 +267,15 @@ export default function OnboardNotification() {
                         {row.limitExpiryDate
                           ? formatDate(row.limitExpiryDate)
                           : null}
+                      </TableCell>
+                      <TableCell
+                        className={
+                          row.status === 'active'
+                            ? 'text-green-500'
+                            : 'text-orange-500'
+                        }
+                      >
+                        {camelCaseToWords(row.status)}
                       </TableCell>
                     </TableRow>
                   ))}

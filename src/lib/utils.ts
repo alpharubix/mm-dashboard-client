@@ -79,12 +79,14 @@ export function capitalize(val: string) {
   return String(val).charAt(0).toUpperCase() + String(val).slice(1)
 }
 
-export const handleExport = async () => {
+export const handleExport = async (queryParams: object) => {
   let toastId: string | number | undefined
 
   try {
     toastId = toast.loading('Processing CSV export...')
-    const res = await axios.get(`${ENV.BACKEND_URL}/output-utr-all`)
+    const res = await axios.get(`${ENV.BACKEND_URL}/invoice-input`, {
+      params: queryParams,
+    })
     const data = res.data.data
     if (!data.length) {
       toast.dismiss(toastId)

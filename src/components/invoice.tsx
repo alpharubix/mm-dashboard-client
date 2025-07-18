@@ -32,13 +32,13 @@ import {
   TableHeader,
   TableRow,
 } from './ui/table'
-import type { OutputUTRType } from '../types'
+import type { InvoiceType } from '../types'
 import { Card, CardContent } from './ui/card'
 import { Label } from './ui/label'
 import useDebounce from '../hooks/use-debounce'
 import { useApiQuery } from '../api/hooks'
 
-export default function OutputUTR() {
+export default function Invoice() {
   const [file, setFile] = useState<File | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const user = getUserFromToken()
@@ -166,7 +166,7 @@ export default function OutputUTR() {
   return (
     <>
       <Card>
-        <div className='flex items-center justify-between flex-wrap px-4 gap-2'>
+        <div className='flex items-center justify-between flex-wrap px-6 gap-2'>
           <div className='space-y-2'>
             <Label
               htmlFor='company-name'
@@ -240,7 +240,7 @@ export default function OutputUTR() {
               }
               defaultValue='all'
             >
-              <SelectTrigger className='h-10'>
+              <SelectTrigger className='h-10 min-w-48'>
                 <SelectValue placeholder='Select status' />
               </SelectTrigger>
               <SelectContent>
@@ -261,7 +261,7 @@ export default function OutputUTR() {
 
           <div className='space-y-2'>
             <Label className='text-sm font-medium text-gray-700'>
-              Date Range
+              Invioce Date Range
             </Label>
             <DatePickerWithRange
               date={filters.date}
@@ -273,8 +273,19 @@ export default function OutputUTR() {
               }
             />
           </div>
-
           <div className='space-y-2'>
+            <Button
+              onClick={() => handleExport(queryParams)}
+              variant='outline'
+              size='sm'
+              className='h-10 w-full cursor-pointer mt-6'
+            >
+              <FileDown className='h-4 w-4 mr-1' />
+              Export
+            </Button>
+          </div>
+
+          {/* <div className='space-y-2'>
             <Label className='text-sm font-medium text-gray-700 opacity-0'>
               Clear
             </Label>
@@ -286,12 +297,12 @@ export default function OutputUTR() {
             >
               Clear
             </Button>
-          </div>
+          </div> */}
         </div>
 
         {/* File Upload */}
         {user?.role === 'superAdmin' && (
-          <div className='flex  items-center justify-between mx-5 gap-2 flex-wrap'>
+          <div className='flex items-center mx-5 gap-6 flex-wrap'>
             <div className='space-y-2 max-w-lg'>
               <Label className='text-sm font-medium text-gray-700'>
                 Upload File
@@ -317,18 +328,6 @@ export default function OutputUTR() {
                   </div>
                 )}
               </div>
-            </div>
-
-            <div className='space-y-2'>
-              <Button
-                onClick={handleExport}
-                variant='outline'
-                size='sm'
-                className='h-10 w-full'
-              >
-                <FileDown className='h-4 w-4 mr-1' />
-                Export
-              </Button>
             </div>
           </div>
         )}
@@ -423,7 +422,7 @@ export default function OutputUTR() {
                         </TableCell>
                       </TableRow>
                     ))
-                  : data?.data?.map((item: OutputUTRType, idx: number) => (
+                  : data?.data?.map((item: InvoiceType, idx: number) => (
                       <TableRow className='font-semibold' key={item._id}>
                         <TableCell>{idx + 1}</TableCell>
                         <TableCell>{item.companyName}</TableCell>
