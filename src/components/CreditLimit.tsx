@@ -72,7 +72,7 @@ export default function CreditLimit() {
 
     try {
       const res = await axios.post(
-        `${ENV.BACKEND_URL}/output-limit-upload`,
+        `${ENV.BACKEND_URL}/credit-limit-upload`,
         form,
         {
           headers: { 'Content-Type': 'multipart/form-data' },
