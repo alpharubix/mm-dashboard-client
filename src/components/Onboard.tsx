@@ -167,56 +167,54 @@ export default function Onboard() {
             className='text-red-600 hover:text-red-700 hover:bg-red-50 cursor-pointer mb-px'
           >
             Clear
-          </Button> */}
-        </div>
+            </Button> */}
 
-        {user?.role === 'superAdmin' && (
-          <div className='flex items-center mx-6 gap-4 flex-wrap'>
-            <div className='space-y-2 max-w-lg'>
-              <Label className='text-sm font-medium text-gray-700'>
-                Upload File
-              </Label>
-              <div className='flex gap-4 items-center'>
-                <InputFile
-                  onChange={handleFileChange}
-                  ref={inputRef}
-                  file={file}
-                />
-                {file && (
-                  <div className='flex gap-2'>
-                    <Button onClick={handleUpload} disabled={!file}>
-                      Upload CSV
-                    </Button>
-                    <Button
-                      onClick={handleCancel}
-                      variant='ghost'
-                      className='text-red-500'
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                )}
+          {user?.role === 'superAdmin' && (
+            <div className='flex items-center gap-4 flex-wrap'>
+              <div className='space-y-2 max-w-lg'>
+                <Label className='text-sm font-medium text-gray-700'>
+                  Upload File
+                </Label>
+                <div className='flex gap-4 items-center'>
+                  <InputFile
+                    onChange={handleFileChange}
+                    ref={inputRef}
+                    file={file}
+                  />
+                  {file && (
+                    <div className='flex gap-2'>
+                      <Button onClick={handleUpload} disabled={!file}>
+                        Upload CSV
+                      </Button>
+                      <Button
+                        onClick={handleCancel}
+                        variant='ghost'
+                        className='text-red-500'
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        )}
-
-        <CardContent>
+          )}
+        </div>
+        <span className='text-sm italic text-gray-500 ml-6 inline'>
+          {data?.total ? `Total - ${data?.total}` : null}
+        </span>
+        <CardContent className=''>
           <Table className='text-base whitespace-nowrap'>
             <TableHeader>
               <TableRow className='bg-gray-50'>
-                <TableHead className='font-semibold'>S.No</TableHead>
-                <TableHead className='font-semibold'>Company Name</TableHead>
-                <TableHead className='font-semibold'>
-                  Distributor Code
-                </TableHead>
-                <TableHead className='font-semibold'>Lender</TableHead>
-                <TableHead className='font-semibold'>Sanction Limit</TableHead>
-                <TableHead className='font-semibold'>Limit Live Date</TableHead>
-                <TableHead className='font-semibold'>
-                  Limit Expiry Date
-                </TableHead>
-                <TableHead className='font-semibold'>Status</TableHead>
+                <TableHead className='font-bold'>S.No</TableHead>
+                <TableHead className='font-bold'>Company Name</TableHead>
+                <TableHead className='font-bold'>Distributor Code</TableHead>
+                <TableHead className='font-bold'>Lender</TableHead>
+                <TableHead className='font-bold'>Sanction Limit</TableHead>
+                <TableHead className='font-bold'>Limit Live Date</TableHead>
+                <TableHead className='font-bold'>Limit Expiry Date</TableHead>
+                <TableHead className='font-bold'>Status</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -250,12 +248,12 @@ export default function Onboard() {
                     </TableRow>
                   ))
                 : data.data.map((row: OnboardType, idx: number) => (
-                    <TableRow key={row._id} className='font-semibold'>
+                    <TableRow key={row._id} className=''>
                       <TableCell>{idx + 1}</TableCell>
                       <TableCell>{row.companyName}</TableCell>
                       <TableCell>{row.distributorCode}</TableCell>
                       <TableCell>{row.lender}</TableCell>
-                      <TableCell className='font-mono'>
+                      <TableCell className=''>
                         {formatAmount(row.sanctionLimit)}
                       </TableCell>
                       <TableCell>

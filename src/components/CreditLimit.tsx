@@ -160,38 +160,40 @@ export default function CreditLimit() {
           >
             Clear
           </Button> */}
-        </div>
-        {user?.role === 'superAdmin' && (
-          <div className='flex items-center mx-6 gap-4 flex-wrap'>
-            <div className='space-y-2 max-w-lg'>
-              <Label className='text-sm font-medium text-gray-700'>
-                Upload File
-              </Label>
-              <div className='flex gap-4 items-center'>
-                <InputFile
-                  onChange={handleFileChange}
-                  ref={inputRef}
-                  file={file}
-                />
-                {file && (
-                  <div className='flex gap-2'>
-                    <Button onClick={handleUpload} disabled={!file}>
-                      Upload CSV
-                    </Button>
-                    <Button
-                      onClick={handleCancel}
-                      variant='ghost'
-                      className='text-red-500'
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                )}
+          {user?.role === 'superAdmin' && (
+            <div className='flex items-center gap-4 flex-wrap'>
+              <div className='space-y-2 max-w-lg'>
+                <Label className='text-sm font-medium text-gray-700'>
+                  Upload File
+                </Label>
+                <div className='flex gap-4 items-center'>
+                  <InputFile
+                    onChange={handleFileChange}
+                    ref={inputRef}
+                    file={file}
+                  />
+                  {file && (
+                    <div className='flex gap-2'>
+                      <Button onClick={handleUpload} disabled={!file}>
+                        Upload CSV
+                      </Button>
+                      <Button
+                        onClick={handleCancel}
+                        variant='ghost'
+                        className='text-red-500'
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        )}
-
+          )}
+        </div>
+        <span className='text-sm italic text-gray-500 ml-6 inline'>
+          {data?.total ? `Total - ${data?.total}` : null}
+        </span>
         <CardContent>
           <Table className='text-base whitespace-nowrap'>
             <TableHeader>
@@ -211,7 +213,7 @@ export default function CreditLimit() {
                   'Limit Expiry Date',
                   'Billing Status',
                 ].map((h) => (
-                  <TableHead className='font-semibold' key={h}>
+                  <TableHead className='font-bold' key={h}>
                     {h}
                   </TableHead>
                 ))}
@@ -231,26 +233,26 @@ export default function CreditLimit() {
                     </TableRow>
                   ))
                 : data?.data?.map((item: CreditLimitType, idx: number) => (
-                    <TableRow className='font-semibold' key={item._id}>
+                    <TableRow className='' key={item._id}>
                       <TableCell>{idx + 1}</TableCell>
                       <TableCell>{item.companyName}</TableCell>
                       <TableCell>{item.distributorCode}</TableCell>
                       <TableCell>{item.city}</TableCell>
                       <TableCell>{item.state}</TableCell>
                       <TableCell>{item.lender}</TableCell>
-                      <TableCell className='font-mono'>
+                      <TableCell className=''>
                         {formatAmount(item.sanctionLimit)}
                       </TableCell>
-                      <TableCell className='font-mono'>
+                      <TableCell className=''>
                         {formatAmount(item.operativeLimit)}
                       </TableCell>
-                      <TableCell className='font-mono'>
+                      <TableCell className=''>
                         {formatAmount(item.utilisedLimit)}
                       </TableCell>
-                      <TableCell className='font-mono'>
+                      <TableCell className=''>
                         {formatAmount(item.availableLimit)}
                       </TableCell>
-                      <TableCell className='font-mono'>
+                      <TableCell className=''>
                         {formatAmount(item.overdue)}
                       </TableCell>
                       <TableCell>
