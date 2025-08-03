@@ -5,8 +5,7 @@ export default function RootRedirect() {
   const user = getUserFromToken()
   if (!user) return <Navigate to='/login' replace />
 
-  const defaultRoute =
-    user?.role === 'viewer' ? '/viewer' : '/onboard-notification'
+  const defaultRoute = user?.role === 'viewer' ? '/viewer' : '/onboard-customer'
 
   return <Navigate to={defaultRoute} replace />
 }

@@ -92,12 +92,16 @@ export default function Users() {
         <CardContent>
           <Table className='text-base whitespace-nowrap'>
             <TableHeader>
-              <TableRow className='bg-gray-50'>
-                <TableHead>S.No</TableHead>
-                <TableHead>Company Name</TableHead>
-                <TableHead>Who</TableHead>
-                <TableHead>Company ID</TableHead>
-                <TableHead>Role</TableHead>
+              <TableRow className='bg-gray-50 '>
+                <TableHead className='font-bold text-gray-700'>S.No</TableHead>
+                <TableHead className='font-bold text-gray-700'>
+                  Company Name
+                </TableHead>
+                <TableHead className='font-bold text-gray-700'>Who</TableHead>
+                <TableHead className='font-bold text-gray-700'>
+                  Company ID
+                </TableHead>
+                <TableHead className='font-bold text-gray-700'>Role</TableHead>
                 {/* <TableHead>Change Role</TableHead> */}
               </TableRow>
             </TableHeader>
@@ -126,7 +130,7 @@ export default function Users() {
                     </TableRow>
                   ))
                 : data?.map((u: UserType, idx: number) => (
-                    <TableRow key={u._id} className='font-semibold'>
+                    <TableRow key={u._id} className=''>
                       <TableCell>{idx + 1}</TableCell>
                       <TableCell>{u.companyName}</TableCell>
                       <TableCell>

@@ -4,11 +4,11 @@ export const ENV = {
 
 export const PERMISSIONS = {
   superAdmin: {
-    routes: ['onboard-notification', 'credit-limit', 'invoice-utr', 'users'],
+    routes: ['onboard-customer', 'credit-limit', 'invoice-utr', 'users'],
     actions: ['create', 'edit', 'delete', 'view', 'upload', 'download'],
   },
   admin: {
-    routes: ['onboard-notification', 'credit-limit', 'invoice-utr'],
+    routes: ['onboard-customer', 'credit-limit', 'invoice-utr'],
     actions: ['view', 'download'],
   },
   viewer: {

@@ -10,9 +10,9 @@ const NotFound = lazy(() => import('./pages/NotFound'))
 const Viewer = lazy(() => import('./pages/Viewer'))
 const Users = lazy(() => import('./pages/Users'))
 
-const Onboard = lazy(() => import('./components/Onboard'))
-const CreditLimit = lazy(() => import('./components/CreditLimit'))
-const Invoice = lazy(() => import('./components/invoice'))
+const Onboard = lazy(() => import('./pages/Onboard'))
+const CreditLimit = lazy(() => import('./pages/CreditLimit'))
+const Invoice = lazy(() => import('./pages/invoice'))
 const ProtectedRoute = lazy(() => import('./components/ProtectedRoute'))
 const RootRedirect = lazy(() => import('./components/RootRedirect'))
 
@@ -64,7 +64,7 @@ export default function App() {
             }
           />
 
-          <Route path='onboard-notification' element={<Onboard />} />
+          <Route path='onboard-customer' element={<Onboard />} />
           <Route path='*' element={<NotFound />} />
         </Route>
       </Routes>

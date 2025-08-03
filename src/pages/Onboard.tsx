@@ -4,15 +4,14 @@ import { toast } from 'sonner'
 import { ENV } from '../conf'
 import {
   camelCaseToWords,
-  cn,
   formatAmount,
   formatDate,
   getUserFromToken,
 } from '../lib/utils'
-import { Button } from './ui/button'
-import { InputFile } from './ui/file-input'
-import { Input } from './ui/input'
-import { Skeleton } from './ui/skeleton'
+import { Button } from '../components/ui/button'
+import { InputFile } from '../components/ui/file-input'
+import { Input } from '../components/ui/input'
+import { Skeleton } from '../components/ui/skeleton'
 import {
   Table,
   TableBody,
@@ -20,25 +19,27 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from './ui/table'
-import type { CreditLimitType } from '../types'
-import { Card, CardContent } from './ui/card'
+} from '../components/ui/table'
+import type { OnboardType } from '../types'
+import { Card, CardContent } from '../components/ui/card'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { Label } from './ui/label'
-import useDebounce from '../hooks/use-debounce'
+import { Label } from '../components/ui/label'
 import { useApiQuery } from '../api/hooks'
+import useDebounce from '../hooks/use-debounce'
 
-export default function CreditLimit() {
-  const [page, setPage] = useState(1)
+export default function Onboard() {
+  const [file, setFile] = useState<File | null>(null)
   const [filters, setFilters] = useState({
     companyName: '',
     distributorCode: '',
   })
-  const [file, setFile] = useState<File | null>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
+  const [page, setPage] = useState(1)
+
   const user = getUserFromToken()
+  const inputRef = useRef<HTMLInputElement>(null)
   const debouncedFilters = useDebounce(filters, 500)
 
+  // Memoized query params
   const queryParams = useMemo(() => {
     const params: any = { page, limit: 10 }
     if (debouncedFilters.companyName)
@@ -49,7 +50,7 @@ export default function CreditLimit() {
   }, [debouncedFilters, page])
 
   const { data, isPending, error, refetch } = useApiQuery(
-    '/credit-limit',
+    '/onboard',
     queryParams
   )
   const totalPages = data?.totalPages || 1
@@ -60,20 +61,28 @@ export default function CreditLimit() {
       </div>
     )
   }
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.[0]) setFile(e.target.files[0])
+    if (e.target.files?.[0]) {
+      setFile(e.target.files[0])
+    }
+  }
+
+  const handleCancel = () => {
+    setFile(null)
+    if (inputRef.current) inputRef.current.value = ''
   }
 
   const handleUpload = async () => {
     if (!file) return
 
-    const form = new FormData()
-    form.append('csvfile', file)
+    const formData = new FormData()
+    formData.append('csvfile', file)
 
     try {
       const res = await axios.post(
-        `${ENV.BACKEND_URL}/credit-limit-upload`,
-        form,
+        `${ENV.BACKEND_URL}/onboard-upload`,
+        formData,
         {
           headers: { 'Content-Type': 'multipart/form-data' },
         }
@@ -81,10 +90,10 @@ export default function CreditLimit() {
 
       toast.success(res.data.message || 'Upload successful')
 
+      // fetchData()
+      refetch()
       setFile(null)
       if (inputRef.current) inputRef.current.value = ''
-      setPage(1)
-      refetch()
     } catch (err) {
       // @ts-ignore
       const { message, duplicates } = err.response?.data || {}
@@ -92,18 +101,13 @@ export default function CreditLimit() {
       const duplicateInfo = duplicates?.length
         ? ` (${duplicates.join(', ')})`
         : ''
-
       toast.error(
         // @ts-ignore
-        `${message || `Upload failed ${message}`}${duplicateInfo}`
+        `${message || `Upload failed ${err.message}`}${duplicateInfo}`
       )
-      console.error(err)
-    }
-  }
 
-  const handleCancel = () => {
-    setFile(null)
-    if (inputRef.current) inputRef.current.value = ''
+      console.error('Upload failed', err)
+    }
   }
 
   const handleClearFilter = () => {
@@ -118,7 +122,7 @@ export default function CreditLimit() {
   return (
     <>
       <Card>
-        <div className='flex flex-wrap gap-6 max-w-5xl items-end px-6'>
+        <div className='flex gap-6 flex-wrap max-w-5xl items-end px-6'>
           <div className='flex items-start flex-col gap-2'>
             <Label
               htmlFor='company-name'
@@ -131,7 +135,9 @@ export default function CreditLimit() {
               placeholder='Example company'
               value={filters.companyName}
               onChange={(e) =>
-                setFilters((f) => ({ ...f, companyName: e.target.value }))
+                setFilters((f) => {
+                  return { ...f, companyName: e.target.value }
+                })
               }
               className='border py-5 text-base'
             />
@@ -148,7 +154,9 @@ export default function CreditLimit() {
               placeholder='ex: 123456'
               value={filters.distributorCode}
               onChange={(e) =>
-                setFilters((f) => ({ ...f, distributorCode: e.target.value }))
+                setFilters((f) => {
+                  return { ...f, distributorCode: e.target.value }
+                })
               }
               className='border py-5 text-base'
             />
@@ -159,7 +167,8 @@ export default function CreditLimit() {
             className='text-red-600 hover:text-red-700 hover:bg-red-50 cursor-pointer mb-px'
           >
             Clear
-          </Button> */}
+            </Button> */}
+
           {user?.role === 'superAdmin' && (
             <div className='flex items-center gap-4 flex-wrap'>
               <div className='space-y-2 max-w-lg'>
@@ -194,95 +203,101 @@ export default function CreditLimit() {
         <span className='text-sm italic text-gray-500 ml-6 inline'>
           {data?.total ? `Total - ${data?.total}` : null}
         </span>
-        <CardContent>
+        <CardContent className=''>
           <Table className='text-base whitespace-nowrap'>
             <TableHeader>
-              <TableRow className='bg-gray-50'>
-                {[
-                  'S.No',
-                  'Company Name',
-                  'Distributor Code',
-                  'City',
-                  'State',
-                  'Lender',
-                  'Sanction Limit',
-                  'Operative Limit',
-                  'Utilised Limit',
-                  'Available Limit',
-                  'Overdue',
-                  'Limit Expiry Date',
-                  'Billing Status',
-                ].map((h) => (
-                  <TableHead className='font-bold' key={h}>
-                    {h}
-                  </TableHead>
-                ))}
+              <TableRow className='bg-gray-50 '>
+                <TableHead className='font-bold text-gray-700'>
+                  Company Name
+                </TableHead>
+                <TableHead className='font-bold text-gray-700'>
+                  Distributor Code
+                </TableHead>
+                <TableHead className='font-bold text-gray-700'>
+                  Lender
+                </TableHead>
+                <TableHead className='font-bold text-gray-700'>
+                  Sanction Limit
+                </TableHead>
+                <TableHead className='font-bold text-gray-700'>
+                  Limit Live Date
+                </TableHead>
+                <TableHead className='font-bold text-gray-700'>
+                  Limit Expiry Date
+                </TableHead>
+                <TableHead className='font-bold text-gray-700'>
+                  Status
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {isPending
                 ? Array.from({ length: 10 }).map((_, i) => (
                     <TableRow key={i}>
-                      {Array(13)
-                        .fill(0)
-                        .map((_, j) => (
-                          <TableCell key={j}>
-                            <Skeleton className='h-4 w-16' />
-                          </TableCell>
-                        ))}
-                    </TableRow>
-                  ))
-                : data?.data?.map((item: CreditLimitType, idx: number) => (
-                    <TableRow className='' key={item._id}>
-                      <TableCell>{idx + 1}</TableCell>
-                      <TableCell>{item.companyName}</TableCell>
-                      <TableCell>{item.distributorCode}</TableCell>
-                      <TableCell>{item.city}</TableCell>
-                      <TableCell>{item.state}</TableCell>
-                      <TableCell>{item.lender}</TableCell>
-                      <TableCell className=''>
-                        {formatAmount(item.sanctionLimit)}
-                      </TableCell>
-                      <TableCell className=''>
-                        {formatAmount(item.operativeLimit)}
-                      </TableCell>
-                      <TableCell className=''>
-                        {formatAmount(item.utilisedLimit)}
-                      </TableCell>
-                      <TableCell className=''>
-                        {formatAmount(item.availableLimit)}
-                      </TableCell>
-                      <TableCell className=''>
-                        {formatAmount(item.overdue)}
+                      <TableCell>
+                        <Skeleton className='h-5 w-32' />
                       </TableCell>
                       <TableCell>
-                        {item.limitExpiryDate
-                          ? formatDate(item.limitExpiryDate)
+                        <Skeleton className='h-5 w-24' />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className='h-5 w-20' />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className='h-5 w-16' />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className='h-5 w-24' />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className='h-5 w-24' />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className='h-5 w-24' />
+                      </TableCell>
+                    </TableRow>
+                  ))
+                : data.data.map((row: OnboardType, idx: number) => (
+                    <TableRow key={row._id} className=''>
+                      <TableCell>{row.companyName}</TableCell>
+                      <TableCell>{row.distributorCode}</TableCell>
+                      <TableCell>{row.lender}</TableCell>
+                      <TableCell className=''>
+                        {formatAmount(row.sanctionLimit)}
+                      </TableCell>
+                      <TableCell>
+                        {row.limitLiveDate
+                          ? formatDate(row.limitLiveDate)
+                          : null}
+                      </TableCell>
+                      <TableCell>
+                        {row.limitExpiryDate
+                          ? formatDate(row.limitExpiryDate)
                           : null}
                       </TableCell>
                       <TableCell
-                        className={cn(
-                          `${
-                            item.billingStatus.toLowerCase() === 'positive'
-                              ? 'text-green-500'
-                              : 'text-orange-500'
-                          }`
-                        )}
+                        className={
+                          row.status === 'active'
+                            ? 'text-green-500'
+                            : 'text-orange-500'
+                        }
                       >
-                        {camelCaseToWords(item.billingStatus)}
+                        {camelCaseToWords(row.status)}
                       </TableCell>
                     </TableRow>
                   ))}
             </TableBody>
           </Table>
+
           {data?.data?.length !== 0 ? (
             <>
-              <div className='mt-4 flex justify-center gap-4 items-center'>
+              <div className='pt-4 flex justify-center gap-4 items-center'>
                 <Button
                   onClick={() => setPage((p) => Math.max(p - 1, 1))}
                   disabled={page === 1}
                   className='cursor-pointer text-2xl'
                   variant={'outline'}
+                  size={'sm'}
                 >
                   <ChevronLeft className='h-4 w-4' />
                 </Button>

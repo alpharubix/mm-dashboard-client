@@ -12,18 +12,18 @@ import {
   getUserFromToken,
   handleExport,
 } from '../lib/utils'
-import { Button } from './ui/button'
-import { DatePickerWithRange } from './ui/DatePicker'
-import { InputFile } from './ui/file-input'
-import { Input } from './ui/input'
+import { Button } from '../components/ui/button'
+import { DatePickerWithRange } from '../components/ui/DatePicker'
+import { InputFile } from '../components/ui/file-input'
+import { Input } from '../components/ui/input'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from './ui/select'
-import { Skeleton } from './ui/skeleton'
+} from '../components/ui/select'
+import { Skeleton } from '../components/ui/skeleton'
 import {
   Table,
   TableBody,
@@ -31,12 +31,14 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from './ui/table'
-import type { InvoiceType } from '../types'
-import { Card, CardContent } from './ui/card'
-import { Label } from './ui/label'
+} from '../components/ui/table'
+import { Card, CardContent } from '../components/ui/card'
+import { Label } from '../components/ui/label'
+
 import useDebounce from '../hooks/use-debounce'
 import { useApiQuery } from '../api/hooks'
+
+import type { InvoiceType } from '../types'
 
 export default function Invoice() {
   const [file, setFile] = useState<File | null>(null)
@@ -339,27 +341,52 @@ export default function Invoice() {
             <Table className='text-base whitespace-nowrap'>
               <TableHeader>
                 <TableRow className='bg-gray-50'>
-                  <TableHead className='font-bold'>S.No</TableHead>
-                  <TableHead className='font-bold'>Company Name</TableHead>
-                  <TableHead className='font-bold'>Distributor Code</TableHead>
-                  <TableHead className='font-bold '>Beneficiary Name</TableHead>
-                  <TableHead className='font-bold '>
+                  <TableHead className='font-bold  text-gray-700'>
+                    Company Name
+                  </TableHead>
+                  <TableHead className='font-bold  text-gray-700'>
+                    Distributor Code
+                  </TableHead>
+                  <TableHead className='font-bold  text-gray-700 '>
+                    Beneficiary Name
+                  </TableHead>
+                  <TableHead className='font-bold  text-gray-700 '>
                     Beneficiary Acc No
                   </TableHead>
-                  <TableHead className='font-bold '>Bank Name</TableHead>
-                  <TableHead className='font-bold '>IFSC Code</TableHead>
-                  <TableHead className='font-bold '>Branch</TableHead>
-                  <TableHead className='font-bold '>Invoice Number</TableHead>
-                  <TableHead className='font-bold '>Invoice Amount</TableHead>
-                  <TableHead className='font-bold '>Invoice Date</TableHead>
-                  <TableHead className='font-bold '>Loan Amount</TableHead>
-                  <TableHead className='font-bold '>
+                  <TableHead className='font-bold  text-gray-700 '>
+                    Bank Name
+                  </TableHead>
+                  <TableHead className='font-bold  text-gray-700 '>
+                    IFSC Code
+                  </TableHead>
+                  <TableHead className='font-bold  text-gray-700 '>
+                    Branch
+                  </TableHead>
+                  <TableHead className='font-bold  text-gray-700 '>
+                    Invoice Number
+                  </TableHead>
+                  <TableHead className='font-bold  text-gray-700 '>
+                    Invoice Amount
+                  </TableHead>
+                  <TableHead className='font-bold  text-gray-700 '>
+                    Invoice Date
+                  </TableHead>
+                  <TableHead className='font-bold  text-gray-700 '>
+                    Loan Amount
+                  </TableHead>
+                  <TableHead className='font-bold  text-gray-700 '>
                     Loan Disbursement Date
                   </TableHead>
-                  <TableHead className='font-bold '>UTR</TableHead>
-                  <TableHead className='font-bold '>Status</TableHead>
+                  <TableHead className='font-bold  text-gray-700 '>
+                    UTR
+                  </TableHead>
+                  <TableHead className='font-bold  text-gray-700 '>
+                    Status
+                  </TableHead>
                   {user?.role === 'superAdmin' && (
-                    <TableHead className='font-bold '>Invoice File</TableHead>
+                    <TableHead className='font-bold  text-gray-700 '>
+                      Invoice File
+                    </TableHead>
                   )}
                 </TableRow>
               </TableHeader>
@@ -414,9 +441,8 @@ export default function Invoice() {
                         </TableCell>
                       </TableRow>
                     ))
-                  : data?.data?.map((item: InvoiceType, idx: number) => (
+                  : data?.data?.map((item: InvoiceType) => (
                       <TableRow className='' key={item._id}>
-                        <TableCell>{idx + 1}</TableCell>
                         <TableCell>{item.companyName}</TableCell>
                         <TableCell>{item.distributorCode}</TableCell>
                         <TableCell>{item.beneficiaryName}</TableCell>
