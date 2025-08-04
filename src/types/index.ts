@@ -1,6 +1,5 @@
 export type OnboardType = {
   _id: string
-  sno: number
   companyName: string
   distributorCode: string
   lender: string
@@ -23,7 +22,6 @@ export type OnboardResponse = {
 
 export type CreditLimitType = {
   _id: string
-  sno: number
   companyName: string
   distributorCode: string
   city: string
@@ -33,6 +31,9 @@ export type CreditLimitType = {
   operativeLimit: number
   utilisedLimit: number
   availableLimit: number
+  pendingInvoices: number
+  currentAvailable: number
+  fundingType: string
   overdue: number
   limitExpiryDate: string
   billingStatus: string

@@ -8,10 +8,10 @@ import {
   formatDate,
   getUserFromToken,
 } from '../lib/utils'
-import { Button } from './ui/button'
-import { InputFile } from './ui/file-input'
-import { Input } from './ui/input'
-import { Skeleton } from './ui/skeleton'
+import { Button } from '../components/ui/button'
+import { InputFile } from '../components/ui/file-input'
+import { Input } from '../components/ui/input'
+import { Skeleton } from '../components/ui/skeleton'
 import {
   Table,
   TableBody,
@@ -19,11 +19,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from './ui/table'
+} from '../components/ui/table'
 import type { OnboardType } from '../types'
-import { Card, CardContent } from './ui/card'
+import { Card, CardContent } from '../components/ui/card'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { Label } from './ui/label'
+import { Label } from '../components/ui/label'
 import { useApiQuery } from '../api/hooks'
 import useDebounce from '../hooks/use-debounce'
 
@@ -167,56 +167,67 @@ export default function Onboard() {
             className='text-red-600 hover:text-red-700 hover:bg-red-50 cursor-pointer mb-px'
           >
             Clear
-          </Button> */}
-        </div>
+            </Button> */}
 
-        {user?.role === 'superAdmin' && (
-          <div className='flex items-center mx-6 gap-4 flex-wrap'>
-            <div className='space-y-2 max-w-lg'>
-              <Label className='text-sm font-medium text-gray-700'>
-                Upload File
-              </Label>
-              <div className='flex gap-4 items-center'>
-                <InputFile
-                  onChange={handleFileChange}
-                  ref={inputRef}
-                  file={file}
-                />
-                {file && (
-                  <div className='flex gap-2'>
-                    <Button onClick={handleUpload} disabled={!file}>
-                      Upload CSV
-                    </Button>
-                    <Button
-                      onClick={handleCancel}
-                      variant='ghost'
-                      className='text-red-500'
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                )}
+          {user?.role === 'superAdmin' && (
+            <div className='flex items-center gap-4 flex-wrap'>
+              <div className='space-y-2 max-w-lg'>
+                <Label className='text-sm font-medium text-gray-700'>
+                  Upload File
+                </Label>
+                <div className='flex gap-4 items-center'>
+                  <InputFile
+                    onChange={handleFileChange}
+                    ref={inputRef}
+                    file={file}
+                  />
+                  {file && (
+                    <div className='flex gap-2'>
+                      <Button onClick={handleUpload} disabled={!file}>
+                        Upload CSV
+                      </Button>
+                      <Button
+                        onClick={handleCancel}
+                        variant='ghost'
+                        className='text-red-500'
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        )}
-
-        <CardContent>
+          )}
+        </div>
+        <span className='text-sm italic text-gray-500 ml-6 inline'>
+          {data?.total ? `Total - ${data?.total}` : null}
+        </span>
+        <CardContent className=''>
           <Table className='text-base whitespace-nowrap'>
             <TableHeader>
-              <TableRow className='bg-gray-50'>
-                <TableHead className='font-semibold'>S.No</TableHead>
-                <TableHead className='font-semibold'>Company Name</TableHead>
-                <TableHead className='font-semibold'>
+              <TableRow className='bg-gray-50 '>
+                <TableHead className='font-bold text-gray-700'>
+                  Company Name
+                </TableHead>
+                <TableHead className='font-bold text-gray-700'>
                   Distributor Code
                 </TableHead>
-                <TableHead className='font-semibold'>Lender</TableHead>
-                <TableHead className='font-semibold'>Sanction Limit</TableHead>
-                <TableHead className='font-semibold'>Limit Live Date</TableHead>
-                <TableHead className='font-semibold'>
+                <TableHead className='font-bold text-gray-700'>
+                  Lender
+                </TableHead>
+                <TableHead className='font-bold text-gray-700'>
+                  Sanction Limit
+                </TableHead>
+                <TableHead className='font-bold text-gray-700'>
+                  Limit Live Date
+                </TableHead>
+                <TableHead className='font-bold text-gray-700'>
                   Limit Expiry Date
                 </TableHead>
-                <TableHead className='font-semibold'>Status</TableHead>
+                <TableHead className='font-bold text-gray-700'>
+                  Status
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -224,38 +235,34 @@ export default function Onboard() {
                 ? Array.from({ length: 10 }).map((_, i) => (
                     <TableRow key={i}>
                       <TableCell>
-                        <Skeleton className='h-4 w-6' />
+                        <Skeleton className='h-5 w-32' />
                       </TableCell>
                       <TableCell>
-                        <Skeleton className='h-4 w-32' />
+                        <Skeleton className='h-5 w-24' />
                       </TableCell>
                       <TableCell>
-                        <Skeleton className='h-4 w-24' />
+                        <Skeleton className='h-5 w-20' />
                       </TableCell>
                       <TableCell>
-                        <Skeleton className='h-4 w-20' />
+                        <Skeleton className='h-5 w-16' />
                       </TableCell>
                       <TableCell>
-                        <Skeleton className='h-4 w-16' />
+                        <Skeleton className='h-5 w-24' />
                       </TableCell>
                       <TableCell>
-                        <Skeleton className='h-4 w-24' />
+                        <Skeleton className='h-5 w-24' />
                       </TableCell>
                       <TableCell>
-                        <Skeleton className='h-4 w-24' />
-                      </TableCell>
-                      <TableCell>
-                        <Skeleton className='h-4 w-24' />
+                        <Skeleton className='h-5 w-24' />
                       </TableCell>
                     </TableRow>
                   ))
                 : data.data.map((row: OnboardType, idx: number) => (
-                    <TableRow key={row._id} className='font-semibold'>
-                      <TableCell>{idx + 1}</TableCell>
+                    <TableRow key={row._id} className=''>
                       <TableCell>{row.companyName}</TableCell>
                       <TableCell>{row.distributorCode}</TableCell>
                       <TableCell>{row.lender}</TableCell>
-                      <TableCell className='font-mono'>
+                      <TableCell className=''>
                         {formatAmount(row.sanctionLimit)}
                       </TableCell>
                       <TableCell>

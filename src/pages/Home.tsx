@@ -7,7 +7,7 @@ export default function Home() {
   const { hasRouteAccess } = usePermissions()
 
   const allTabs = [
-    { to: 'onboard-notification', label: 'Onboard Notification' },
+    { to: 'onboard-customer', label: 'Onboard Customer' },
     { to: 'credit-limit', label: 'Credit Limit' },
     { to: 'invoice-utr', label: 'Invoice UTR' },
     { to: 'users', label: 'Users' },

@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { format } from 'date-fns'
-import { ChevronLeft, ChevronRight, FileDown } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Download, FileDown } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { DateRange } from 'react-day-picker'
 import { toast } from 'sonner'
@@ -12,18 +12,18 @@ import {
   getUserFromToken,
   handleExport,
 } from '../lib/utils'
-import { Button } from './ui/button'
-import { DatePickerWithRange } from './ui/DatePicker'
-import { InputFile } from './ui/file-input'
-import { Input } from './ui/input'
+import { Button } from '../components/ui/button'
+import { DatePickerWithRange } from '../components/ui/DatePicker'
+import { InputFile } from '../components/ui/file-input'
+import { Input } from '../components/ui/input'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from './ui/select'
-import { Skeleton } from './ui/skeleton'
+} from '../components/ui/select'
+import { Skeleton } from '../components/ui/skeleton'
 import {
   Table,
   TableBody,
@@ -31,12 +31,14 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from './ui/table'
-import type { InvoiceType } from '../types'
-import { Card, CardContent } from './ui/card'
-import { Label } from './ui/label'
+} from '../components/ui/table'
+import { Card, CardContent } from '../components/ui/card'
+import { Label } from '../components/ui/label'
+
 import useDebounce from '../hooks/use-debounce'
 import { useApiQuery } from '../api/hooks'
+
+import type { InvoiceType } from '../types'
 
 export default function Invoice() {
   const [file, setFile] = useState<File | null>(null)
@@ -278,9 +280,9 @@ export default function Invoice() {
               onClick={() => handleExport(queryParams)}
               variant='outline'
               size='sm'
-              className='h-10 w-full cursor-pointer mt-6'
+              className='h-10 w-full cursor-pointer mt-6 font-normal text-sm text-gray-600'
             >
-              <FileDown className='h-4 w-4 mr-1' />
+              <Download className='h-4 w-4 mr-1' />
               Export
             </Button>
           </div>
@@ -331,41 +333,58 @@ export default function Invoice() {
             </div>
           </div>
         )}
-
+        <span className='text-sm italic text-gray-500 ml-6 inline'>
+          {data?.total ? `Total - ${data?.total}` : null}
+        </span>
         <CardContent>
           <div className='overflow-x-auto'>
             <Table className='text-base whitespace-nowrap'>
               <TableHeader>
                 <TableRow className='bg-gray-50'>
-                  <TableHead className='font-semibold '>S.No</TableHead>
-                  <TableHead className='font-semibold '>Company Name</TableHead>
-                  <TableHead className='font-semibold '>
+                  <TableHead className='font-bold  text-gray-700'>
+                    Company Name
+                  </TableHead>
+                  <TableHead className='font-bold  text-gray-700'>
                     Distributor Code
                   </TableHead>
-                  <TableHead className='font-semibold '>
+                  <TableHead className='font-bold  text-gray-700 '>
                     Beneficiary Name
                   </TableHead>
-                  <TableHead className='font-semibold '>
+                  <TableHead className='font-bold  text-gray-700 '>
                     Beneficiary Acc No
                   </TableHead>
-                  <TableHead className='font-semibold '>Bank Name</TableHead>
-                  <TableHead className='font-semibold '>IFSC Code</TableHead>
-                  <TableHead className='font-semibold '>Branch</TableHead>
-                  <TableHead className='font-semibold '>
+                  <TableHead className='font-bold  text-gray-700 '>
+                    Bank Name
+                  </TableHead>
+                  <TableHead className='font-bold  text-gray-700 '>
+                    IFSC Code
+                  </TableHead>
+                  <TableHead className='font-bold  text-gray-700 '>
+                    Branch
+                  </TableHead>
+                  <TableHead className='font-bold  text-gray-700 '>
                     Invoice Number
                   </TableHead>
-                  <TableHead className='font-semibold '>
+                  <TableHead className='font-bold  text-gray-700 '>
                     Invoice Amount
                   </TableHead>
-                  <TableHead className='font-semibold '>Invoice Date</TableHead>
-                  <TableHead className='font-semibold '>Loan Amount</TableHead>
-                  <TableHead className='font-semibold '>
+                  <TableHead className='font-bold  text-gray-700 '>
+                    Invoice Date
+                  </TableHead>
+                  <TableHead className='font-bold  text-gray-700 '>
+                    Loan Amount
+                  </TableHead>
+                  <TableHead className='font-bold  text-gray-700 '>
                     Loan Disbursement Date
                   </TableHead>
-                  <TableHead className='font-semibold '>UTR</TableHead>
-                  <TableHead className='font-semibold '>Status</TableHead>
+                  <TableHead className='font-bold  text-gray-700 '>
+                    UTR
+                  </TableHead>
+                  <TableHead className='font-bold  text-gray-700 '>
+                    Status
+                  </TableHead>
                   {user?.role === 'superAdmin' && (
-                    <TableHead className='font-semibold '>
+                    <TableHead className='font-bold  text-gray-700 '>
                       Invoice File
                     </TableHead>
                   )}
@@ -422,9 +441,8 @@ export default function Invoice() {
                         </TableCell>
                       </TableRow>
                     ))
-                  : data?.data?.map((item: InvoiceType, idx: number) => (
-                      <TableRow className='font-semibold' key={item._id}>
-                        <TableCell>{idx + 1}</TableCell>
+                  : data?.data?.map((item: InvoiceType) => (
+                      <TableRow className='' key={item._id}>
                         <TableCell>{item.companyName}</TableCell>
                         <TableCell>{item.distributorCode}</TableCell>
                         <TableCell>{item.beneficiaryName}</TableCell>
@@ -433,11 +451,11 @@ export default function Invoice() {
                         <TableCell>{item.ifscCode}</TableCell>
                         <TableCell>{item.branch}</TableCell>
                         <TableCell>{item.invoiceNumber}</TableCell>
-                        <TableCell className='font-mono'>
+                        <TableCell className=''>
                           {formatAmount(item.invoiceAmount)}
                         </TableCell>
                         <TableCell>{formatDate(item.invoiceDate)}</TableCell>
-                        <TableCell className='font-mono'>
+                        <TableCell className=''>
                           {formatAmount(item.loanAmount)}
                         </TableCell>
                         <TableCell>

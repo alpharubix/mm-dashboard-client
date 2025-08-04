@@ -9,10 +9,15 @@ import {
   formatDate,
   getUserFromToken,
 } from '../lib/utils'
-import { Button } from './ui/button'
-import { InputFile } from './ui/file-input'
-import { Input } from './ui/input'
-import { Skeleton } from './ui/skeleton'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
+
+import useDebounce from '../hooks/use-debounce'
+import { useApiQuery } from '../api/hooks'
+import { Card, CardContent } from '../components/ui/card'
+import { Label } from '../components/ui/label'
+import { Input } from '../components/ui/input'
+import { InputFile } from '../components/ui/file-input'
+import { Button } from '../components/ui/button'
 import {
   Table,
   TableBody,
@@ -20,13 +25,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from './ui/table'
-import type { CreditLimitType } from '../types'
-import { Card, CardContent } from './ui/card'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { Label } from './ui/label'
-import useDebounce from '../hooks/use-debounce'
-import { useApiQuery } from '../api/hooks'
+} from '../components/ui/table'
+import { Skeleton } from '../components/ui/skeleton'
+import { CreditLimitType } from '../types'
 
 export default function CreditLimit() {
   const [page, setPage] = useState(1)
@@ -78,8 +79,9 @@ export default function CreditLimit() {
           headers: { 'Content-Type': 'multipart/form-data' },
         }
       )
-
-      toast.success(res.data.message || 'Upload successful')
+      const responseMessage =
+        `${res.data.insertedCount} ${res.data.message}` || 'Upload successful'
+      toast.success(responseMessage)
 
       setFile(null)
       if (inputRef.current) inputRef.current.value = ''
@@ -160,44 +162,45 @@ export default function CreditLimit() {
           >
             Clear
           </Button> */}
-        </div>
-        {user?.role === 'superAdmin' && (
-          <div className='flex items-center mx-6 gap-4 flex-wrap'>
-            <div className='space-y-2 max-w-lg'>
-              <Label className='text-sm font-medium text-gray-700'>
-                Upload File
-              </Label>
-              <div className='flex gap-4 items-center'>
-                <InputFile
-                  onChange={handleFileChange}
-                  ref={inputRef}
-                  file={file}
-                />
-                {file && (
-                  <div className='flex gap-2'>
-                    <Button onClick={handleUpload} disabled={!file}>
-                      Upload CSV
-                    </Button>
-                    <Button
-                      onClick={handleCancel}
-                      variant='ghost'
-                      className='text-red-500'
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                )}
+          {user?.role === 'superAdmin' && (
+            <div className='flex items-center gap-4 flex-wrap'>
+              <div className='space-y-2 max-w-lg'>
+                <Label className='text-sm font-medium text-gray-700'>
+                  Upload File
+                </Label>
+                <div className='flex gap-4 items-center'>
+                  <InputFile
+                    onChange={handleFileChange}
+                    ref={inputRef}
+                    file={file}
+                  />
+                  {file && (
+                    <div className='flex gap-2'>
+                      <Button onClick={handleUpload} disabled={!file}>
+                        Upload CSV
+                      </Button>
+                      <Button
+                        onClick={handleCancel}
+                        variant='ghost'
+                        className='text-red-500'
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        )}
-
+          )}
+        </div>
+        <span className='text-sm italic text-gray-500 ml-6 inline'>
+          {data?.total ? `Total - ${data?.total}` : null}
+        </span>
         <CardContent>
           <Table className='text-base whitespace-nowrap'>
             <TableHeader>
               <TableRow className='bg-gray-50'>
                 {[
-                  'S.No',
                   'Company Name',
                   'Distributor Code',
                   'City',
@@ -207,11 +210,13 @@ export default function CreditLimit() {
                   'Operative Limit',
                   'Utilised Limit',
                   'Available Limit',
+                  'Pending Invoices',
+                  'Current Available',
                   'Overdue',
                   'Limit Expiry Date',
                   'Billing Status',
                 ].map((h) => (
-                  <TableHead className='font-semibold' key={h}>
+                  <TableHead className='font-bold text-gray-700' key={h}>
                     {h}
                   </TableHead>
                 ))}
@@ -221,7 +226,7 @@ export default function CreditLimit() {
               {isPending
                 ? Array.from({ length: 10 }).map((_, i) => (
                     <TableRow key={i}>
-                      {Array(13)
+                      {Array(15)
                         .fill(0)
                         .map((_, j) => (
                           <TableCell key={j}>
@@ -230,27 +235,32 @@ export default function CreditLimit() {
                         ))}
                     </TableRow>
                   ))
-                : data?.data?.map((item: CreditLimitType, idx: number) => (
-                    <TableRow className='font-semibold' key={item._id}>
-                      <TableCell>{idx + 1}</TableCell>
+                : data?.data?.map((item: CreditLimitType) => (
+                    <TableRow className='' key={item._id}>
                       <TableCell>{item.companyName}</TableCell>
                       <TableCell>{item.distributorCode}</TableCell>
                       <TableCell>{item.city}</TableCell>
                       <TableCell>{item.state}</TableCell>
                       <TableCell>{item.lender}</TableCell>
-                      <TableCell className='font-mono'>
+                      <TableCell className=''>
                         {formatAmount(item.sanctionLimit)}
                       </TableCell>
-                      <TableCell className='font-mono'>
+                      <TableCell className=''>
                         {formatAmount(item.operativeLimit)}
                       </TableCell>
-                      <TableCell className='font-mono'>
+                      <TableCell className=''>
                         {formatAmount(item.utilisedLimit)}
                       </TableCell>
-                      <TableCell className='font-mono'>
+                      <TableCell className=''>
                         {formatAmount(item.availableLimit)}
                       </TableCell>
-                      <TableCell className='font-mono'>
+                      <TableCell className=''>
+                        {formatAmount(item.pendingInvoices)}
+                      </TableCell>
+                      <TableCell className=''>
+                        {formatAmount(item.currentAvailable)}
+                      </TableCell>
+                      <TableCell className=''>
                         {formatAmount(item.overdue)}
                       </TableCell>
                       <TableCell>

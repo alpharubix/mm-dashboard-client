@@ -138,7 +138,7 @@ export const getDefaultRoute = (role: string) => {
   switch (role) {
     case 'superAdmin':
     case 'admin':
-      return '/onboard-notification'
+      return '/onboard-customer'
     case 'viewer':
       return '/viewer'
     default:

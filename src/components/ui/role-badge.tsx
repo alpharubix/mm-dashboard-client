@@ -18,9 +18,7 @@ const RoleBadge = ({ role }: RoleBadgeProps) => {
   }
 
   return (
-    <span className={`${getRoleColor(role)} font-medium`}>
-      {camelCaseToWords(role)}
-    </span>
+    <span className={`${getRoleColor(role)}`}>{camelCaseToWords(role)}</span>
   )
 }
 

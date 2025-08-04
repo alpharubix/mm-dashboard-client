@@ -1,3 +1,4 @@
+import { camelCaseToWords } from '../../lib/utils'
 import { Badge } from './badge'
 
 type RoleBadgeProps = {
@@ -31,12 +32,15 @@ const CompanyType = ({ role }: RoleBadgeProps) => {
     }
   }
   return (
-    <Badge
-      variant='outline'
-      className={`${getRoleColor(role)} bg-blue-50 border-blue-200 uppercase`}
-    >
-      {getCompanyType(role)}
-    </Badge>
+    // <Badge
+    //   variant='outline'
+    //   className={`${getRoleColor(role)} bg-blue-50 border-blue-200 uppercase`}
+    // >
+    //   {getCompanyType(role)}
+    // </Badge>
+    <span className={`${getRoleColor(role)}`}>
+      {camelCaseToWords(getCompanyType(role))}
+    </span>
   )
 }
 
