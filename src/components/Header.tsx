@@ -71,7 +71,7 @@ export default function Header() {
 
   return (
     <header className='bg-white shadow-sm border-b'>
-      <div className='flex items-center justify-between px-6 py-1'>
+      <div className='flex items-center justify-between px-6 py-px'>
         {/* Logo */}
         <div>
           <img
@@ -116,7 +116,7 @@ export default function Header() {
                 }}
               >
                 <SelectTrigger className='h-10'>
-                  <SelectValue placeholder='Select status' />
+                  <SelectValue placeholder='Select anchor' />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value='ckpl'>CavinKare</SelectItem>

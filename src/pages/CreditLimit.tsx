@@ -197,7 +197,7 @@ export default function CreditLimit() {
           {data?.total ? `Total - ${data?.total}` : null}
         </span>
         <CardContent>
-          <Table className='text-base whitespace-nowrap'>
+          <Table className='text-base whitespace-nowrap table-fixed'>
             <TableHeader>
               <TableRow className='bg-gray-50'>
                 {[
@@ -216,7 +216,10 @@ export default function CreditLimit() {
                   'Limit Expiry Date',
                   'Billing Status',
                 ].map((h) => (
-                  <TableHead className='font-bold text-gray-700' key={h}>
+                  <TableHead
+                    className='font-bold text-gray-700 w-[190px]'
+                    key={h}
+                  >
                     {h}
                   </TableHead>
                 ))}
@@ -236,33 +239,34 @@ export default function CreditLimit() {
                     </TableRow>
                   ))
                 : data?.data?.map((item: CreditLimitType) => (
-                    <TableRow className='' key={item._id}>
-                      <TableCell>{item.companyName}</TableCell>
-                      <TableCell>{item.distributorCode}</TableCell>
+                    <TableRow
+                      key={item._id}
+                      className={cn(
+                        '*:truncate *:overflow-hidden *:text-ellipsis',
+                        item.billingStatus.toLowerCase() === 'negative' &&
+                          'bg-red-50 hover:bg-red-0'
+                      )}
+                    >
+                      <TableCell title={item.companyName}>
+                        {item.companyName}
+                      </TableCell>
+                      <TableCell title={item.distributorCode}>
+                        {item.distributorCode}
+                      </TableCell>
                       <TableCell>{item.city}</TableCell>
                       <TableCell>{item.state}</TableCell>
                       <TableCell>{item.lender}</TableCell>
-                      <TableCell className=''>
-                        {formatAmount(item.sanctionLimit)}
-                      </TableCell>
-                      <TableCell className=''>
-                        {formatAmount(item.operativeLimit)}
-                      </TableCell>
-                      <TableCell className=''>
-                        {formatAmount(item.utilisedLimit)}
-                      </TableCell>
-                      <TableCell className=''>
-                        {formatAmount(item.availableLimit)}
-                      </TableCell>
-                      <TableCell className=''>
+                      <TableCell>{formatAmount(item.sanctionLimit)}</TableCell>
+                      <TableCell>{formatAmount(item.operativeLimit)}</TableCell>
+                      <TableCell>{formatAmount(item.utilisedLimit)}</TableCell>
+                      <TableCell>{formatAmount(item.availableLimit)}</TableCell>
+                      <TableCell>
                         {formatAmount(item.pendingInvoices)}
                       </TableCell>
-                      <TableCell className=''>
+                      <TableCell>
                         {formatAmount(item.currentAvailable)}
                       </TableCell>
-                      <TableCell className=''>
-                        {formatAmount(item.overdue)}
-                      </TableCell>
+                      <TableCell>{formatAmount(item.overdue)}</TableCell>
                       <TableCell>
                         {item.limitExpiryDate
                           ? formatDate(item.limitExpiryDate)
@@ -270,12 +274,11 @@ export default function CreditLimit() {
                       </TableCell>
                       <TableCell
                         className={cn(
-                          `${
-                            item.billingStatus.toLowerCase() === 'positive'
-                              ? 'text-green-500'
-                              : 'text-orange-500'
-                          }`
+                          item.billingStatus.toLowerCase() === 'positive'
+                            ? 'text-green-500'
+                            : 'text-orange-500'
                         )}
+                        title={camelCaseToWords(item.billingStatus)}
                       >
                         {camelCaseToWords(item.billingStatus)}
                       </TableCell>

@@ -9,9 +9,11 @@ import { Label } from '../components/ui/label'
 import { ENV } from '../conf'
 import { cn, getDefaultRoute, setAuthToken } from '../lib/utils'
 import { jwtDecode } from 'jwt-decode'
+import { Loader2 } from 'lucide-react'
 
 export default function Login() {
   const [form, setForm] = useState({ username: '', password: '' })
+  const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -21,6 +23,7 @@ export default function Login() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
+      setIsLoading(true)
       const res = await axios.post(`${ENV.BACKEND_URL}/login`, form)
       localStorage.setItem('mm_auth_token', res.data.token)
       setAuthToken()
@@ -30,7 +33,9 @@ export default function Login() {
       const user = jwtDecode(res.data.token)
       // @ts-ignore
       navigate(getDefaultRoute(user?.role), { replace: true })
+      setIsLoading(false)
     } catch (err) {
+      setIsLoading(false)
       console.error(err)
       // @ts-ignore
       toast.error(err.response.data.message)
@@ -71,10 +76,15 @@ export default function Login() {
                   <div className='flex items-center justify-center'>
                     <Button
                       type='submit'
-                      className='cursor-pointer '
+                      className='cursor-pointer min-w-[100px]'
                       variant={'outline'}
+                      disabled={isLoading}
                     >
-                      Login
+                      {!isLoading ? (
+                        'Login'
+                      ) : (
+                        <Loader2 className='animate-spin' />
+                      )}
                     </Button>
                   </div>
                 </div>

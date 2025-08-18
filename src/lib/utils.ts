@@ -62,16 +62,12 @@ export function camelCaseToWords(s: string) {
 
 export const getCompanyName = (companyId: string) => {
   switch (companyId) {
-    case 'CKPL':
+    case 'ckpl':
       return 'CavinKare'
-    case 'HWC':
-      return 'Himalayan'
-    case '1234':
-      return 'Agency'
-    case 'mm123':
-      return 'MeraMerchant'
+    case 'hwc':
+      return 'Himalaya'
     default:
-      return companyId // or u.companyName if you have the name field
+      return companyId
   }
 }
 

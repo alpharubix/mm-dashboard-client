@@ -7,6 +7,7 @@ import { toast } from 'sonner'
 import { ENV } from '../conf'
 import {
   camelCaseToWords,
+  cn,
   formatAmount,
   formatDate,
   getUserFromToken,
@@ -275,17 +276,20 @@ export default function Invoice() {
               }
             />
           </div>
-          <div className='space-y-2'>
-            <Button
-              onClick={() => handleExport(queryParams)}
-              variant='outline'
-              size='sm'
-              className='h-10 w-full cursor-pointer mt-6 font-normal text-sm text-gray-600'
-            >
-              <Download className='h-4 w-4 mr-1' />
-              Export
-            </Button>
-          </div>
+
+          {user?.role === 'superAdmin' && (
+            <div className='space-y-2'>
+              <Button
+                onClick={() => handleExport(queryParams)}
+                variant='outline'
+                size='sm'
+                className='h-10 w-full cursor-pointer mt-6 font-normal text-sm text-gray-600'
+              >
+                <Download className='h-4 w-4 mr-1' />
+                Export
+              </Button>
+            </div>
+          )}
 
           {/* <div className='space-y-2'>
             <Label className='text-sm font-medium text-gray-700 opacity-0'>
@@ -347,21 +351,25 @@ export default function Invoice() {
                   <TableHead className='font-bold  text-gray-700'>
                     Distributor Code
                   </TableHead>
-                  <TableHead className='font-bold  text-gray-700 '>
-                    Beneficiary Name
-                  </TableHead>
-                  <TableHead className='font-bold  text-gray-700 '>
-                    Beneficiary Acc No
-                  </TableHead>
-                  <TableHead className='font-bold  text-gray-700 '>
-                    Bank Name
-                  </TableHead>
-                  <TableHead className='font-bold  text-gray-700 '>
-                    IFSC Code
-                  </TableHead>
-                  <TableHead className='font-bold  text-gray-700 '>
-                    Branch
-                  </TableHead>
+                  {user?.role === 'superAdmin' && (
+                    <>
+                      <TableHead className='font-bold  text-gray-700 '>
+                        Beneficiary Name
+                      </TableHead>
+                      <TableHead className='font-bold  text-gray-700 '>
+                        Beneficiary Acc No
+                      </TableHead>
+                      <TableHead className='font-bold  text-gray-700 '>
+                        Bank Name
+                      </TableHead>
+                      <TableHead className='font-bold  text-gray-700 '>
+                        IFSC Code
+                      </TableHead>
+                      <TableHead className='font-bold  text-gray-700 '>
+                        Branch
+                      </TableHead>
+                    </>
+                  )}
                   <TableHead className='font-bold  text-gray-700 '>
                     Invoice Number
                   </TableHead>
@@ -442,14 +450,25 @@ export default function Invoice() {
                       </TableRow>
                     ))
                   : data?.data?.map((item: InvoiceType) => (
-                      <TableRow className='' key={item._id}>
+                      <TableRow
+                        key={item._id}
+                        className={cn(
+                          '*:truncate *:overflow-hidden *:text-ellipsis',
+                          item.status === 'notProcessed' &&
+                            'bg-red-50 hover:bg-red-0'
+                        )}
+                      >
                         <TableCell>{item.companyName}</TableCell>
                         <TableCell>{item.distributorCode}</TableCell>
-                        <TableCell>{item.beneficiaryName}</TableCell>
-                        <TableCell>{item.beneficiaryAccNo}</TableCell>
-                        <TableCell>{item.bankName}</TableCell>
-                        <TableCell>{item.ifscCode}</TableCell>
-                        <TableCell>{item.branch}</TableCell>
+                        {user?.role === 'superAdmin' && (
+                          <>
+                            <TableCell>{item.beneficiaryName}</TableCell>
+                            <TableCell>{item.beneficiaryAccNo}</TableCell>
+                            <TableCell>{item.bankName}</TableCell>
+                            <TableCell>{item.ifscCode}</TableCell>
+                            <TableCell>{item.branch}</TableCell>
+                          </>
+                        )}
                         <TableCell>{item.invoiceNumber}</TableCell>
                         <TableCell className=''>
                           {formatAmount(item.invoiceAmount)}

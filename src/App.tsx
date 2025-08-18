@@ -5,6 +5,7 @@ import { lazy } from 'react'
 
 // Lazy imports
 const Login = lazy(() => import('./pages/Login'))
+const Signup = lazy(() => import('./pages/Signup'))
 const Home = lazy(() => import('./pages/Home'))
 const NotFound = lazy(() => import('./pages/NotFound'))
 const Viewer = lazy(() => import('./pages/Viewer'))
@@ -25,6 +26,7 @@ export default function App() {
       <Routes>
         <Route path='/' element={<RootRedirect />} />
         <Route path='/login' element={<Login />} />
+        <Route path='/signup' element={<Signup />} />
         <Route path='/' element={<Home />}>
           <Route
             path='users'
