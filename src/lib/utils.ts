@@ -105,7 +105,11 @@ export const handleExport = async (queryParams: object) => {
         ? format(new Date(rest.loanDisbursementDate), 'dd-MM-yy')
         : 'NA',
       UTR: rest.utr || 'NA',
+      'Anchor ID': rest.anchorId,
+      'Funding Type': rest.fundingType,
       Status: rest.status,
+      'Distributor Phone': rest.distributorPhone,
+      'Distributor Email': rest.distributorEmail,
     }))
 
     const csv = unparse(transformed)
