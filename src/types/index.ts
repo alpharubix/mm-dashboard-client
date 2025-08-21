@@ -67,12 +67,13 @@ export type UserType = {
 }
 
 export type ViewerDataType = {
-  _id: string
   invoiceNumber: number
+  anchorId: string
   invoiceAmount: number
   invoiceDate: string
   loanAmount: number
   loanDisbursementDate: string
   utr: string
   status: string
+  invoicePdfUrl?: string
 }
