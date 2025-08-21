@@ -91,10 +91,10 @@ export default function Login() {
                 <div className='mt-4 text-center text-sm'>
                   Don&apos;t have an account? Contact Admin <br />
                   <a
-                    href='mailto:prathap@meramerchant.com'
+                    href='mailto:payments@meramerchant.com'
                     className='font-bold'
                   >
-                    prathap@meramerchant.com
+                    payments@meramerchant.com
                   </a>
                 </div>
               </form>
