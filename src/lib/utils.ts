@@ -109,7 +109,7 @@ export const handleExport = async (queryParams: any) => {
       UTR: rest.utr || 'NA',
       'Anchor ID': rest.anchorId,
       'Funding Type': rest.fundingType,
-      Status: rest.status,
+      Status: camelCaseToWords(rest.status),
       'Distributor Phone': rest.distributorPhone,
       'Distributor Email': rest.distributorEmail,
     }))
