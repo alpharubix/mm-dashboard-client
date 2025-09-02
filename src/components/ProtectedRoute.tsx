@@ -22,7 +22,7 @@ export default function ProtectedRoute({
 
   // Check route permission
   if (requiredRoute && !hasRouteAccess(requiredRoute)) {
-    console.log(requiredRoute, hasRouteAccess(requiredRoute))
+    // console.log(requiredRoute, hasRouteAccess(requiredRoute))
     // return <Navigate to='/unauthorized' replace />
     return <NotFound />
   }
