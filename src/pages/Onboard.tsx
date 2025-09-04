@@ -205,7 +205,7 @@ export default function Onboard() {
         </span>
         <CardContent className=''>
           <Table className='text-base whitespace-nowrap'>
-            <TableHeader>
+            <TableHeader className='tracking-wide'>
               <TableRow className='bg-gray-50'>
                 <TableHead className='font-bold text-gray-700'>
                   Company Name
