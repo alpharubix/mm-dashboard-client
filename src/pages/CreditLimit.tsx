@@ -198,7 +198,7 @@ export default function CreditLimit() {
         </span>
         <CardContent>
           <Table className='text-base whitespace-nowrap table-fixed'>
-            <TableHeader>
+            <TableHeader className='tracking-wide'>
               <TableRow className='bg-gray-50'>
                 {[
                   'Company Name',

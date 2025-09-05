@@ -343,7 +343,7 @@ export default function Invoice() {
         <CardContent>
           <div className='overflow-x-auto'>
             <Table className='text-base whitespace-nowrap'>
-              <TableHeader>
+              <TableHeader className='tracking-wide'>
                 <TableRow className='bg-gray-50'>
                   <TableHead className='font-bold  text-gray-700'>
                     Company Name
@@ -351,7 +351,7 @@ export default function Invoice() {
                   <TableHead className='font-bold  text-gray-700'>
                     Distributor Code
                   </TableHead>
-                  {user?.role === 'superAdmin' && (
+                  {/* {user?.role === 'superAdmin' && (
                     <>
                       <TableHead className='font-bold  text-gray-700 '>
                         Beneficiary Name
@@ -369,7 +369,7 @@ export default function Invoice() {
                         Branch
                       </TableHead>
                     </>
-                  )}
+                  )} */}
                   <TableHead className='font-bold  text-gray-700 '>
                     Invoice Number
                   </TableHead>
@@ -382,8 +382,11 @@ export default function Invoice() {
                   <TableHead className='font-bold  text-gray-700 '>
                     Loan Amount
                   </TableHead>
-                  <TableHead className='font-bold  text-gray-700 '>
-                    Loan Disbursement Date
+                  <TableHead
+                    title='Limit Live Date'
+                    className='font-bold  text-gray-700 '
+                  >
+                    LLD
                   </TableHead>
                   <TableHead className='font-bold  text-gray-700 '>
                     UTR
@@ -408,7 +411,7 @@ export default function Invoice() {
                         <TableCell>
                           <Skeleton className='h-4 w-32' />
                         </TableCell>
-                        <TableCell>
+                        {/* <TableCell>
                           <Skeleton className='h-4 w-24' />
                         </TableCell>
                         <TableCell>
@@ -422,7 +425,7 @@ export default function Invoice() {
                         </TableCell>
                         <TableCell>
                           <Skeleton className='h-4 w-20' />
-                        </TableCell>
+                        </TableCell> */}
                         <TableCell>
                           <Skeleton className='h-4 w-20' />
                         </TableCell>
@@ -460,7 +463,7 @@ export default function Invoice() {
                       >
                         <TableCell>{item.companyName}</TableCell>
                         <TableCell>{item.distributorCode}</TableCell>
-                        {user?.role === 'superAdmin' && (
+                        {/* {user?.role === 'superAdmin' && (
                           <>
                             <TableCell>{item.beneficiaryName}</TableCell>
                             <TableCell>{item.beneficiaryAccNo}</TableCell>
@@ -468,7 +471,7 @@ export default function Invoice() {
                             <TableCell>{item.ifscCode}</TableCell>
                             <TableCell>{item.branch}</TableCell>
                           </>
-                        )}
+                        )} */}
                         <TableCell>{item.invoiceNumber}</TableCell>
                         <TableCell className=''>
                           {formatAmount(item.invoiceAmount)}
