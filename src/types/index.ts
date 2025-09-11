@@ -56,6 +56,8 @@ export type InvoiceType = {
   utr: string
   status: string
   invoicePdfUrl: string
+  createdAt: string
+  updatedAt: string
 }
 
 export type UserType = {

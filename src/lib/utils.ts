@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { clsx, type ClassValue } from 'clsx'
-import { format } from 'date-fns'
+import { format, parseISO } from 'date-fns'
 import { jwtDecode } from 'jwt-decode'
 import { unparse } from 'papaparse'
 import { toast } from 'sonner'
@@ -30,6 +30,18 @@ export const formatAmount = (amount: number): string => {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   })
+}
+
+export const formatDateHourMinute = (
+  dateString: string,
+  pattern = 'dd-MM-yyyy hh:mm a'
+) => {
+  if (!dateString) return ''
+  try {
+    return format(parseISO(dateString), pattern)
+  } catch {
+    return ''
+  }
 }
 
 type DecodedToken = {
@@ -112,6 +124,8 @@ export const handleExport = async (queryParams: any) => {
       Status: camelCaseToWords(rest.status),
       'Distributor Phone': rest.distributorPhone,
       'Distributor Email': rest.distributorEmail,
+      'Created At': formatDateHourMinute(rest.createdAt),
+      'Updated At': formatDateHourMinute(rest.updatedAt),
     }))
 
     const csv = unparse(transformed)
