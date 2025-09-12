@@ -4,19 +4,12 @@ import { ChevronLeft, ChevronRight, Download, FileDown } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { DateRange } from 'react-day-picker'
 import { toast } from 'sonner'
-import { ENV } from '../conf'
-import {
-  camelCaseToWords,
-  cn,
-  formatAmount,
-  formatDate,
-  getUserFromToken,
-  handleExport,
-} from '../lib/utils'
 import { Button } from '../components/ui/button'
+import { Card, CardContent } from '../components/ui/card'
 import { DatePickerWithRange } from '../components/ui/DatePicker'
 import { InputFile } from '../components/ui/file-input'
 import { Input } from '../components/ui/input'
+import { Label } from '../components/ui/label'
 import {
   Select,
   SelectContent,
@@ -33,13 +26,34 @@ import {
   TableHeader,
   TableRow,
 } from '../components/ui/table'
-import { Card, CardContent } from '../components/ui/card'
-import { Label } from '../components/ui/label'
+import { ENV } from '../conf'
+import {
+  camelCaseToWords,
+  cn,
+  formatAmount,
+  formatDate,
+  formatDateHourMinute,
+  getUserFromToken,
+  handleExport,
+} from '../lib/utils'
 
-import useDebounce from '../hooks/use-debounce'
 import { useApiQuery } from '../api/hooks'
+import useDebounce from '../hooks/use-debounce'
 
 import type { InvoiceType } from '../types'
+
+const showError = (error: any) => {
+  if (!error) return
+  console.log({ error })
+  const { message, missingFields } = error
+
+  let toastMessage = message
+  if (missingFields?.length) {
+    toastMessage += `: ${missingFields.join(', ')}`
+  }
+
+  toast.error(toastMessage)
+}
 
 export default function Invoice() {
   const [file, setFile] = useState<File | null>(null)
@@ -118,14 +132,15 @@ export default function Invoice() {
       if (inputRef.current) inputRef.current.value = ''
     } catch (err) {
       // @ts-ignore
-      const { message, duplicates } = err.response?.data || {}
+      // const { message, duplicates } = err.response?.data || {}
 
-      const duplicateInfo = duplicates?.length
-        ? ` (${duplicates.join(', ')})`
-        : ''
+      // const duplicateInfo = duplicates?.length
+      //   ? ` (${duplicates.join(', ')})`
+      //   : ''
 
-      toast.error(`${message || `Upload failed ${message}`}${duplicateInfo}`)
-
+      // toast.error(`${message || `Upload failed ${message}`}${duplicateInfo}`)
+      // @ts-ignore
+      showError(err.response.data || {})
       console.error('Upload failed', err)
     }
   }
@@ -395,9 +410,17 @@ export default function Invoice() {
                     Status
                   </TableHead>
                   {user?.role === 'superAdmin' && (
-                    <TableHead className='font-bold  text-gray-700 '>
-                      Invoice File
-                    </TableHead>
+                    <>
+                      <TableHead className='font-bold  text-gray-700 min-w-28'>
+                        Invoice File
+                      </TableHead>
+                      <TableHead className='font-bold  text-gray-700 '>
+                        Created At
+                      </TableHead>
+                      <TableHead className='font-bold  text-gray-700 '>
+                        Updated At
+                      </TableHead>
+                    </>
                   )}
                 </TableRow>
               </TableHeader>
@@ -446,6 +469,12 @@ export default function Invoice() {
                         </TableCell>
                         <TableCell>
                           <Skeleton className='h-4 w-20' />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className='h-4 w-16' />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className='h-4 w-16' />
                         </TableCell>
                         <TableCell>
                           <Skeleton className='h-4 w-16' />
@@ -506,6 +535,12 @@ export default function Invoice() {
                             </span>
                           </TableCell>
                         )}
+                        <TableCell>
+                          {formatDateHourMinute(item.createdAt)}
+                        </TableCell>
+                        <TableCell>
+                          {formatDateHourMinute(item.updatedAt)}
+                        </TableCell>
                       </TableRow>
                     ))}
               </TableBody>
