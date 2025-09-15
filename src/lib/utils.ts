@@ -88,8 +88,6 @@ export function capitalize(val: string) {
 }
 
 export const handleExport = async (queryParams: any) => {
-  delete queryParams.page
-  delete queryParams.limit
   let toastId: string | number | undefined
 
   try {
