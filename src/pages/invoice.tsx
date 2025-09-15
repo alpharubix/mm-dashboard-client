@@ -518,29 +518,31 @@ export default function Invoice() {
 
                         <TableCell>{camelCaseToWords(item.status)}</TableCell>
                         {user?.role === 'superAdmin' && (
-                          <TableCell className=''>
-                            <span className=''>
-                              {item.invoicePdfUrl ? (
-                                <a
-                                  href={item.invoicePdfUrl}
-                                  target='_blank'
-                                  rel='noopener noreferrer'
-                                  style={{ display: 'inline-block' }}
-                                >
-                                  <FileDown className='' />
-                                </a>
-                              ) : (
-                                'NA'
-                              )}
-                            </span>
-                          </TableCell>
+                          <>
+                            <TableCell className=''>
+                              <span className=''>
+                                {item.invoicePdfUrl ? (
+                                  <a
+                                    href={item.invoicePdfUrl}
+                                    target='_blank'
+                                    rel='noopener noreferrer'
+                                    style={{ display: 'inline-block' }}
+                                  >
+                                    <FileDown className='' />
+                                  </a>
+                                ) : (
+                                  'NA'
+                                )}
+                              </span>
+                            </TableCell>
+                            <TableCell>
+                              {formatDateHourMinute(item.createdAt)}
+                            </TableCell>
+                            <TableCell>
+                              {formatDateHourMinute(item.updatedAt)}
+                            </TableCell>
+                          </>
                         )}
-                        <TableCell>
-                          {formatDateHourMinute(item.createdAt)}
-                        </TableCell>
-                        <TableCell>
-                          {formatDateHourMinute(item.updatedAt)}
-                        </TableCell>
                       </TableRow>
                     ))}
               </TableBody>
