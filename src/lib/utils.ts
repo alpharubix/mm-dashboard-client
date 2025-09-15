@@ -92,8 +92,9 @@ export const handleExport = async (queryParams: any) => {
 
   try {
     toastId = toast.loading('Processing CSV export...')
+    const exportParams = { ...queryParams, export: 'true' }
     const res = await axios.get(`${ENV.BACKEND_URL}/invoice-input`, {
-      params: queryParams,
+      params: exportParams,
     })
     const data = res.data.data
     if (!data.length) {
