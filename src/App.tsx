@@ -1,7 +1,9 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import { getAuthToken } from './lib/utils'
 import axios from 'axios'
 import { lazy } from 'react'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+
+import { getAuthToken } from './lib/utils'
+import Email from './pages/Email'
 
 // Lazy imports
 const Login = lazy(() => import('./pages/Login'))
@@ -33,6 +35,15 @@ export default function App() {
             element={
               <ProtectedRoute requiredRoute='users'>
                 <Users />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path='email'
+            element={
+              <ProtectedRoute requiredRoute='email'>
+                <Email />
               </ProtectedRoute>
             }
           />

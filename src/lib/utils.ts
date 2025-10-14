@@ -1,3 +1,4 @@
+import { ENV } from '@/conf'
 import axios from 'axios'
 import { clsx, type ClassValue } from 'clsx'
 import { format, parseISO } from 'date-fns'
@@ -5,7 +6,6 @@ import { jwtDecode } from 'jwt-decode'
 import { unparse } from 'papaparse'
 import { toast } from 'sonner'
 import { twMerge } from 'tailwind-merge'
-import { ENV } from '../conf'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))

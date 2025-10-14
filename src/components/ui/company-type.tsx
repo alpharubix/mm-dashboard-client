@@ -1,4 +1,4 @@
-import { camelCaseToWords } from '../../lib/utils'
+import { camelCaseToWords } from '@/lib/utils'
 import { Badge } from './badge'
 
 type RoleBadgeProps = {
