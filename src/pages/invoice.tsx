@@ -104,6 +104,9 @@ export default function Invoice() {
     '/invoice-input',
     queryParams
   )
+  console.log("Data ============> ", data?.data?.map((d: any) => d.status));
+
+
   const totalPages = data?.totalPages || 1
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -144,6 +147,10 @@ export default function Invoice() {
       console.error('Upload failed', err)
     }
   }
+
+  const handleSendMail = (distributorCode: string, invoiceNumber: number) => {
+    toast.success("Email is successfully sent. Distributor Code: " + distributorCode + ", Invoice Number: " + invoiceNumber);
+  };
 
   const handleCancel = () => {
     setFile(null)
@@ -360,10 +367,10 @@ export default function Invoice() {
             <Table className='text-base whitespace-nowrap'>
               <TableHeader className='tracking-wide'>
                 <TableRow className='bg-gray-50'>
-                  <TableHead className='font-bold  text-gray-700'>
+                  <TableHead className='font-bold bg-gray-50 sticky left-0 z-20 text-gray-700'>
                     Company Name
                   </TableHead>
-                  <TableHead className='font-bold  text-gray-700'>
+                  <TableHead className='font-bold text-gray-700 sticky left-[167px] z-10 bg-gray-50 '>
                     Distributor Code
                   </TableHead>
                   {/* {user?.role === 'superAdmin' && (
@@ -414,6 +421,9 @@ export default function Invoice() {
                       <TableHead className='font-bold  text-gray-700 min-w-28'>
                         Invoice File
                       </TableHead>
+                      <TableHead className='font-bold  text-gray-700 min-w-28'>
+                        Disbursement
+                      </TableHead>
                       <TableHead className='font-bold  text-gray-700 '>
                         Created At
                       </TableHead>
@@ -427,14 +437,14 @@ export default function Invoice() {
               <TableBody>
                 {isPending
                   ? Array.from({ length: 10 }).map((_, i) => (
-                      <TableRow key={i}>
-                        <TableCell>
-                          <Skeleton className='h-4 w-32' />
-                        </TableCell>
-                        <TableCell>
-                          <Skeleton className='h-4 w-32' />
-                        </TableCell>
-                        {/* <TableCell>
+                    <TableRow key={i}>
+                      <TableCell>
+                        <Skeleton className='h-4 w-32' />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className='h-4 w-32' />
+                      </TableCell>
+                      {/* <TableCell>
                           <Skeleton className='h-4 w-24' />
                         </TableCell>
                         <TableCell>
@@ -449,102 +459,200 @@ export default function Invoice() {
                         <TableCell>
                           <Skeleton className='h-4 w-20' />
                         </TableCell> */}
-                        <TableCell>
-                          <Skeleton className='h-4 w-20' />
-                        </TableCell>
-                        <TableCell>
-                          <Skeleton className='h-4 w-28' />
-                        </TableCell>
-                        <TableCell>
-                          <Skeleton className='h-4 w-16' />
-                        </TableCell>
-                        <TableCell>
-                          <Skeleton className='h-4 w-24' />
-                        </TableCell>
-                        <TableCell>
-                          <Skeleton className='h-4 w-16' />
-                        </TableCell>
-                        <TableCell>
-                          <Skeleton className='h-4 w-24' />
-                        </TableCell>
-                        <TableCell>
-                          <Skeleton className='h-4 w-20' />
-                        </TableCell>
-                        <TableCell>
-                          <Skeleton className='h-4 w-16' />
-                        </TableCell>
-                        <TableCell>
-                          <Skeleton className='h-4 w-16' />
-                        </TableCell>
-                        <TableCell>
-                          <Skeleton className='h-4 w-16' />
-                        </TableCell>
-                      </TableRow>
-                    ))
+                      <TableCell>
+                        <Skeleton className='h-4 w-20' />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className='h-4 w-28' />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className='h-4 w-16' />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className='h-4 w-24' />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className='h-4 w-16' />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className='h-4 w-24' />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className='h-4 w-20' />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className='h-4 w-16' />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className='h-4 w-16' />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className='h-4 w-16' />
+                      </TableCell>
+                    </TableRow>
+                  ))
                   : data?.data?.map((item: InvoiceType) => (
-                      <TableRow
-                        key={item._id}
+                    <TableRow
+                      key={item._id}
+                      className={cn(
+                        'group transition-colors',
+                        item.status === 'notProcessed' ? 'bg-red-50' : 'bg-white'
+                      )}
+                    >
+                      <TableCell
                         className={cn(
-                          '*:truncate *:overflow-hidden *:text-ellipsis',
-                          item.status === 'notProcessed' &&
-                            'bg-red-50 hover:bg-red-0'
+                          'sticky left-0 z-20',
+                          item.status === 'notProcessed'
+                            ? 'bg-red-50 group-hover:bg-red-100'
+                            : 'bg-white group-hover:bg-muted'
                         )}
                       >
-                        <TableCell>{item.companyName}</TableCell>
-                        <TableCell>{item.distributorCode}</TableCell>
-                        {/* {user?.role === 'superAdmin' && (
-                          <>
-                            <TableCell>{item.beneficiaryName}</TableCell>
-                            <TableCell>{item.beneficiaryAccNo}</TableCell>
-                            <TableCell>{item.bankName}</TableCell>
-                            <TableCell>{item.ifscCode}</TableCell>
-                            <TableCell>{item.branch}</TableCell>
-                          </>
-                        )} */}
-                        <TableCell>{item.invoiceNumber}</TableCell>
-                        <TableCell className=''>
-                          {formatAmount(item.invoiceAmount)}
-                        </TableCell>
-                        <TableCell>{formatDate(item.invoiceDate)}</TableCell>
-                        <TableCell className=''>
-                          {formatAmount(item.loanAmount)}
-                        </TableCell>
-                        <TableCell>
-                          {item.loanDisbursementDate
-                            ? formatDate(item.loanDisbursementDate)
-                            : 'NA'}
-                        </TableCell>
-                        <TableCell>{item.utr ? item.utr : 'NA'}</TableCell>
+                        {item.companyName}
+                      </TableCell>
 
-                        <TableCell>{camelCaseToWords(item.status)}</TableCell>
-                        {user?.role === 'superAdmin' && (
-                          <>
-                            <TableCell className=''>
-                              <span className=''>
-                                {item.invoicePdfUrl ? (
-                                  <a
-                                    href={item.invoicePdfUrl}
-                                    target='_blank'
-                                    rel='noopener noreferrer'
-                                    style={{ display: 'inline-block' }}
-                                  >
-                                    <FileDown className='' />
-                                  </a>
-                                ) : (
-                                  'NA'
-                                )}
-                              </span>
-                            </TableCell>
-                            <TableCell>
-                              {formatDateHourMinute(item.createdAt)}
-                            </TableCell>
-                            <TableCell>
-                              {formatDateHourMinute(item.updatedAt)}
-                            </TableCell>
-                          </>
+                      <TableCell
+                        className={cn(
+                          'sticky left-[167px] z-10',
+                          item.status === 'notProcessed'
+                            ? 'bg-red-50 group-hover:bg-red-100'
+                            : 'bg-white group-hover:bg-muted'
                         )}
-                      </TableRow>
-                    ))}
+                      >
+                        {item.distributorCode}
+                      </TableCell>
+
+                      <TableCell
+                        className={cn(
+                          item.status === 'notProcessed'
+                            ? 'bg-red-50 group-hover:bg-red-100'
+                            : 'bg-white group-hover:bg-muted'
+                        )}
+                      >
+                        {item.invoiceNumber}
+                      </TableCell>
+                      <TableCell
+                        className={cn(
+                          item.status === 'notProcessed'
+                            ? 'bg-red-50 group-hover:bg-red-100'
+                            : 'bg-white group-hover:bg-muted'
+                        )}
+                      >
+                        {formatAmount(item.invoiceAmount)}
+                      </TableCell>
+                      <TableCell
+                        className={cn(
+                          item.status === 'notProcessed'
+                            ? 'bg-red-50 group-hover:bg-red-100'
+                            : 'bg-white group-hover:bg-muted'
+                        )}
+                      >
+                        {formatDate(item.invoiceDate)}
+                      </TableCell>
+                      <TableCell
+                        className={cn(
+                          item.status === 'notProcessed'
+                            ? 'bg-red-50 group-hover:bg-red-100'
+                            : 'bg-white group-hover:bg-muted'
+                        )}
+                      >
+                        {formatAmount(item.loanAmount)}
+                      </TableCell>
+                      <TableCell
+                        className={cn(
+                          item.status === 'notProcessed'
+                            ? 'bg-red-50 group-hover:bg-red-100'
+                            : 'bg-white group-hover:bg-muted'
+                        )}
+                      >
+                        {item.loanDisbursementDate
+                          ? formatDate(item.loanDisbursementDate)
+                          : 'NA'}
+                      </TableCell>
+                      <TableCell
+                        className={cn(
+                          item.status === 'notProcessed'
+                            ? 'bg-red-50 group-hover:bg-red-100'
+                            : 'bg-white group-hover:bg-muted'
+                        )}
+                      >
+                        {item.utr ? item.utr : 'NA'}
+                      </TableCell>
+                      <TableCell
+                        className={cn(
+                          item.status === 'notProcessed'
+                            ? 'bg-red-50 group-hover:bg-red-100'
+                            : 'bg-white group-hover:bg-muted'
+                        )}
+                      >
+                        {camelCaseToWords(item.status)}
+                      </TableCell>
+
+
+                      {user?.role === 'superAdmin' && (
+                        <>
+                          <TableCell
+                            className={cn(
+                              'flex justify-center',
+                              item.status === 'notProcessed'
+                                ? 'bg-red-50 group-hover:bg-red-100'
+                                : 'bg-white group-hover:bg-muted'
+                            )}
+                          >
+                            <span className="">
+                              {item.invoicePdfUrl ? (
+                                <a
+                                  href={item.invoicePdfUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  style={{ display: 'inline-block' }}
+                                >
+                                  <FileDown className="" />
+                                </a>
+                              ) : (
+                                'NA'
+                              )}
+                            </span>
+                          </TableCell>
+                          <TableCell
+                            className={cn(
+                              item.status === 'notProcessed'
+                                ? 'bg-red-50 group-hover:bg-red-100'
+                                : 'bg-white group-hover:bg-muted'
+                            )}
+                          >
+                            {item.status === 'yetToProcess' && (
+                              <Button
+                                onClick={() =>
+                                  handleSendMail(item.distributorCode, item.invoiceNumber)
+                                }
+                              >
+                                Send Mail
+                              </Button>
+                            )}
+                          </TableCell>
+                          <TableCell
+                            className={cn(
+                              item.status === 'notProcessed'
+                                ? 'bg-red-50 group-hover:bg-red-100'
+                                : 'bg-white group-hover:bg-muted'
+                            )}
+                          >
+                            {formatDateHourMinute(item.createdAt)}
+                          </TableCell>
+                          <TableCell
+                            className={cn(
+                              item.status === 'notProcessed'
+                                ? 'bg-red-50 group-hover:bg-red-100'
+                                : 'bg-white group-hover:bg-muted'
+                            )}
+                          >
+                            {formatDateHourMinute(item.updatedAt)}
+                          </TableCell>
+                        </>
+                      )}
+                    </TableRow>
+                  ))
+                }
               </TableBody>
             </Table>
             {data?.data?.length !== 0 ? (
