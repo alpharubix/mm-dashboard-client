@@ -40,8 +40,8 @@ import {
 import { useApiQuery } from '../api/hooks'
 import useDebounce from '../hooks/use-debounce'
 
-import type { InvoiceType } from '../types'
 import EmailDrawer from '@/components/EmailDrawer'
+import type { InvoiceType } from '../types'
 
 const showError = (error: any) => {
   if (!error) return
@@ -190,7 +190,7 @@ export default function Invoice() {
 
   if (error) {
     return (
-      <div className="flex justify-center items-center h-screen text-red-500">
+      <div className='flex justify-center items-center h-screen text-red-500'>
         {error.message}
       </div>
     )
@@ -199,71 +199,71 @@ export default function Invoice() {
   return (
     <>
       <Card>
-        <div className="flex items-center justify-between flex-wrap px-6 gap-2">
-          <div className="space-y-2">
+        <div className='flex items-center justify-between flex-wrap px-6 gap-2'>
+          <div className='space-y-2'>
             <Label
-              htmlFor="company-name"
-              className="text-sm font-medium text-gray-700"
+              htmlFor='company-name'
+              className='text-sm font-medium text-gray-700'
             >
               Company name
             </Label>
             <Input
-              id="company-name"
-              placeholder="Example company"
+              id='company-name'
+              placeholder='Example company'
               value={filters.companyName}
               onChange={(e) =>
                 setFilters((f) => ({ ...f, companyName: e.target.value }))
               }
-              className="h-10"
+              className='h-10'
             />
           </div>
 
-          <div className="space-y-2">
+          <div className='space-y-2'>
             <Label
-              htmlFor="distributor-code"
-              className="text-sm font-medium text-gray-700"
+              htmlFor='distributor-code'
+              className='text-sm font-medium text-gray-700'
             >
               Distributor code
             </Label>
             <Input
-              id="distributor-code"
-              placeholder="ex: 123456"
+              id='distributor-code'
+              placeholder='ex: 123456'
               value={filters.distributorCode}
               onChange={(e) =>
                 setFilters((f) => ({ ...f, distributorCode: e.target.value }))
               }
-              className="h-10"
+              className='h-10'
             />
           </div>
 
-          <div className="space-y-2">
-            <Label className="text-sm font-medium text-gray-700">
+          <div className='space-y-2'>
+            <Label className='text-sm font-medium text-gray-700'>
               Invoice No.
             </Label>
             <Input
-              placeholder="Invoice No."
+              placeholder='Invoice No.'
               value={filters.invoiceNumber}
               onChange={(e) =>
                 setFilters((f) => ({ ...f, invoiceNumber: e.target.value }))
               }
-              className="h-10"
+              className='h-10'
             />
           </div>
 
-          <div className="space-y-2">
-            <Label className="text-sm font-medium text-gray-700">UTR</Label>
+          <div className='space-y-2'>
+            <Label className='text-sm font-medium text-gray-700'>UTR</Label>
             <Input
-              placeholder="UTR"
+              placeholder='UTR'
               value={filters.utr}
               onChange={(e) =>
                 setFilters((f) => ({ ...f, utr: e.target.value }))
               }
-              className="h-10"
+              className='h-10'
             />
           </div>
 
-          <div className="space-y-2">
-            <Label className="text-sm font-medium text-gray-700">Status</Label>
+          <div className='space-y-2'>
+            <Label className='text-sm font-medium text-gray-700'>Status</Label>
             <Select
               onValueChange={(value) =>
                 setFilters((f) => ({
@@ -271,29 +271,29 @@ export default function Invoice() {
                   status: value === 'all' ? '' : value,
                 }))
               }
-              defaultValue="all"
+              defaultValue='all'
             >
-              <SelectTrigger className="h-10 min-w-48">
-                <SelectValue placeholder="Select status" />
+              <SelectTrigger className='h-10 min-w-48'>
+                <SelectValue placeholder='Select status' />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All</SelectItem>
-                <SelectItem value="yetToProcess">Yet To Process</SelectItem>
-                <SelectItem value="inProgress">In Progress</SelectItem>
-                <SelectItem value="processed">Processed</SelectItem>
-                <SelectItem value="pendingWithCustomer">
+                <SelectItem value='all'>All</SelectItem>
+                <SelectItem value='yetToProcess'>Yet To Process</SelectItem>
+                <SelectItem value='inProgress'>In Progress</SelectItem>
+                <SelectItem value='processed'>Processed</SelectItem>
+                <SelectItem value='pendingWithCustomer'>
                   Pending With Customer
                 </SelectItem>
-                <SelectItem value="pendingWithLender">
+                <SelectItem value='pendingWithLender'>
                   Pending With Lender
                 </SelectItem>
-                <SelectItem value="notProcessed">Not Processed</SelectItem>
+                <SelectItem value='notProcessed'>Not Processed</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
-          <div className="space-y-2">
-            <Label className="text-sm font-medium text-gray-700">
+          <div className='space-y-2'>
+            <Label className='text-sm font-medium text-gray-700'>
               Invioce Date Range
             </Label>
             <DatePickerWithRange
@@ -308,14 +308,14 @@ export default function Invoice() {
           </div>
 
           {user?.role === 'superAdmin' && (
-            <div className="space-y-2">
+            <div className='space-y-2'>
               <Button
                 onClick={() => handleExport(queryParams)}
-                variant="outline"
-                size="sm"
-                className="h-10 w-full cursor-pointer mt-6 font-normal text-sm text-gray-600"
+                variant='outline'
+                size='sm'
+                className='h-10 w-full cursor-pointer mt-6 font-normal text-sm text-gray-600'
               >
-                <Download className="h-4 w-4 mr-1" />
+                <Download className='h-4 w-4 mr-1' />
                 Export
               </Button>
             </div>
@@ -338,26 +338,26 @@ export default function Invoice() {
 
         {/* File Upload */}
         {user?.role === 'superAdmin' && (
-          <div className="flex items-center mx-5 gap-6 flex-wrap">
-            <div className="space-y-2 max-w-lg">
-              <Label className="text-sm font-medium text-gray-700">
+          <div className='flex items-center mx-5 gap-6 flex-wrap'>
+            <div className='space-y-2 max-w-lg'>
+              <Label className='text-sm font-medium text-gray-700'>
                 Upload File
               </Label>
-              <div className="flex gap-4 items-center">
+              <div className='flex gap-4 items-center'>
                 <InputFile
                   onChange={handleFileChange}
                   ref={inputRef}
                   file={file}
                 />
                 {file && (
-                  <div className="flex gap-2">
+                  <div className='flex gap-2'>
                     <Button onClick={handleUpload} disabled={!file}>
                       Upload CSV
                     </Button>
                     <Button
                       onClick={handleCancel}
-                      variant="ghost"
-                      className="text-red-500"
+                      variant='ghost'
+                      className='text-red-500'
                     >
                       Cancel
                     </Button>
@@ -367,18 +367,18 @@ export default function Invoice() {
             </div>
           </div>
         )}
-        <span className="text-sm italic text-gray-500 ml-6 inline">
+        <span className='text-sm italic text-gray-500 ml-6 inline'>
           {data?.total ? `Total - ${data?.total}` : null}
         </span>
         <CardContent>
-          <div className="overflow-x-auto">
-            <Table className="text-base whitespace-nowrap table-fixed">
-              <TableHeader className="tracking-wide">
-                <TableRow className="bg-gray-50">
-                  <TableHead className="font-bold bg-gray-50 sticky left-0 w-[200px] z-20 text-gray-700 ">
+          <div className='overflow-x-auto'>
+            <Table className='text-base whitespace-nowrap table-fixed'>
+              <TableHeader className='tracking-wide'>
+                <TableRow className='bg-gray-50'>
+                  <TableHead className='font-bold bg-gray-50 sticky left-0 w-[200px] z-20 text-gray-700 '>
                     Company Name
                   </TableHead>
-                  <TableHead className="font-bold text-gray-700 sticky left-[200px] w-[150px]  z-10 bg-gray-50 ">
+                  <TableHead className='font-bold text-gray-700 sticky left-[200px] w-[150px]  z-10 bg-gray-50 '>
                     Distributor Code
                   </TableHead>
                   {/* {user?.role === 'superAdmin' && (
@@ -400,42 +400,42 @@ export default function Invoice() {
                       </TableHead>
                     </>
                   )} */}
-                  <TableHead className="font-bold  text-gray-700 w-[150px] ">
+                  <TableHead className='font-bold  text-gray-700 w-[150px] '>
                     Invoice Number
                   </TableHead>
-                  <TableHead className="font-bold  text-gray-700 w-[150px] ">
+                  <TableHead className='font-bold  text-gray-700 w-[150px] '>
                     Invoice Amount
                   </TableHead>
-                  <TableHead className="font-bold  text-gray-700 w-[120px] ">
+                  <TableHead className='font-bold  text-gray-700 w-[120px] '>
                     Invoice Date
                   </TableHead>
-                  <TableHead className="font-bold  text-gray-700 w-[150px] ">
+                  <TableHead className='font-bold  text-gray-700 w-[150px] '>
                     Loan Amount
                   </TableHead>
                   <TableHead
-                    title="Limit Live Date"
-                    className="font-bold  text-gray-700 w-[100px] "
+                    title='Limit Live Date'
+                    className='font-bold  text-gray-700 w-[100px] '
                   >
                     LLD
                   </TableHead>
-                  <TableHead className="font-bold  text-gray-700 w-[100px] ">
+                  <TableHead className='font-bold  text-gray-700 w-[100px] '>
                     UTR
                   </TableHead>
-                  <TableHead className="font-bold  text-gray-700 w-[200px]">
+                  <TableHead className='font-bold  text-gray-700 w-[200px]'>
                     Status
                   </TableHead>
                   {user?.role === 'superAdmin' && (
                     <>
-                      <TableHead className="font-bold  text-gray-700 min-w-28 w-[120px] ">
+                      <TableHead className='font-bold  text-gray-700 min-w-28 w-[120px] '>
                         Invoice File
                       </TableHead>
-                      <TableHead className="font-bold  text-gray-700 min-w-28 w-[130px] ">
+                      <TableHead className='font-bold  text-gray-700 min-w-28 w-[130px] '>
                         Disbursement
                       </TableHead>
-                      <TableHead className="font-bold  text-gray-700 w-[200px] ">
+                      <TableHead className='font-bold  text-gray-700 w-[200px] '>
                         Created At
                       </TableHead>
-                      <TableHead className="font-bold  text-gray-700 w-[200px]">
+                      <TableHead className='font-bold  text-gray-700 w-[200px]'>
                         Updated At
                       </TableHead>
                     </>
@@ -447,10 +447,10 @@ export default function Invoice() {
                   ? Array.from({ length: 10 }).map((_, i) => (
                       <TableRow key={i}>
                         <TableCell>
-                          <Skeleton className="h-4 w-32" />
+                          <Skeleton className='h-4 w-32' />
                         </TableCell>
                         <TableCell>
-                          <Skeleton className="h-4 w-32" />
+                          <Skeleton className='h-4 w-32' />
                         </TableCell>
                         {/* <TableCell>
                           <Skeleton className='h-4 w-24' />
@@ -468,34 +468,34 @@ export default function Invoice() {
                           <Skeleton className='h-4 w-20' />
                         </TableCell> */}
                         <TableCell>
-                          <Skeleton className="h-4 w-20" />
+                          <Skeleton className='h-4 w-20' />
                         </TableCell>
                         <TableCell>
-                          <Skeleton className="h-4 w-28" />
+                          <Skeleton className='h-4 w-28' />
                         </TableCell>
                         <TableCell>
-                          <Skeleton className="h-4 w-16" />
+                          <Skeleton className='h-4 w-16' />
                         </TableCell>
                         <TableCell>
-                          <Skeleton className="h-4 w-24" />
+                          <Skeleton className='h-4 w-24' />
                         </TableCell>
                         <TableCell>
-                          <Skeleton className="h-4 w-16" />
+                          <Skeleton className='h-4 w-16' />
                         </TableCell>
                         <TableCell>
-                          <Skeleton className="h-4 w-24" />
+                          <Skeleton className='h-4 w-24' />
                         </TableCell>
                         <TableCell>
-                          <Skeleton className="h-4 w-20" />
+                          <Skeleton className='h-4 w-20' />
                         </TableCell>
                         <TableCell>
-                          <Skeleton className="h-4 w-16" />
+                          <Skeleton className='h-4 w-16' />
                         </TableCell>
                         <TableCell>
-                          <Skeleton className="h-4 w-16" />
+                          <Skeleton className='h-4 w-16' />
                         </TableCell>
                         <TableCell>
-                          <Skeleton className="h-4 w-16" />
+                          <Skeleton className='h-4 w-16' />
                         </TableCell>
                       </TableRow>
                     ))
@@ -503,7 +503,7 @@ export default function Invoice() {
                       <TableRow
                         key={item._id}
                         className={cn(
-                          'group transition-colors',
+                          'group transition-colors *:truncate *:overflow-hidden',
                           item.status === 'notProcessed'
                             ? 'bg-red-50'
                             : 'bg-white'
@@ -511,7 +511,7 @@ export default function Invoice() {
                       >
                         <TableCell
                           className={cn(
-                            'sticky left-0 z-20 ',
+                            'sticky left-0 z-20 overflow-hidden',
                             item.status === 'notProcessed'
                               ? 'bg-red-50 group-hover:bg-red-100'
                               : 'bg-white group-hover:bg-muted'
@@ -607,15 +607,15 @@ export default function Invoice() {
                                   : 'bg-white group-hover:bg-muted'
                               )}
                             >
-                              <span className="">
+                              <span className=''>
                                 {item.invoicePdfUrl ? (
                                   <a
                                     href={item.invoicePdfUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
+                                    target='_blank'
+                                    rel='noopener noreferrer'
                                     style={{ display: 'inline-block' }}
                                   >
-                                    <FileDown className="" />
+                                    <FileDown className='' />
                                   </a>
                                 ) : (
                                   'NA'
@@ -659,30 +659,30 @@ export default function Invoice() {
             </Table>
             {data?.data?.length !== 0 ? (
               <>
-                <div className="mt-4 flex justify-center gap-4 items-center">
+                <div className='mt-4 flex justify-center gap-4 items-center'>
                   <Button
                     onClick={() => setPage((p) => Math.max(p - 1, 1))}
                     disabled={page === 1}
-                    className="cursor-pointer text-2xl"
+                    className='cursor-pointer text-2xl'
                     variant={'outline'}
                   >
-                    <ChevronLeft className="h-4 w-4" />
+                    <ChevronLeft className='h-4 w-4' />
                   </Button>
-                  <span className="text-sm text-gray-600">
+                  <span className='text-sm text-gray-600'>
                     Page {page} of {totalPages}
                   </span>
                   <Button
                     onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
                     disabled={page === totalPages}
-                    className="cursor-pointer text-2xl"
+                    className='cursor-pointer text-2xl'
                     variant={'outline'}
                   >
-                    <ChevronRight className="h-4 w-4" />
+                    <ChevronRight className='h-4 w-4' />
                   </Button>
                 </div>
               </>
             ) : (
-              <div className="text-center text-2xl m-3">
+              <div className='text-center text-2xl m-3'>
                 {isPending ? null : 'No Data Found'}
               </div>
             )}
