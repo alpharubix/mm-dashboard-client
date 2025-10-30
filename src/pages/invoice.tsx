@@ -372,13 +372,13 @@ export default function Invoice() {
         </span>
         <CardContent>
           <div className="overflow-x-auto">
-            <Table className="text-base whitespace-nowrap">
+            <Table className="text-base whitespace-nowrap table-fixed">
               <TableHeader className="tracking-wide">
                 <TableRow className="bg-gray-50">
-                  <TableHead className="font-bold bg-gray-50 sticky left-0 z-20 text-gray-700">
+                  <TableHead className="font-bold bg-gray-50 sticky left-0 w-[200px] z-20 text-gray-700 ">
                     Company Name
                   </TableHead>
-                  <TableHead className="font-bold text-gray-700 sticky left-[167px] z-10 bg-gray-50 ">
+                  <TableHead className="font-bold text-gray-700 sticky left-[200px] w-[150px]  z-10 bg-gray-50 ">
                     Distributor Code
                   </TableHead>
                   {/* {user?.role === 'superAdmin' && (
@@ -400,42 +400,42 @@ export default function Invoice() {
                       </TableHead>
                     </>
                   )} */}
-                  <TableHead className="font-bold  text-gray-700 ">
+                  <TableHead className="font-bold  text-gray-700 w-[150px] ">
                     Invoice Number
                   </TableHead>
-                  <TableHead className="font-bold  text-gray-700 ">
+                  <TableHead className="font-bold  text-gray-700 w-[150px] ">
                     Invoice Amount
                   </TableHead>
-                  <TableHead className="font-bold  text-gray-700 ">
+                  <TableHead className="font-bold  text-gray-700 w-[120px] ">
                     Invoice Date
                   </TableHead>
-                  <TableHead className="font-bold  text-gray-700 ">
+                  <TableHead className="font-bold  text-gray-700 w-[150px] ">
                     Loan Amount
                   </TableHead>
                   <TableHead
                     title="Limit Live Date"
-                    className="font-bold  text-gray-700 "
+                    className="font-bold  text-gray-700 w-[100px] "
                   >
                     LLD
                   </TableHead>
-                  <TableHead className="font-bold  text-gray-700 ">
+                  <TableHead className="font-bold  text-gray-700 w-[100px] ">
                     UTR
                   </TableHead>
-                  <TableHead className="font-bold  text-gray-700 ">
+                  <TableHead className="font-bold  text-gray-700 w-[170px]">
                     Status
                   </TableHead>
                   {user?.role === 'superAdmin' && (
                     <>
-                      <TableHead className="font-bold  text-gray-700 min-w-28">
+                      <TableHead className="font-bold  text-gray-700 min-w-28 w-[120px] ">
                         Invoice File
                       </TableHead>
-                      <TableHead className="font-bold  text-gray-700 min-w-28">
+                      <TableHead className="font-bold  text-gray-700 min-w-28 w-[130px] ">
                         Disbursement
                       </TableHead>
-                      <TableHead className="font-bold  text-gray-700 ">
+                      <TableHead className="font-bold  text-gray-700 w-[200px] ">
                         Created At
                       </TableHead>
-                      <TableHead className="font-bold  text-gray-700 ">
+                      <TableHead className="font-bold  text-gray-700 w-[200px]">
                         Updated At
                       </TableHead>
                     </>
@@ -511,7 +511,7 @@ export default function Invoice() {
                       >
                         <TableCell
                           className={cn(
-                            'sticky left-0 z-20',
+                            'sticky left-0 z-20 ',
                             item.status === 'notProcessed'
                               ? 'bg-red-50 group-hover:bg-red-100'
                               : 'bg-white group-hover:bg-muted'
@@ -522,7 +522,7 @@ export default function Invoice() {
 
                         <TableCell
                           className={cn(
-                            'sticky left-[167px] z-10',
+                            'sticky left-[200px] z-10',
                             item.status === 'notProcessed'
                               ? 'bg-red-50 group-hover:bg-red-100'
                               : 'bg-white group-hover:bg-muted'
