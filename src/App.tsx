@@ -26,42 +26,33 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path='/' element={<RootRedirect />} />
-        <Route path='/login' element={<Login />} />
-        <Route path='/signup' element={<Signup />} />
-        <Route path='/' element={<Home />}>
+        <Route path="/" element={<RootRedirect />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/" element={<Home />}>
           <Route
-            path='users'
+            path="users"
             element={
-              <ProtectedRoute requiredRoute='users'>
+              <ProtectedRoute requiredRoute="users">
                 <Users />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path='email'
-            element={
-              <ProtectedRoute requiredRoute='email'>
-                <Email />
               </ProtectedRoute>
             }
           />
 
           {/* Admin + SuperAdmin routes */}
           <Route
-            path='credit-limit'
+            path="credit-limit"
             element={
-              <ProtectedRoute requiredRoute='credit-limit'>
+              <ProtectedRoute requiredRoute="credit-limit">
                 <CreditLimit />
               </ProtectedRoute>
             }
           />
 
           <Route
-            path='invoice-utr'
+            path="invoice-utr"
             element={
-              <ProtectedRoute requiredRoute='invoice-utr'>
+              <ProtectedRoute requiredRoute="invoice-utr">
                 <Invoice />
               </ProtectedRoute>
             }
@@ -69,16 +60,16 @@ export default function App() {
 
           {/* All roles can access */}
           <Route
-            path='viewer'
+            path="viewer"
             element={
-              <ProtectedRoute requiredRoute='viewer'>
+              <ProtectedRoute requiredRoute="viewer">
                 <Viewer />
               </ProtectedRoute>
             }
           />
 
-          <Route path='onboard-customer' element={<Onboard />} />
-          <Route path='*' element={<NotFound />} />
+          <Route path="onboard-customer" element={<Onboard />} />
+          <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
     </BrowserRouter>

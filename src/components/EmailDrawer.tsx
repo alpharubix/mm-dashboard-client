@@ -22,7 +22,7 @@ type FormDataType = {
 }
 
 export default function EmailDrawer() {
-  const mutation = useApiPost('/email-send')
+  const mutation = useApiPost('/test-mail')
 
   const handleFormData = (form: HTMLFormElement) => {
     const formData = new FormData(form)
