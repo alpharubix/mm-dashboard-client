@@ -421,7 +421,7 @@ export default function Invoice() {
                   <TableHead className="font-bold  text-gray-700 w-[100px] ">
                     UTR
                   </TableHead>
-                  <TableHead className="font-bold  text-gray-700 w-[170px]">
+                  <TableHead className="font-bold  text-gray-700 w-[200px]">
                     Status
                   </TableHead>
                   {user?.role === 'superAdmin' && (
