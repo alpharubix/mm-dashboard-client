@@ -72,6 +72,13 @@ const Toolbar = ({ editor }:any) => {
       <button onClick={() => editor.chain().focus().addRowAfter().run()}>
         Add Row
       </button>
+      
+      <button onClick={() => editor.chain().focus().deleteRow().run()}>
+        Delete Row
+      </button>
+      <button onClick={()=> editor.chain().focus().deleteColumn().run()}>
+        Delete Col
+      </button>
       <button onClick={() => editor.chain().focus().deleteTable().run()}>
         Delete Table
       </button>
