@@ -25,7 +25,7 @@ export const EMAIL_STATUS = {
   SENT: 'sent',
 }
 
-export const INVOICE_STATUS = {
+export const INV_STATUS = {
   YET_TO_PROCESS: 'yetToProcess',
   IN_PROGRESS: 'inProgress',
   PROCESSED: 'processed',
