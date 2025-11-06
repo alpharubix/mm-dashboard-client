@@ -1,6 +1,14 @@
-import { FileDown, ChevronDown } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { ChevronDown, FileDown } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { useApiQuery } from '../api/hooks'
 import { Card, CardContent } from '../components/ui/card'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../components/ui/select'
 import { Skeleton } from '../components/ui/skeleton'
 import {
   Table,
@@ -12,19 +20,12 @@ import {
 } from '../components/ui/table'
 import {
   camelCaseToWords,
+  cn,
   formatAmount,
   formatDate,
   getCompanyName,
 } from '../lib/utils'
 import type { ViewerDataType } from '../types'
-import { useApiQuery } from '../api/hooks'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../components/ui/select'
 
 export default function Viewer() {
   const { data, isPending, error } = useApiQuery('/viewer-data')
@@ -207,7 +208,7 @@ export default function Viewer() {
                         Overdue:
                       </span>{' '}
                       <span className='text-lg text-red-900 tracking-wider'>
-                        {overdue ? formatAmount(overdue) + '/-' : 'NA'}
+                        {overdue ? formatAmount(overdue) + '/-' : '0'}
                       </span>
                     </div>
                   </div>
@@ -285,7 +286,14 @@ export default function Viewer() {
                         ))
                       ) : filteredData.invoiceData?.length > 0 ? (
                         filteredData.invoiceData.map((inv: ViewerDataType) => (
-                          <TableRow key={inv.invoiceNumber}>
+                          <TableRow
+                            key={inv.invoiceNumber}
+                            className={cn(
+                              '*:truncate *:overflow-hidden *:text-ellipsis',
+                              inv.status === 'notProcessed' &&
+                                'bg-red-50 hover:bg-red-0'
+                            )}
+                          >
                             <TableCell>{inv.invoiceNumber}</TableCell>
                             <TableCell>
                               {formatAmount(inv.invoiceAmount)}
@@ -295,7 +303,9 @@ export default function Viewer() {
                               {formatAmount(inv.loanAmount)}
                             </TableCell>
                             <TableCell>
-                              {formatDate(inv.loanDisbursementDate) || (
+                              {inv.loanDisbursementDate ? (
+                                formatDate(inv.loanDisbursementDate)
+                              ) : (
                                 <span className='text-gray-400'>NA</span>
                               )}
                             </TableCell>
