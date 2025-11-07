@@ -601,7 +601,6 @@ export default function Invoice() {
                           <>
                             <TableCell
                               className={cn(
-                                'flex justify-center items-center',
                                 item.status === 'notProcessed'
                                   ? 'bg-red-50 group-hover:bg-red-100'
                                   : 'bg-white group-hover:bg-muted'
