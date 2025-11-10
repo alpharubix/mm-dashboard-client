@@ -207,7 +207,7 @@ export default function Viewer() {
                         Overdue:
                       </span>{' '}
                       <span className='text-lg text-red-900 tracking-wider'>
-                        {overdue ? formatAmount(overdue) + '/-' : 'NA'}
+                        {overdue ? formatAmount(overdue) + '/-' : '0'}
                       </span>
                     </div>
                   </div>

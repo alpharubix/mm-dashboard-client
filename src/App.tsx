@@ -3,7 +3,6 @@ import { lazy } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
 import { getAuthToken } from './lib/utils'
-import Email from './pages/Email'
 
 // Lazy imports
 const Login = lazy(() => import('./pages/Login'))

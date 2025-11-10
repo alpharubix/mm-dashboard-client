@@ -26,7 +26,7 @@ import {
   TableHeader,
   TableRow,
 } from '../components/ui/table'
-import { ENV } from '../conf'
+import { EMAIL_STATUS, ENV, INV_STATUS } from '../conf'
 import {
   camelCaseToWords,
   cn,
@@ -40,7 +40,7 @@ import {
 import { useApiQuery } from '../api/hooks'
 import useDebounce from '../hooks/use-debounce'
 
-import EmailDrawer from '@/components/EmailDrawer'
+import EmailContainer from '@/components/EmailDrawer'
 import type { InvoiceType } from '../types'
 
 const showError = (error: any) => {
@@ -104,10 +104,6 @@ export default function Invoice() {
   const { data, isPending, error, refetch } = useApiQuery(
     '/invoice-input',
     queryParams
-  )
-  console.log(
-    'Data ============> ',
-    data?.data?.map((d: any) => d.status)
   )
 
   const totalPages = data?.totalPages || 1
@@ -278,16 +274,22 @@ export default function Invoice() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value='all'>All</SelectItem>
-                <SelectItem value='yetToProcess'>Yet To Process</SelectItem>
-                <SelectItem value='inProgress'>In Progress</SelectItem>
-                <SelectItem value='processed'>Processed</SelectItem>
-                <SelectItem value='pendingWithCustomer'>
+                <SelectItem value={INV_STATUS.YET_TO_PROCESS}>
+                  Yet To Process
+                </SelectItem>
+                <SelectItem value={INV_STATUS.IN_PROGRESS}>
+                  In Progress
+                </SelectItem>
+                <SelectItem value={INV_STATUS.PROCESSED}>Processed</SelectItem>
+                <SelectItem value={INV_STATUS.PENDING_WITH_CUSTOMER}>
                   Pending With Customer
                 </SelectItem>
-                <SelectItem value='pendingWithLender'>
+                <SelectItem value={INV_STATUS.PENDING_WITH_LENDER}>
                   Pending With Lender
                 </SelectItem>
-                <SelectItem value='notProcessed'>Not Processed</SelectItem>
+                <SelectItem value={INV_STATUS.NOT_PROCESSED}>
+                  Not Processed
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -504,7 +506,7 @@ export default function Invoice() {
                         key={item._id}
                         className={cn(
                           'group transition-colors *:truncate *:overflow-hidden',
-                          item.status === 'notProcessed'
+                          item.status === INV_STATUS.NOT_PROCESSED
                             ? 'bg-red-50'
                             : 'bg-white'
                         )}
@@ -512,7 +514,7 @@ export default function Invoice() {
                         <TableCell
                           className={cn(
                             'sticky left-0 z-20 overflow-hidden',
-                            item.status === 'notProcessed'
+                            item.status === INV_STATUS.NOT_PROCESSED
                               ? 'bg-red-50 group-hover:bg-red-100'
                               : 'bg-white group-hover:bg-muted'
                           )}
@@ -523,7 +525,7 @@ export default function Invoice() {
                         <TableCell
                           className={cn(
                             'sticky left-[200px] z-10',
-                            item.status === 'notProcessed'
+                            item.status === INV_STATUS.NOT_PROCESSED
                               ? 'bg-red-50 group-hover:bg-red-100'
                               : 'bg-white group-hover:bg-muted'
                           )}
@@ -533,7 +535,7 @@ export default function Invoice() {
 
                         <TableCell
                           className={cn(
-                            item.status === 'notProcessed'
+                            item.status === INV_STATUS.NOT_PROCESSED
                               ? 'bg-red-50 group-hover:bg-red-100'
                               : 'bg-white group-hover:bg-muted'
                           )}
@@ -542,7 +544,7 @@ export default function Invoice() {
                         </TableCell>
                         <TableCell
                           className={cn(
-                            item.status === 'notProcessed'
+                            item.status === INV_STATUS.NOT_PROCESSED
                               ? 'bg-red-50 group-hover:bg-red-100'
                               : 'bg-white group-hover:bg-muted'
                           )}
@@ -551,7 +553,7 @@ export default function Invoice() {
                         </TableCell>
                         <TableCell
                           className={cn(
-                            item.status === 'notProcessed'
+                            item.status === INV_STATUS.NOT_PROCESSED
                               ? 'bg-red-50 group-hover:bg-red-100'
                               : 'bg-white group-hover:bg-muted'
                           )}
@@ -560,7 +562,7 @@ export default function Invoice() {
                         </TableCell>
                         <TableCell
                           className={cn(
-                            item.status === 'notProcessed'
+                            item.status === INV_STATUS.NOT_PROCESSED
                               ? 'bg-red-50 group-hover:bg-red-100'
                               : 'bg-white group-hover:bg-muted'
                           )}
@@ -569,7 +571,7 @@ export default function Invoice() {
                         </TableCell>
                         <TableCell
                           className={cn(
-                            item.status === 'notProcessed'
+                            item.status === INV_STATUS.NOT_PROCESSED
                               ? 'bg-red-50 group-hover:bg-red-100'
                               : 'bg-white group-hover:bg-muted'
                           )}
@@ -580,7 +582,7 @@ export default function Invoice() {
                         </TableCell>
                         <TableCell
                           className={cn(
-                            item.status === 'notProcessed'
+                            item.status === INV_STATUS.NOT_PROCESSED
                               ? 'bg-red-50 group-hover:bg-red-100'
                               : 'bg-white group-hover:bg-muted'
                           )}
@@ -589,7 +591,7 @@ export default function Invoice() {
                         </TableCell>
                         <TableCell
                           className={cn(
-                            item.status === 'notProcessed'
+                            item.status === INV_STATUS.NOT_PROCESSED
                               ? 'bg-red-50 group-hover:bg-red-100'
                               : 'bg-white group-hover:bg-muted'
                           )}
@@ -602,7 +604,7 @@ export default function Invoice() {
                             <TableCell
                               className={cn(
                                 'flex justify-center items-center',
-                                item.status === 'notProcessed'
+                                item.status === INV_STATUS.NOT_PROCESSED
                                   ? 'bg-red-50 group-hover:bg-red-100'
                                   : 'bg-white group-hover:bg-muted'
                               )}
@@ -613,7 +615,7 @@ export default function Invoice() {
                                     href={item.invoicePdfUrl}
                                     target='_blank'
                                     rel='noopener noreferrer'
-                                    style={{ display: 'inline-block' }}
+                                    className='inline-flex items-center text-blue-600 hover:text-blue-800'
                                   >
                                     <FileDown className='' />
                                   </a>
@@ -622,20 +624,35 @@ export default function Invoice() {
                                 )}
                               </span>
                             </TableCell>
+                            {user.role === 'superAdmin' ? (
+                              <TableCell
+                                className={cn(
+                                  item.status === INV_STATUS.NOT_PROCESSED
+                                    ? 'bg-red-50 group-hover:bg-red-100'
+                                    : 'bg-white group-hover:bg-muted'
+                                )}
+                              >
+                                {item.emailStatus === EMAIL_STATUS.ELIGIBLE && (
+                                  <EmailContainer
+                                    distributorCode={item.distributorCode}
+                                    invoiceNumber={item.invoiceNumber}
+                                  />
+                                )}
+
+                                {item.emailStatus ===
+                                  EMAIL_STATUS.NOT_ELIGIBLE && 'Not Eligible'}
+                                {item.emailStatus === EMAIL_STATUS.OVERDUE &&
+                                  'Overdue'}
+                                {item.emailStatus ===
+                                  EMAIL_STATUS.INSUFF_AVAIL_LIMIT &&
+                                  'Insufficient Available Limit'}
+                                {item.emailStatus === EMAIL_STATUS.SENT &&
+                                  'Sent'}
+                              </TableCell>
+                            ) : null}
                             <TableCell
                               className={cn(
-                                item.status === 'notProcessed'
-                                  ? 'bg-red-50 group-hover:bg-red-100'
-                                  : 'bg-white group-hover:bg-muted'
-                              )}
-                            >
-                              {item.status === 'yetToProcess' && (
-                                <EmailDrawer />
-                              )}
-                            </TableCell>
-                            <TableCell
-                              className={cn(
-                                item.status === 'notProcessed'
+                                item.status === INV_STATUS.NOT_PROCESSED
                                   ? 'bg-red-50 group-hover:bg-red-100'
                                   : 'bg-white group-hover:bg-muted'
                               )}
@@ -644,7 +661,7 @@ export default function Invoice() {
                             </TableCell>
                             <TableCell
                               className={cn(
-                                item.status === 'notProcessed'
+                                item.status === INV_STATUS.NOT_PROCESSED
                                   ? 'bg-red-50 group-hover:bg-red-100'
                                   : 'bg-white group-hover:bg-muted'
                               )}

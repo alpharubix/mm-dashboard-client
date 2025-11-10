@@ -33,3 +33,14 @@ export const INV_STATUS = {
   PENDING_WITH_LENDER: 'pendingWithLender',
   NOT_PROCESSED: 'notProcessed',
 }
+
+export const STATUS_ACTIONS = {
+  notEligible: { text: 'Not Eligible', canSend: false },
+  overdue: { text: 'Overdue', canSend: false },
+  insufficientAvailableLimit: {
+    text: 'Insufficient Available Limit',
+    canSend: false,
+  },
+  eligible: { text: '', canSend: true },
+  sent: { text: 'Sent', canSend: false },
+}

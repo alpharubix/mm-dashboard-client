@@ -76,8 +76,11 @@
 .ProseMirror .selectedCell:after {
   z-index: 2;
   position: absolute;
-  content: "";
-  left: 0; right: 0; top: 0; bottom: 0;
+  content: '';
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
   background: rgba(0, 123, 255, 0.1);
   pointer-events: none;
 }
@@ -105,4 +108,8 @@
 }
 .send-button:hover {
   background-color: #218838;
+}
+
+.tiptap ul li {
+  list-style-type: disc !important;
 }
