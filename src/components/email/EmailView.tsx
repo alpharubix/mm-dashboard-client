@@ -19,7 +19,6 @@ export default function EmailDrawerView({
   setOpen,
   template,
   editor,
-  // handleSubmit,
   handleMailCheck,
   emailDetails,
   handleSendButton,
@@ -31,13 +30,12 @@ export default function EmailDrawerView({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button
-          variant='outline'
-          className='cursor-pointer'
+        <span
+          className='cursor-pointer font-medium text-blue-600'
           onClick={() => handleMailCheck()}
         >
           Send Mail
-        </Button>
+        </span>
       </DialogTrigger>
 
       <DialogContent

@@ -420,7 +420,7 @@ export default function Invoice() {
                   >
                     LLD
                   </TableHead>
-                  <TableHead className='font-bold  text-gray-700 w-[100px] '>
+                  <TableHead className='font-bold  text-gray-700 w-[200px] '>
                     UTR
                   </TableHead>
                   <TableHead className='font-bold  text-gray-700 w-[200px]'>
@@ -431,7 +431,7 @@ export default function Invoice() {
                       <TableHead className='font-bold  text-gray-700 min-w-28 w-[120px] '>
                         Invoice File
                       </TableHead>
-                      <TableHead className='font-bold  text-gray-700 min-w-28 w-[130px] '>
+                      <TableHead className='font-bold  text-gray-700 min-w-28 w-[200px] '>
                         Disbursement
                       </TableHead>
                       <TableHead className='font-bold  text-gray-700 w-[200px] '>
@@ -641,14 +641,27 @@ export default function Invoice() {
                                 )}
 
                                 {item.emailStatus ===
-                                  EMAIL_STATUS.NOT_ELIGIBLE && 'Not Eligible'}
-                                {item.emailStatus === EMAIL_STATUS.OVERDUE &&
-                                  'Overdue'}
+                                  EMAIL_STATUS.NOT_ELIGIBLE && (
+                                  <span className='text-red-500 font-medium'>
+                                    Not Eligible
+                                  </span>
+                                )}
+                                {item.emailStatus === EMAIL_STATUS.OVERDUE && (
+                                  <span className='text-orange-400  font-medium'>
+                                    Overdue
+                                  </span>
+                                )}
                                 {item.emailStatus ===
-                                  EMAIL_STATUS.INSUFF_AVAIL_LIMIT &&
-                                  'Insufficient Available Limit'}
-                                {item.emailStatus === EMAIL_STATUS.SENT &&
-                                  'Sent'}
+                                  EMAIL_STATUS.INSUFF_AVAIL_LIMIT && (
+                                  <span className='text-yellow-600 font-medium'>
+                                    Insufficient Available Limit
+                                  </span>
+                                )}
+                                {item.emailStatus === EMAIL_STATUS.SENT && (
+                                  <span className='text-green-500 font-medium'>
+                                    Sent
+                                  </span>
+                                )}
                               </TableCell>
                             ) : null}
                             <TableCell

@@ -10,6 +10,7 @@ import { StarterKit } from '@tiptap/starter-kit'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
+import './Editor.css'
 import EmailDrawerView from './email/EmailView'
 import { Button } from './ui/button'
 import {
@@ -20,9 +21,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from './ui/dialog'
-
-import { useApiQuery } from '@/api/hooks'
-import './Editor.css'
 
 export default function EmailContainer({
   distributorCode,
@@ -42,10 +40,6 @@ export default function EmailContainer({
     body: '',
   })
   const [formPayload, setFormPayload] = useState<any>(null)
-  const { refetch } = useApiQuery(
-    `/invoice-input?invoiceNumber=${invoiceNumber}`
-  )
-
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -84,7 +78,11 @@ export default function EmailContainer({
 
   const handleMailCheckAndSubmit = async () => {
     const eligibility = await checkEligibility()
-    if (!eligibility.isEligible) return
+    if (!eligibility.isEligible) {
+      setOpen(false)
+      onStatusUpdated?.()
+      return
+    }
 
     setOpen(true)
 
