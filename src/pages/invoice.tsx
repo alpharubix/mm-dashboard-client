@@ -636,6 +636,7 @@ export default function Invoice() {
                                   <EmailContainer
                                     distributorCode={item.distributorCode}
                                     invoiceNumber={item.invoiceNumber}
+                                    onStatusUpdated={refetch}
                                   />
                                 )}
 

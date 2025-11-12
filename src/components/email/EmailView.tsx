@@ -11,6 +11,7 @@ import {
 } from '../ui/dialog'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
+import { Spinner } from '../ui/spinner'
 import Toolbar from './Toolbar'
 
 export default function EmailDrawerView({
@@ -18,9 +19,15 @@ export default function EmailDrawerView({
   setOpen,
   template,
   editor,
-  handleSubmit,
+  // handleSubmit,
   handleMailCheck,
+  emailDetails,
+  handleSendButton,
+  attachments,
+  eligiblityStatus,
 }: any) {
+  // TODO Show the spinner based on the email status
+  console.log({ eligiblityStatus })
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -34,6 +41,9 @@ export default function EmailDrawerView({
       </DialogTrigger>
 
       <DialogContent
+        onOpenAutoFocus={(e) => {
+          e.preventDefault()
+        }}
         className='sm:max-w-[650px] max-h-[750px] overflow-scroll'
         aria-describedby={undefined}
       >
@@ -42,32 +52,70 @@ export default function EmailDrawerView({
         </DialogHeader>
 
         {!template ? (
-          <div className='p-4 text-sm text-gray-500'>Loading template...</div>
+          <Spinner className='mx-auto' />
         ) : (
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSendButton}>
             <div className='grid gap-2'>
               <div className='grid gap-1'>
                 <Label htmlFor='from'>From</Label>
-                <Input
-                  id='from'
-                  name='from'
-                  defaultValue='techmgr@meramerchant.com'
-                />
+                <Input id='from' name='from' defaultValue={emailDetails.from} />
               </div>
 
               <div className='grid gap-1'>
                 <Label htmlFor='to'>To</Label>
-                <Input id='to' name='to' placeholder='To' />
+                <Input
+                  id='to'
+                  name='to'
+                  placeholder='To'
+                  defaultValue={emailDetails.to}
+                />
               </div>
 
               <div className='grid gap-1'>
                 <Label htmlFor='cc'>Cc</Label>
-                <Input id='cc' name='cc' placeholder='Cc' />
+                <Input
+                  id='cc'
+                  name='cc'
+                  placeholder='Cc'
+                  defaultValue={emailDetails.cc}
+                />
               </div>
 
               <div className='grid gap-1'>
                 <Label htmlFor='subject'>Subject</Label>
-                <Input id='subject' name='subject' placeholder='Subject' />
+                <Input
+                  id='subject'
+                  name='subject'
+                  placeholder='Subject'
+                  defaultValue={emailDetails.subject}
+                />
+              </div>
+              {/* ✅ Attachments section */}
+              <div className='flex items-center gap-2'>
+                {attachments?.csv && (
+                  <span>
+                    <a
+                      download={attachments.csv.filename}
+                      href={`data:${attachments.csv.mime};base64,${attachments.csv.base64}`}
+                      className='inline underline text-blue-500'
+                    >
+                      Download CSV
+                    </a>
+                  </span>
+                )}
+
+                {attachments?.pdf && (
+                  <span>
+                    <a
+                      href={attachments.pdf.url}
+                      target='_blank'
+                      rel='noreferrer'
+                      className='inline underline text-blue-500'
+                    >
+                      View PDF
+                    </a>
+                  </span>
+                )}
               </div>
 
               {editor && (

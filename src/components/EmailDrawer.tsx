@@ -1,25 +1,50 @@
-import { Table } from '@tiptap/extension-table'
-import { TableCell } from '@tiptap/extension-table-cell'
-import { TableHeader } from '@tiptap/extension-table-header'
-import { TableRow } from '@tiptap/extension-table-row'
+import { api } from '@/api'
+import {
+  Table,
+  TableCell,
+  TableHeader,
+  TableRow,
+} from '@tiptap/extension-table'
 import { useEditor } from '@tiptap/react'
 import { StarterKit } from '@tiptap/starter-kit'
-import { useApiPost } from '../api/hooks'
-
-import { api } from '@/api'
 import { useEffect, useState } from 'react'
-import './Editor.css'
+import { toast } from 'sonner'
+
 import EmailDrawerView from './email/EmailView'
+import { Button } from './ui/button'
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from './ui/dialog'
+
+import { useApiQuery } from '@/api/hooks'
+import './Editor.css'
 
 export default function EmailContainer({
   distributorCode,
   invoiceNumber,
+  onStatusUpdated,
 }: any) {
   const [open, setOpen] = useState(false)
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false)
   const [template, setTemplate] = useState('')
   const [body, setBody] = useState('')
-  console.log({ distributorCode })
-  const mutation = useApiPost('/email-send')
+  const [attachments, setAttachments] = useState<any>(null)
+  const [emailDetails, setEmailDetails] = useState({
+    to: '',
+    from: '',
+    cc: '',
+    subject: '',
+    body: '',
+  })
+  const [formPayload, setFormPayload] = useState<any>(null)
+  const { refetch } = useApiQuery(
+    `/invoice-input?invoiceNumber=${invoiceNumber}`
+  )
 
   const editor = useEditor({
     extensions: [
@@ -33,79 +58,120 @@ export default function EmailContainer({
     onUpdate: ({ editor }) => setBody(editor.getHTML()),
   })
 
-  // useEffect(() => {
-  // if (!open) return
-  // refetch()
-  //   .then((res) => {
-  //     const html = res?.data?.body || '<p>Default content...</p>'
-  //     setTemplate(html)
-  //     setBody(html)
-  //     editor?.commands.setContent(html)
-  //   })
-  //   .catch(() => {
-  //     const fallback = '<p>Default content...</p>'
-  //     setTemplate(fallback)
-  //     setBody(fallback)
-  //     editor?.commands.setContent(fallback)
-  //   })
-  // }, [open])
-
   useEffect(() => {
     return () => editor?.destroy()
   }, [editor])
 
-  const fetchTemplate = async (
-    distributorCode: string,
-    invoiceNumber: string
-  ) => {
+  const fetchTemplate = async () => {
     const url = `/email-template?distributorCode=${distributorCode}&invoiceNumber=${invoiceNumber}`
     const res = await api.get(url)
-    console.log(res.data)
     return res.data.data
   }
 
-  // After clicking on the check eligiblity button
-  const handleMailCheck = async (
-    distributorCode: string,
-    invoiceNumber: string
-  ) => {
+  const checkEligibility = async () => {
     try {
-      const res = await fetchTemplate(distributorCode, invoiceNumber)
-      console.log(res.body)
-      const html = res?.body || '<p>Default content...</p>'
-      const cleanHtml = html.replace(/\\"/g, '"').replace(/\\'/g, "'")
+      const res = await api.post('/email-eligibility-check', {
+        distributorCode,
+        invoiceNumber,
+      })
+      toast.success(res.data.message)
+      return res.data
+    } catch (err: any) {
+      toast.error(err.response.data.message)
+      return { isEligible: false }
+    }
+  }
+
+  const handleMailCheckAndSubmit = async () => {
+    const eligibility = await checkEligibility()
+    if (!eligibility.isEligible) return
+
+    setOpen(true)
+
+    try {
+      const tpl = await fetchTemplate()
+      setEmailDetails(tpl)
+
+      const cleanHtml = (tpl?.body || '<p>Default content...</p>')
+        .replace(/\\"/g, '"')
+        .replace(/\\'/g, "'")
 
       setTemplate(cleanHtml)
       setBody(cleanHtml)
+      setAttachments(tpl.attachments)
       editor?.commands.setContent(cleanHtml)
     } catch {
       const fallback = '<p>Default content...</p>'
       setTemplate(fallback)
       setBody(fallback)
       editor?.commands.setContent(fallback)
+      toast.error('Something went wrong')
     }
   }
 
-  const handleSubmit = (evt: React.FormEvent<HTMLFormElement>) => {
+  const handleSendButton = (evt: React.FormEvent<HTMLFormElement>) => {
     evt.preventDefault()
     const formData = new FormData(evt.currentTarget)
-    const payload = {
+
+    setFormPayload({
       ...Object.fromEntries(formData.entries()),
       distributorCode,
       invoiceNumber,
       body,
+      csv: attachments?.csv,
+      pdfUrl: attachments?.pdf?.url,
+    })
+
+    setConfirmDialogOpen(true)
+  }
+
+  const handleSubmit = async () => {
+    setConfirmDialogOpen(false)
+    setOpen(false)
+    if (!formPayload) return
+
+    try {
+      const res = await api.post('/send-mail', formPayload)
+      // refetch()
+      onStatusUpdated?.()
+      toast.success(res.data.message)
+    } catch (err: any) {
+      toast.error(err.response.data.message)
     }
-    mutation.mutate(payload)
   }
 
   return (
-    <EmailDrawerView
-      open={open}
-      setOpen={setOpen}
-      template={template}
-      editor={editor}
-      handleMailCheck={() => handleMailCheck(distributorCode, invoiceNumber)}
-      handleSubmit={handleSubmit}
-    />
+    <>
+      <EmailDrawerView
+        open={open}
+        setOpen={setOpen}
+        template={template}
+        editor={editor}
+        handleMailCheck={handleMailCheckAndSubmit}
+        emailDetails={emailDetails}
+        attachments={attachments}
+        handleSendButton={handleSendButton}
+      />
+
+      <Dialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
+        <DialogContent
+          className='sm:max-w-[400px]'
+          aria-describedby={undefined}
+        >
+          <DialogHeader>
+            <DialogTitle>Confirm Send</DialogTitle>
+          </DialogHeader>
+
+          <p>Are you sure you want to send this email?</p>
+
+          <DialogFooter className='mt-4'>
+            <DialogClose asChild>
+              <Button variant='outline'>Cancel</Button>
+            </DialogClose>
+            <Button onClick={handleSubmit}>Yes, Send</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }
