@@ -200,9 +200,13 @@ export default function CreditLimit() {
           <Table className='text-base whitespace-nowrap table-fixed'>
             <TableHeader className='tracking-wide'>
               <TableRow className='bg-gray-50'>
+                <TableHead className='font-bold text-gray-700 w-[190px] bg-gray-50 sticky left-0 z-20'>
+                  Company Name
+                </TableHead>
+                <TableHead className='font-bold text-gray-700 w-[190px] bg-gray-50 sticky left-[190px] z-20'>
+                  Distributor Code
+                </TableHead>
                 {[
-                  'Company Name',
-                  'Distributor Code',
                   'City',
                   'State',
                   'Lender',
@@ -228,62 +232,166 @@ export default function CreditLimit() {
             <TableBody>
               {isPending
                 ? Array.from({ length: 10 }).map((_, i) => (
-                    <TableRow key={i}>
-                      {Array(15)
-                        .fill(0)
-                        .map((_, j) => (
-                          <TableCell key={j}>
-                            <Skeleton className='h-4 w-16' />
-                          </TableCell>
-                        ))}
-                    </TableRow>
-                  ))
+                  <TableRow key={i}>
+                    {Array(15)
+                      .fill(0)
+                      .map((_, j) => (
+                        <TableCell key={j}>
+                          <Skeleton className='h-4 w-16' />
+                        </TableCell>
+                      ))}
+                  </TableRow>
+                ))
+
                 : data?.data?.map((item: CreditLimitType) => (
-                    <TableRow
-                      key={item._id}
+                  <TableRow
+                    key={item._id}
+                    className={cn(
+                      'group relative *:truncate *:overflow-hidden *:text-ellipsis transition-colors',
+                      item.billingStatus.toLowerCase() === 'negative'
+                        ? 'bg-red-50'
+                        : 'bg-white'
+                    )}
+                  >
+                    <TableCell
                       className={cn(
-                        '*:truncate *:overflow-hidden *:text-ellipsis',
-                        item.billingStatus.toLowerCase() === 'negative' &&
-                          'bg-red-50 hover:bg-red-0'
+                        'sticky left-0 z-20 overflow-hidden',
+                        item.billingStatus.toLowerCase() === 'negative'
+                          ? 'bg-red-50 group-hover:bg-red-100'
+                          : 'bg-white group-hover:bg-muted' 
                       )}
                     >
-                      <TableCell title={item.companyName}>
-                        {item.companyName}
-                      </TableCell>
-                      <TableCell title={item.distributorCode}>
-                        {item.distributorCode}
-                      </TableCell>
-                      <TableCell>{item.city}</TableCell>
-                      <TableCell>{item.state}</TableCell>
-                      <TableCell>{item.lender}</TableCell>
-                      <TableCell>{formatAmount(item.sanctionLimit)}</TableCell>
-                      <TableCell>{formatAmount(item.operativeLimit)}</TableCell>
-                      <TableCell>{formatAmount(item.utilisedLimit)}</TableCell>
-                      <TableCell>{formatAmount(item.availableLimit)}</TableCell>
-                      <TableCell>
-                        {formatAmount(item.pendingInvoices)}
-                      </TableCell>
-                      <TableCell>
-                        {formatAmount(item.currentAvailable)}
-                      </TableCell>
-                      <TableCell>{formatAmount(item.overdue)}</TableCell>
-                      <TableCell>
-                        {item.limitExpiryDate
-                          ? formatDate(item.limitExpiryDate)
-                          : null}
-                      </TableCell>
-                      <TableCell
-                        className={cn(
-                          item.billingStatus.toLowerCase() === 'positive'
-                            ? 'text-green-500'
-                            : 'text-orange-500'
-                        )}
-                        title={camelCaseToWords(item.billingStatus)}
-                      >
-                        {camelCaseToWords(item.billingStatus)}
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                      {item.companyName}
+                    </TableCell>
+
+                    <TableCell
+                      className={cn(
+                        'sticky left-[190px] z-10 overflow-hidden',
+                        item.billingStatus.toLowerCase() === 'negative'
+                          ? 'bg-red-50 group-hover:bg-red-100'
+                          : 'bg-white group-hover:bg-muted' 
+                      )}
+                    >
+                      {item.distributorCode}
+                    </TableCell>
+
+                    <TableCell
+                      className={cn(
+                        item.billingStatus.toLowerCase() === 'negative'
+                          ? 'bg-red-50 group-hover:bg-red-100'
+                          : 'bg-white group-hover:bg-muted'
+                      )}
+                    >
+                      {item.city}
+                    </TableCell>
+                    <TableCell
+                      className={cn(
+                        item.billingStatus.toLowerCase() === 'negative'
+                          ? 'bg-red-50 group-hover:bg-red-100'
+                          : 'bg-white group-hover:bg-muted'
+                      )}
+                    >
+                      {item.state}
+                    </TableCell>
+                    <TableCell
+                      className={cn(
+                        item.billingStatus.toLowerCase() === 'negative'
+                          ? 'bg-red-50 group-hover:bg-red-100'
+                          : 'bg-white group-hover:bg-muted'
+                      )}
+                    >
+                      {item.lender}
+                    </TableCell>
+                    <TableCell
+                      className={cn(
+                        item.billingStatus.toLowerCase() === 'negative'
+                          ? 'bg-red-50 group-hover:bg-red-100'
+                          : 'bg-white group-hover:bg-muted'
+                      )}
+                    >
+                      {formatAmount(item.sanctionLimit)}
+                    </TableCell>
+                    <TableCell
+                      className={cn(
+                        item.billingStatus.toLowerCase() === 'negative'
+                          ? 'bg-red-50 group-hover:bg-red-100'
+                          : 'bg-white group-hover:bg-muted'
+                      )}
+                    >
+                      {formatAmount(item.operativeLimit)}
+                    </TableCell>
+                    <TableCell
+                      className={cn(
+                        item.billingStatus.toLowerCase() === 'negative'
+                          ? 'bg-red-50 group-hover:bg-red-100'
+                          : 'bg-white group-hover:bg-muted'
+                      )}
+                    >
+                      {formatAmount(item.utilisedLimit)}
+                    </TableCell>
+                    <TableCell
+                      className={cn(
+                        item.billingStatus.toLowerCase() === 'negative'
+                          ? 'bg-red-50 group-hover:bg-red-100'
+                          : 'bg-white group-hover:bg-muted'
+                      )}
+                    >
+                      {formatAmount(item.availableLimit)}
+                    </TableCell>
+                    <TableCell
+                      className={cn(
+                        item.billingStatus.toLowerCase() === 'negative'
+                          ? 'bg-red-50 group-hover:bg-red-100'
+                          : 'bg-white group-hover:bg-muted'
+                      )}
+                    >
+                      {formatAmount(item.pendingInvoices)}
+                    </TableCell>
+                    <TableCell
+                      className={cn(
+                        item.billingStatus.toLowerCase() === 'negative'
+                          ? 'bg-red-50 group-hover:bg-red-100'
+                          : 'bg-white group-hover:bg-muted'
+                      )}
+                    >
+                      {formatAmount(item.currentAvailable)}
+                    </TableCell>
+                    <TableCell
+                      className={cn(
+                        item.billingStatus.toLowerCase() === 'negative'
+                          ? 'bg-red-50 group-hover:bg-red-100'
+                          : 'bg-white group-hover:bg-muted'
+                      )}
+                    >
+                      {formatAmount(item.overdue)}
+                    </TableCell>
+                    <TableCell
+                      className={cn(
+                        item.billingStatus.toLowerCase() === 'negative'
+                          ? 'bg-red-50 group-hover:bg-red-100'
+                          : 'bg-white group-hover:bg-muted'
+                      )}
+                    >
+                      {item.limitExpiryDate ? formatDate(item.limitExpiryDate) : null}
+                    </TableCell>
+
+                    {/* This cell already had a cn, so we just add the new logic */}
+                    <TableCell
+                      className={cn(
+                        item.billingStatus.toLowerCase() === 'positive'
+                          ? 'text-green-500'
+                          : 'text-orange-500',
+                        item.billingStatus.toLowerCase() === 'negative'
+                          ? 'bg-red-50 group-hover:bg-red-100'
+                          : 'bg-white group-hover:bg-muted'
+                      )}
+                      title={camelCaseToWords(item.billingStatus)}
+                    >
+                      {camelCaseToWords(item.billingStatus)}
+                    </TableCell>
+                  </TableRow>
+                ))
+              }
             </TableBody>
           </Table>
           {data?.data?.length !== 0 ? (

@@ -3,14 +3,18 @@ import { api } from './index'
 
 export const useApiQuery = (endpoint: string, params: any = {}) => {
   const anchorId = localStorage.getItem('mm_anchor')
-  params.anchorId = anchorId
+
+  const { enabled = true, ...rest } = params
+
+  rest.anchorId = anchorId
 
   return useQuery({
-    queryKey: [endpoint, params, anchorId],
+    queryKey: [endpoint, rest, anchorId],
     queryFn: async () => {
-      const res = await api.get(endpoint, { params })
+      const res = await api.get(endpoint, { params: rest })
       return res.data
     },
+    enabled, // ✅ forward enabled
   })
 }
 
