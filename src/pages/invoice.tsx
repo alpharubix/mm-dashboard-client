@@ -26,7 +26,7 @@ import {
   TableHeader,
   TableRow,
 } from '../components/ui/table'
-import { ENV } from '../conf'
+import { EMAIL_STATUS, ENV, INV_STATUS } from '../conf'
 import {
   camelCaseToWords,
   cn,
@@ -40,6 +40,7 @@ import {
 import { useApiQuery } from '../api/hooks'
 import useDebounce from '../hooks/use-debounce'
 
+import EmailContainer from '@/components/EmailDrawer'
 import type { InvoiceType } from '../types'
 
 const showError = (error: any) => {
@@ -104,6 +105,7 @@ export default function Invoice() {
     '/invoice-input',
     queryParams
   )
+
   const totalPages = data?.totalPages || 1
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -143,6 +145,15 @@ export default function Invoice() {
       showError(err.response.data || {})
       console.error('Upload failed', err)
     }
+  }
+
+  const handleSendMail = (distributorCode: string, invoiceNumber: number) => {
+    toast.success(
+      'Email is successfully sent. Distributor Code: ' +
+        distributorCode +
+        ', Invoice Number: ' +
+        invoiceNumber
+    )
   }
 
   const handleCancel = () => {
@@ -263,16 +274,22 @@ export default function Invoice() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value='all'>All</SelectItem>
-                <SelectItem value='yetToProcess'>Yet To Process</SelectItem>
-                <SelectItem value='inProgress'>In Progress</SelectItem>
-                <SelectItem value='processed'>Processed</SelectItem>
-                <SelectItem value='pendingWithCustomer'>
+                <SelectItem value={INV_STATUS.YET_TO_PROCESS}>
+                  Yet To Process
+                </SelectItem>
+                <SelectItem value={INV_STATUS.IN_PROGRESS}>
+                  In Progress
+                </SelectItem>
+                <SelectItem value={INV_STATUS.PROCESSED}>Processed</SelectItem>
+                <SelectItem value={INV_STATUS.PENDING_WITH_CUSTOMER}>
                   Pending With Customer
                 </SelectItem>
-                <SelectItem value='pendingWithLender'>
+                <SelectItem value={INV_STATUS.PENDING_WITH_LENDER}>
                   Pending With Lender
                 </SelectItem>
-                <SelectItem value='notProcessed'>Not Processed</SelectItem>
+                <SelectItem value={INV_STATUS.NOT_PROCESSED}>
+                  Not Processed
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -357,13 +374,13 @@ export default function Invoice() {
         </span>
         <CardContent>
           <div className='overflow-x-auto'>
-            <Table className='text-base whitespace-nowrap'>
+            <Table className='text-base whitespace-nowrap table-fixed'>
               <TableHeader className='tracking-wide'>
                 <TableRow className='bg-gray-50'>
-                  <TableHead className='font-bold  text-gray-700'>
+                  <TableHead className='font-bold bg-gray-50 sticky left-0 w-[200px] z-20 text-gray-700 '>
                     Company Name
                   </TableHead>
-                  <TableHead className='font-bold  text-gray-700'>
+                  <TableHead className='font-bold text-gray-700 sticky left-[200px] w-[150px]  z-10 bg-gray-50 '>
                     Distributor Code
                   </TableHead>
                   {/* {user?.role === 'superAdmin' && (
@@ -385,39 +402,42 @@ export default function Invoice() {
                       </TableHead>
                     </>
                   )} */}
-                  <TableHead className='font-bold  text-gray-700 '>
+                  <TableHead className='font-bold  text-gray-700 w-[150px] '>
                     Invoice Number
                   </TableHead>
-                  <TableHead className='font-bold  text-gray-700 '>
+                  <TableHead className='font-bold  text-gray-700 w-[150px] '>
                     Invoice Amount
                   </TableHead>
-                  <TableHead className='font-bold  text-gray-700 '>
+                  <TableHead className='font-bold  text-gray-700 w-[120px] '>
                     Invoice Date
                   </TableHead>
-                  <TableHead className='font-bold  text-gray-700 '>
+                  <TableHead className='font-bold  text-gray-700 w-[150px] '>
                     Loan Amount
                   </TableHead>
                   <TableHead
                     title='Limit Live Date'
-                    className='font-bold  text-gray-700 '
+                    className='font-bold  text-gray-700 w-[100px] '
                   >
                     LLD
                   </TableHead>
-                  <TableHead className='font-bold  text-gray-700 '>
+                  <TableHead className='font-bold  text-gray-700 w-[200px] '>
                     UTR
                   </TableHead>
-                  <TableHead className='font-bold  text-gray-700 '>
+                  <TableHead className='font-bold  text-gray-700 w-[200px]'>
                     Status
                   </TableHead>
                   {user?.role === 'superAdmin' && (
                     <>
-                      <TableHead className='font-bold  text-gray-700 min-w-28'>
+                      <TableHead className='font-bold  text-gray-700 min-w-28 w-[120px] '>
                         Invoice File
                       </TableHead>
-                      <TableHead className='font-bold  text-gray-700 '>
+                      <TableHead className='font-bold  text-gray-700 min-w-28 w-[200px] '>
+                        Disbursement
+                      </TableHead>
+                      <TableHead className='font-bold  text-gray-700 w-[200px] '>
                         Created At
                       </TableHead>
-                      <TableHead className='font-bold  text-gray-700 '>
+                      <TableHead className='font-bold  text-gray-700 w-[200px]'>
                         Updated At
                       </TableHead>
                     </>
@@ -485,48 +505,117 @@ export default function Invoice() {
                       <TableRow
                         key={item._id}
                         className={cn(
-                          '*:truncate *:overflow-hidden *:text-ellipsis',
-                          item.status === 'notProcessed' &&
-                            'bg-red-50 hover:bg-red-0'
+                          'group transition-colors *:truncate *:overflow-hidden',
+                          item.status === INV_STATUS.NOT_PROCESSED
+                            ? 'bg-red-50'
+                            : 'bg-white'
                         )}
                       >
-                        <TableCell>{item.companyName}</TableCell>
-                        <TableCell>{item.distributorCode}</TableCell>
-                        {/* {user?.role === 'superAdmin' && (
-                          <>
-                            <TableCell>{item.beneficiaryName}</TableCell>
-                            <TableCell>{item.beneficiaryAccNo}</TableCell>
-                            <TableCell>{item.bankName}</TableCell>
-                            <TableCell>{item.ifscCode}</TableCell>
-                            <TableCell>{item.branch}</TableCell>
-                          </>
-                        )} */}
-                        <TableCell>{item.invoiceNumber}</TableCell>
-                        <TableCell className=''>
+                        <TableCell
+                          className={cn(
+                            'sticky left-0 z-20 overflow-hidden',
+                            item.status === INV_STATUS.NOT_PROCESSED
+                              ? 'bg-red-50 group-hover:bg-red-100'
+                              : 'bg-white group-hover:bg-muted'
+                          )}
+                        >
+                          {item.companyName}
+                        </TableCell>
+
+                        <TableCell
+                          className={cn(
+                            'sticky left-[200px] z-10',
+                            item.status === INV_STATUS.NOT_PROCESSED
+                              ? 'bg-red-50 group-hover:bg-red-100'
+                              : 'bg-white group-hover:bg-muted'
+                          )}
+                        >
+                          {item.distributorCode}
+                        </TableCell>
+
+                        <TableCell
+                          className={cn(
+                            item.status === INV_STATUS.NOT_PROCESSED
+                              ? 'bg-red-50 group-hover:bg-red-100'
+                              : 'bg-white group-hover:bg-muted'
+                          )}
+                        >
+                          {item.invoiceNumber}
+                        </TableCell>
+                        <TableCell
+                          className={cn(
+                            item.status === INV_STATUS.NOT_PROCESSED
+                              ? 'bg-red-50 group-hover:bg-red-100'
+                              : 'bg-white group-hover:bg-muted'
+                          )}
+                        >
                           {formatAmount(item.invoiceAmount)}
                         </TableCell>
-                        <TableCell>{formatDate(item.invoiceDate)}</TableCell>
-                        <TableCell className=''>
+                        <TableCell
+                          className={cn(
+                            item.status === INV_STATUS.NOT_PROCESSED
+                              ? 'bg-red-50 group-hover:bg-red-100'
+                              : 'bg-white group-hover:bg-muted'
+                          )}
+                        >
+                          {formatDate(item.invoiceDate)}
+                        </TableCell>
+                        <TableCell
+                          className={cn(
+                            item.status === INV_STATUS.NOT_PROCESSED
+                              ? 'bg-red-50 group-hover:bg-red-100'
+                              : 'bg-white group-hover:bg-muted'
+                          )}
+                        >
                           {formatAmount(item.loanAmount)}
                         </TableCell>
-                        <TableCell>
+                        <TableCell
+                          className={cn(
+                            item.status === INV_STATUS.NOT_PROCESSED
+                              ? 'bg-red-50 group-hover:bg-red-100'
+                              : 'bg-white group-hover:bg-muted'
+                          )}
+                        >
                           {item.loanDisbursementDate
                             ? formatDate(item.loanDisbursementDate)
                             : 'NA'}
                         </TableCell>
-                        <TableCell>{item.utr ? item.utr : 'NA'}</TableCell>
+                        <TableCell
+                          className={cn(
+                            item.status === INV_STATUS.NOT_PROCESSED
+                              ? 'bg-red-50 group-hover:bg-red-100'
+                              : 'bg-white group-hover:bg-muted'
+                          )}
+                        >
+                          {item.utr ? item.utr : 'NA'}
+                        </TableCell>
+                        <TableCell
+                          className={cn(
+                            item.status === INV_STATUS.NOT_PROCESSED
+                              ? 'bg-red-50 group-hover:bg-red-100'
+                              : 'bg-white group-hover:bg-muted'
+                          )}
+                        >
+                          {camelCaseToWords(item.status)}
+                        </TableCell>
 
-                        <TableCell>{camelCaseToWords(item.status)}</TableCell>
                         {user?.role === 'superAdmin' && (
                           <>
-                            <TableCell className=''>
+                            <TableCell
+                              className={cn(
+                                'flex justify-center items-center',
+                                item.status === INV_STATUS.NOT_PROCESSED
+                                  ? 'bg-red-50 group-hover:bg-red-100'
+                                  : 'bg-white group-hover:bg-muted'
+                              )}
+                            >
                               <span className=''>
                                 {item.invoicePdfUrl ? (
                                   <a
                                     href={item.invoicePdfUrl}
                                     target='_blank'
                                     rel='noopener noreferrer'
-                                    style={{ display: 'inline-block' }}
+                                    className='inline-flex items-center text-blue-600 hover:text-blue-800'
                                   >
                                     <FileDown className='' />
                                   </a>
@@ -535,10 +624,62 @@ export default function Invoice() {
                                 )}
                               </span>
                             </TableCell>
-                            <TableCell>
+                            {user.role === 'superAdmin' ? (
+                              <TableCell
+                                className={cn(
+                                  item.status === INV_STATUS.NOT_PROCESSED
+                                    ? 'bg-red-50 group-hover:bg-red-100'
+                                    : 'bg-white group-hover:bg-muted'
+                                )}
+                              >
+                                {item.emailStatus === EMAIL_STATUS.ELIGIBLE && (
+                                  <EmailContainer
+                                    distributorCode={item.distributorCode}
+                                    invoiceNumber={item.invoiceNumber}
+                                    onStatusUpdated={refetch}
+                                  />
+                                )}
+
+                                {item.emailStatus ===
+                                  EMAIL_STATUS.NOT_ELIGIBLE && (
+                                  <span className='text-red-500 font-medium'>
+                                    Not Eligible
+                                  </span>
+                                )}
+                                {item.emailStatus === EMAIL_STATUS.OVERDUE && (
+                                  <span className='text-orange-400  font-medium'>
+                                    Overdue
+                                  </span>
+                                )}
+                                {item.emailStatus ===
+                                  EMAIL_STATUS.INSUFF_AVAIL_LIMIT && (
+                                  <span className='text-yellow-600 font-medium'>
+                                    Insufficient Available Limit
+                                  </span>
+                                )}
+                                {item.emailStatus === EMAIL_STATUS.SENT && (
+                                  <span className='text-green-500 font-medium'>
+                                    Sent
+                                  </span>
+                                )}
+                              </TableCell>
+                            ) : null}
+                            <TableCell
+                              className={cn(
+                                item.status === INV_STATUS.NOT_PROCESSED
+                                  ? 'bg-red-50 group-hover:bg-red-100'
+                                  : 'bg-white group-hover:bg-muted'
+                              )}
+                            >
                               {formatDateHourMinute(item.createdAt)}
                             </TableCell>
-                            <TableCell>
+                            <TableCell
+                              className={cn(
+                                item.status === INV_STATUS.NOT_PROCESSED
+                                  ? 'bg-red-50 group-hover:bg-red-100'
+                                  : 'bg-white group-hover:bg-muted'
+                              )}
+                            >
                               {formatDateHourMinute(item.updatedAt)}
                             </TableCell>
                           </>

@@ -55,6 +55,7 @@ export type InvoiceType = {
   loanDisbursementDate: string
   utr: string
   status: string
+  emailStatus: string
   invoicePdfUrl: string
   createdAt: string
   updatedAt: string
