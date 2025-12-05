@@ -95,8 +95,8 @@ export default function Invoice() {
       params.status = debouncedFilters.status
     }
     if (debouncedFilters.date?.from && debouncedFilters.date?.to) {
-      params.fromDate = format(debouncedFilters.date.from, 'dd-MM-yy')
-      params.toDate = format(debouncedFilters.date.to, 'dd-MM-yy')
+      params.fromInvoiceDate = format(debouncedFilters.date.from, 'dd-MM-yy')
+      params.toInvoiceDate = format(debouncedFilters.date.to, 'dd-MM-yy')
     }
     return params
   }, [debouncedFilters, page])
