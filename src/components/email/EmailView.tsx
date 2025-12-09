@@ -26,7 +26,6 @@ export default function EmailDrawerView({
   eligiblityStatus,
   totalEligibleInvoiceCount,
 }: any) {
-
   const isEligible =
     totalEligibleInvoiceCount === undefined || totalEligibleInvoiceCount > 0
 
@@ -36,13 +35,13 @@ export default function EmailDrawerView({
         <DialogTrigger asChild>
           <div>
             <Button
-              variant="outline"
-              className="w-24 relative"
+              variant='outline'
+              className='w-24 relative cursor-pointer hover:border-ring hover:ring-ring/50 hover:ring-[3px]'
               onClick={() => handleMailCheck()}
             >
               Send
               {totalEligibleInvoiceCount > 0 && (
-                <span className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-green-400 text-xs text-white">
+                <span className='absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-green-400 text-xs text-white'>
                   {totalEligibleInvoiceCount}
                 </span>
               )}
@@ -50,8 +49,8 @@ export default function EmailDrawerView({
           </div>
         </DialogTrigger>
       ) : (
-        <Button variant="outline" className="w-24" disabled>
-          Send
+        <Button variant='outline' className='w-24' disabled>
+          No Invoices
         </Button>
       )}
 
@@ -59,7 +58,7 @@ export default function EmailDrawerView({
         onOpenAutoFocus={(e) => {
           e.preventDefault()
         }}
-        className="sm:max-w-[650px] max-h-[750px] overflow-scroll"
+        className='sm:max-w-[650px] max-h-[750px] overflow-scroll'
         aria-describedby={undefined}
       >
         <DialogHeader>
@@ -67,52 +66,52 @@ export default function EmailDrawerView({
         </DialogHeader>
 
         {!template ? (
-          <Spinner className="mx-auto" />
+          <Spinner className='mx-auto' />
         ) : (
           <form onSubmit={handleSendButton}>
-            <div className="grid gap-2">
-              <div className="grid gap-1">
-                <Label htmlFor="from">From</Label>
-                <Input id="from" name="from" defaultValue={emailDetails.from} />
+            <div className='grid gap-2'>
+              <div className='grid gap-1'>
+                <Label htmlFor='from'>From</Label>
+                <Input id='from' name='from' defaultValue={emailDetails.from} />
               </div>
 
-              <div className="grid gap-1">
-                <Label htmlFor="to">To</Label>
+              <div className='grid gap-1'>
+                <Label htmlFor='to'>To</Label>
                 <Input
-                  id="to"
-                  name="to"
-                  placeholder="To"
+                  id='to'
+                  name='to'
+                  placeholder='To'
                   defaultValue={emailDetails.to}
                 />
               </div>
 
-              <div className="grid gap-1">
-                <Label htmlFor="cc">Cc</Label>
+              <div className='grid gap-1'>
+                <Label htmlFor='cc'>Cc</Label>
                 <Input
-                  id="cc"
-                  name="cc"
-                  placeholder="Cc"
+                  id='cc'
+                  name='cc'
+                  placeholder='Cc'
                   defaultValue={emailDetails.cc}
                 />
               </div>
 
-              <div className="grid gap-1">
-                <Label htmlFor="subject">Subject</Label>
+              <div className='grid gap-1'>
+                <Label htmlFor='subject'>Subject</Label>
                 <Input
-                  id="subject"
-                  name="subject"
-                  placeholder="Subject"
+                  id='subject'
+                  name='subject'
+                  placeholder='Subject'
                   defaultValue={emailDetails.subject}
                 />
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className='flex items-center gap-2'>
                 {attachments?.csv && (
                   <span>
                     <a
                       download={attachments.csv.filename}
                       href={`data:${attachments.csv.mime};base64,${attachments.csv.base64}`}
-                      className="inline underline text-blue-500"
+                      className='inline underline text-blue-500'
                     >
                       Download CSV
                     </a>
@@ -123,9 +122,9 @@ export default function EmailDrawerView({
                   <span>
                     <a
                       href={attachments.pdf.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline underline text-blue-500"
+                      target='_blank'
+                      rel='noreferrer'
+                      className='inline underline text-blue-500'
                     >
                       View PDF
                     </a>
@@ -134,22 +133,22 @@ export default function EmailDrawerView({
               </div>
 
               {editor && (
-                <div className="editor-wrapper">
+                <div className='editor-wrapper'>
                   <Toolbar editor={editor} />
-                  <div className="overflow-scroll">
-                    <EditorContent editor={editor} className="min-w-[900px]" />
+                  <div className='overflow-scroll'>
+                    <EditorContent editor={editor} className='min-w-[900px]' />
                   </div>
                 </div>
               )}
             </div>
 
-            <DialogFooter className="mt-2">
+            <DialogFooter className='mt-2'>
               <DialogClose asChild>
-                <Button variant="outline" className="cursor-pointer">
+                <Button variant='outline' className='cursor-pointer'>
                   Cancel
                 </Button>
               </DialogClose>
-              <Button type="submit" className="cursor-pointer">
+              <Button type='submit' className='cursor-pointer'>
                 Send
               </Button>
             </DialogFooter>
