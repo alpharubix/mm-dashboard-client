@@ -15,6 +15,7 @@ const Users = lazy(() => import('./pages/Users'))
 const Onboard = lazy(() => import('./pages/Onboard'))
 const CreditLimit = lazy(() => import('./pages/CreditLimit'))
 const Invoice = lazy(() => import('./pages/invoice'))
+const Disbursement = lazy(() => import('./pages/Disbursement'))
 const ProtectedRoute = lazy(() => import('./components/ProtectedRoute'))
 const RootRedirect = lazy(() => import('./components/RootRedirect'))
 
@@ -53,6 +54,15 @@ export default function App() {
             element={
               <ProtectedRoute requiredRoute="invoice-utr">
                 <Invoice />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="disbursement"
+            element={
+              <ProtectedRoute requiredRoute="disbursement">
+                <Disbursement />
               </ProtectedRoute>
             }
           />

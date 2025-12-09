@@ -24,19 +24,35 @@ export default function EmailDrawerView({
   handleSendButton,
   attachments,
   eligiblityStatus,
+  totalEligibleInvoiceCount,
 }: any) {
-  // TODO Show the spinner based on the email status
-  console.log({ eligiblityStatus })
+  const isEligible =
+    totalEligibleInvoiceCount === undefined || totalEligibleInvoiceCount > 0
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <span
-          className='cursor-pointer font-medium text-blue-600'
-          onClick={() => handleMailCheck()}
-        >
-          Send Mail
-        </span>
-      </DialogTrigger>
+      {isEligible ? (
+        <DialogTrigger asChild>
+          <div>
+            <Button
+              variant='outline'
+              className='w-24 relative cursor-pointer hover:border-ring hover:ring-ring/50 hover:ring-[3px]'
+              onClick={() => handleMailCheck()}
+            >
+              Send
+              {totalEligibleInvoiceCount > 0 && (
+                <span className='absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-green-400 text-xs text-white'>
+                  {totalEligibleInvoiceCount}
+                </span>
+              )}
+            </Button>
+          </div>
+        </DialogTrigger>
+      ) : (
+        <Button variant='outline' className='w-24' disabled>
+          No Invoices
+        </Button>
+      )}
 
       <DialogContent
         onOpenAutoFocus={(e) => {
@@ -88,7 +104,7 @@ export default function EmailDrawerView({
                   defaultValue={emailDetails.subject}
                 />
               </div>
-              {/* ✅ Attachments section */}
+
               <div className='flex items-center gap-2'>
                 {attachments?.csv && (
                   <span>

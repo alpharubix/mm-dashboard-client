@@ -59,6 +59,7 @@ export type InvoiceType = {
   invoicePdfUrl: string
   createdAt: string
   updatedAt: string
+  totalEligibleInvoiceCount: number
 }
 
 export type UserType = {

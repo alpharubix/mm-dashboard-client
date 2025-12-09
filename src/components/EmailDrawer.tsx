@@ -26,6 +26,7 @@ export default function EmailContainer({
   distributorCode,
   invoiceNumber,
   onStatusUpdated,
+  totalEligibleInvoiceCount,
 }: any) {
   const [open, setOpen] = useState(false)
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false)
@@ -149,11 +150,12 @@ export default function EmailContainer({
         emailDetails={emailDetails}
         attachments={attachments}
         handleSendButton={handleSendButton}
+        totalEligibleInvoiceCount={totalEligibleInvoiceCount}
       />
 
       <Dialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
         <DialogContent
-          className='sm:max-w-[400px]'
+          className="sm:max-w-[400px]"
           aria-describedby={undefined}
         >
           <DialogHeader>
@@ -162,9 +164,9 @@ export default function EmailContainer({
 
           <p>Are you sure you want to send this email?</p>
 
-          <DialogFooter className='mt-4'>
+          <DialogFooter className="mt-4">
             <DialogClose asChild>
-              <Button variant='outline'>Cancel</Button>
+              <Button variant="outline">Cancel</Button>
             </DialogClose>
             <Button onClick={handleSubmit}>Yes, Send</Button>
           </DialogFooter>
