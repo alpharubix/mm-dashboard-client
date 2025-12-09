@@ -138,7 +138,7 @@ export default function Invoice() {
       </div>
     )
   }
-
+  console.log(data?.data[0]?.invoiceNumbers)
   return (
     <>
       <Card>
@@ -252,7 +252,7 @@ export default function Invoice() {
                         <TableCell className='bg-white group-hover:bg-muted'>
                           <EmailContainer
                             distributorCode={item.distributorCode}
-                            invoiceNumber={item.invoiceNumber}
+                            invoiceNumbers={item.invoiceNumbers}
                             totalEligibleInvoiceCount={
                               item.totalEligibleInvoiceCount
                             }

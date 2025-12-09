@@ -24,7 +24,7 @@ import {
 
 export default function EmailContainer({
   distributorCode,
-  invoiceNumber,
+  invoiceNumbers,
   onStatusUpdated,
   totalEligibleInvoiceCount,
 }: any) {
@@ -58,32 +58,32 @@ export default function EmailContainer({
   }, [editor])
 
   const fetchTemplate = async () => {
-    const url = `/email-template?distributorCode=${distributorCode}&invoiceNumber=${invoiceNumber}`
+    const url = `/email-template?distributorCode=${distributorCode}`
     const res = await api.get(url)
     return res.data.data
   }
 
-  const checkEligibility = async () => {
-    try {
-      const res = await api.post('/email-eligibility-check', {
-        distributorCode,
-        invoiceNumber,
-      })
-      toast.success(res.data.message)
-      return res.data
-    } catch (err: any) {
-      toast.error(err.response.data.message)
-      return { isEligible: false }
-    }
-  }
-
+  // const checkEligibility = async () => {
+  //   try {
+  //     const res = await api.post('/email-eligibility-check', {
+  //       distributorCode,
+  //       invoiceNumber,
+  //     })
+  //     toast.success(res.data.message)
+  //     return res.data
+  //   } catch (err: any) {
+  //     toast.error(err.response.data.message)
+  //     return { isEligible: false }
+  //   }
+  // }
+  console.log(invoiceNumbers, ' invoiceNumbers')
   const handleMailCheckAndSubmit = async () => {
-    const eligibility = await checkEligibility()
-    if (!eligibility.isEligible) {
-      setOpen(false)
-      onStatusUpdated?.()
-      return
-    }
+    // const eligibility = await checkEligibility()
+    // if (!eligibility.isEligible) {
+    setOpen(false)
+    onStatusUpdated?.()
+    // return
+    // }
 
     setOpen(true)
 
@@ -115,10 +115,9 @@ export default function EmailContainer({
     setFormPayload({
       ...Object.fromEntries(formData.entries()),
       distributorCode,
-      invoiceNumber,
+      invoiceNumbers,
       body,
-      csv: attachments?.csv,
-      pdfUrl: attachments?.pdf?.url,
+      attachments,
     })
 
     setConfirmDialogOpen(true)
@@ -155,7 +154,7 @@ export default function EmailContainer({
 
       <Dialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
         <DialogContent
-          className="sm:max-w-[400px]"
+          className='sm:max-w-[400px]'
           aria-describedby={undefined}
         >
           <DialogHeader>
@@ -164,9 +163,9 @@ export default function EmailContainer({
 
           <p>Are you sure you want to send this email?</p>
 
-          <DialogFooter className="mt-4">
+          <DialogFooter className='mt-4'>
             <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
+              <Button variant='outline'>Cancel</Button>
             </DialogClose>
             <Button onClick={handleSubmit}>Yes, Send</Button>
           </DialogFooter>

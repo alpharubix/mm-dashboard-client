@@ -48,7 +48,8 @@ export type InvoiceType = {
   bankName: string
   ifscCode: string
   branch: string
-  invoiceNumber: number
+  invoiceNumbers?: number
+  invoiceNumber?: number
   invoiceAmount: number
   invoiceDate: string
   loanAmount: number

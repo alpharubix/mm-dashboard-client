@@ -22,7 +22,7 @@ export default function EmailDrawerView({
   handleMailCheck,
   emailDetails,
   handleSendButton,
-  attachments,
+  attachments, // This is now an Array [{filename, content, contentType}, ...]
   eligiblityStatus,
   totalEligibleInvoiceCount,
 }: any) {
@@ -105,35 +105,42 @@ export default function EmailDrawerView({
                 />
               </div>
 
-              <div className='flex items-center gap-2'>
-                {attachments?.csv && (
-                  <span>
-                    <a
-                      download={attachments.csv.filename}
-                      href={`data:${attachments.csv.mime};base64,${attachments.csv.base64}`}
-                      className='inline underline text-blue-500'
-                    >
-                      Download CSV
-                    </a>
-                  </span>
-                )}
+              {/* ✅ UPDATED: Attachments section for Array */}
+              <div className='grid gap-1'>
+                <Label>Attachments</Label>
+                <div className='flex flex-wrap items-center gap-3'>
+                  {Array.isArray(attachments) && attachments.length > 0 ? (
+                    attachments.map((att: any, index: number) => {
+                      // Handle fallback for keys depending on your exact backend response
+                      const mime =
+                        att.contentType ||
+                        att.mime ||
+                        'application/octet-stream'
+                      const content = att.content || att.base64
 
-                {attachments?.pdf && (
-                  <span>
-                    <a
-                      href={attachments.pdf.url}
-                      target='_blank'
-                      rel='noreferrer'
-                      className='inline underline text-blue-500'
-                    >
-                      View PDF
-                    </a>
-                  </span>
-                )}
+                      return (
+                        <a
+                          key={index}
+                          // Create data URI for download
+                          href={`data:${mime};base64,${content}`}
+                          download={att.filename}
+                          className='text-sm text-blue-600 underline hover:text-blue-800 flex items-center gap-1'
+                        >
+                          {/* Display Filename */}
+                          📄 {att.filename}
+                        </a>
+                      )
+                    })
+                  ) : (
+                    <span className='text-sm text-gray-400'>
+                      No attachments found
+                    </span>
+                  )}
+                </div>
               </div>
 
               {editor && (
-                <div className='editor-wrapper'>
+                <div className='editor-wrapper mt-2'>
                   <Toolbar editor={editor} />
                   <div className='overflow-scroll'>
                     <EditorContent editor={editor} className='min-w-[900px]' />
