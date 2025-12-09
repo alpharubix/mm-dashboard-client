@@ -63,28 +63,10 @@ export default function EmailContainer({
     return res.data.data
   }
 
-  // const checkEligibility = async () => {
-  //   try {
-  //     const res = await api.post('/email-eligibility-check', {
-  //       distributorCode,
-  //       invoiceNumber,
-  //     })
-  //     toast.success(res.data.message)
-  //     return res.data
-  //   } catch (err: any) {
-  //     toast.error(err.response.data.message)
-  //     return { isEligible: false }
-  //   }
-  // }
   console.log(invoiceNumbers, ' invoiceNumbers')
   const handleMailCheckAndSubmit = async () => {
-    // const eligibility = await checkEligibility()
-    // if (!eligibility.isEligible) {
     setOpen(false)
     onStatusUpdated?.()
-    // return
-    // }
-
     setOpen(true)
 
     try {
