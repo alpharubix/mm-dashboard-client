@@ -26,7 +26,7 @@ import {
   TableHeader,
   TableRow,
 } from '../components/ui/table'
-import { EMAIL_STATUS, ENV, INV_STATUS } from '../conf'
+import { ENV, INV_STATUS } from '../conf'
 import {
   camelCaseToWords,
   cn,
@@ -40,7 +40,6 @@ import {
 import { useApiQuery } from '../api/hooks'
 import useDebounce from '../hooks/use-debounce'
 
-import EmailContainer from '@/components/EmailDrawer'
 import type { InvoiceType } from '../types'
 
 const showError = (error: any) => {
@@ -145,15 +144,6 @@ export default function Invoice() {
       showError(err.response.data || {})
       console.error('Upload failed', err)
     }
-  }
-
-  const handleSendMail = (distributorCode: string, invoiceNumber: number) => {
-    toast.success(
-      'Email is successfully sent. Distributor Code: ' +
-        distributorCode +
-        ', Invoice Number: ' +
-        invoiceNumber
-    )
   }
 
   const handleCancel = () => {
@@ -431,7 +421,7 @@ export default function Invoice() {
                       <TableHead className='font-bold  text-gray-700 min-w-28 w-[120px] '>
                         Invoice File
                       </TableHead>
-                      
+
                       <TableHead className='font-bold  text-gray-700 w-[200px] '>
                         Created At
                       </TableHead>

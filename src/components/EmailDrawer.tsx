@@ -40,6 +40,7 @@ export default function EmailContainer({
     subject: '',
     body: '',
   })
+  const [isSendMailLoading, setIsSendMailLoading] = useState(false)
   const [formPayload, setFormPayload] = useState<any>(null)
   const editor = useEditor({
     extensions: [
@@ -63,12 +64,7 @@ export default function EmailContainer({
     return res.data.data
   }
 
-  console.log(invoiceNumbers, ' invoiceNumbers')
   const handleMailCheckAndSubmit = async () => {
-    setOpen(false)
-    onStatusUpdated?.()
-    setOpen(true)
-
     try {
       const tpl = await fetchTemplate()
       setEmailDetails(tpl)
@@ -106,20 +102,26 @@ export default function EmailContainer({
   }
 
   const handleSubmit = async () => {
+    setIsSendMailLoading(true)
     setConfirmDialogOpen(false)
     setOpen(false)
-    if (!formPayload) return
+    if (!formPayload) {
+      setIsSendMailLoading(false)
+      return
+    }
 
     try {
       const res = await api.post('/send-mail', formPayload)
-      // refetch()
-      onStatusUpdated?.()
+      await onStatusUpdated?.()
       toast.success(res.data.message)
     } catch (err: any) {
+      setIsSendMailLoading(false)
       toast.error(err.response.data.message)
+    } finally {
+      setIsSendMailLoading(false)
     }
   }
-
+  console.log(isSendMailLoading, ' EmailDrawer')
   return (
     <>
       <EmailDrawerView
@@ -132,6 +134,7 @@ export default function EmailContainer({
         attachments={attachments}
         handleSendButton={handleSendButton}
         totalEligibleInvoiceCount={totalEligibleInvoiceCount}
+        isSendMailLoading={isSendMailLoading}
       />
 
       <Dialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>

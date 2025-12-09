@@ -23,11 +23,12 @@ export default function EmailDrawerView({
   emailDetails,
   handleSendButton,
   attachments, // This is now an Array [{filename, content, contentType}, ...]
-  eligiblityStatus,
+  isSendMailLoading,
   totalEligibleInvoiceCount,
 }: any) {
   const isEligible =
     totalEligibleInvoiceCount === undefined || totalEligibleInvoiceCount > 0
+  console.log(isSendMailLoading, ' EmailDrawerView')
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -38,13 +39,14 @@ export default function EmailDrawerView({
               variant='outline'
               className='w-24 relative cursor-pointer hover:border-ring hover:ring-ring/50 hover:ring-[3px]'
               onClick={() => handleMailCheck()}
+              disabled={isSendMailLoading}
             >
-              Send
-              {totalEligibleInvoiceCount > 0 && (
+              {isSendMailLoading ? 'Sending...' : 'Send'}
+              {totalEligibleInvoiceCount > 0 && !isSendMailLoading ? (
                 <span className='absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-green-400 text-xs text-white'>
                   {totalEligibleInvoiceCount}
                 </span>
-              )}
+              ) : null}
             </Button>
           </div>
         </DialogTrigger>

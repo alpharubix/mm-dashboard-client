@@ -1,7 +1,5 @@
-import axios from 'axios'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { toast } from 'sonner'
+import { useEffect, useMemo, useState } from 'react'
 import { Button } from '../components/ui/button'
 import { Card, CardContent } from '../components/ui/card'
 import { Input } from '../components/ui/input'
@@ -15,7 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from '../components/ui/table'
-import { EMAIL_STATUS, ENV, INV_STATUS } from '../conf'
+import { INV_STATUS } from '../conf'
 import { cn, getUserFromToken } from '../lib/utils'
 
 import { useApiQuery } from '../api/hooks'
@@ -24,22 +22,7 @@ import useDebounce from '../hooks/use-debounce'
 import EmailContainer from '@/components/EmailDrawer'
 import type { InvoiceType } from '../types'
 
-const showError = (error: any) => {
-  if (!error) return
-  console.log({ error })
-  const { message, missingFields } = error
-
-  let toastMessage = message
-  if (missingFields?.length) {
-    toastMessage += `: ${missingFields.join(', ')}`
-  }
-
-  toast.error(toastMessage)
-}
-
 export default function Invoice() {
-  const [file, setFile] = useState<File | null>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
   const user = getUserFromToken()
   const [page, setPage] = useState(1)
 
@@ -67,66 +50,6 @@ export default function Invoice() {
 
   const totalPages = data?.totalPages || 1
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.[0]) setFile(e.target.files[0])
-  }
-
-  const handleUpload = async () => {
-    if (!file) return
-
-    const form = new FormData()
-    form.append('csvfile', file)
-
-    try {
-      const res = await axios.post(
-        `${ENV.BACKEND_URL}/invoice-utr-upload`,
-        form,
-        {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        }
-      )
-
-      toast.success(res.data.message || 'Upload successful')
-
-      refetch()
-      setFile(null)
-      if (inputRef.current) inputRef.current.value = ''
-    } catch (err) {
-      // @ts-ignore
-      // const { message, duplicates } = err.response?.data || {}
-
-      // const duplicateInfo = duplicates?.length
-      //   ? ` (${duplicates.join(', ')})`
-      //   : ''
-
-      // toast.error(`${message || `Upload failed ${message}`}${duplicateInfo}`)
-      // @ts-ignore
-      showError(err.response.data || {})
-      console.error('Upload failed', err)
-    }
-  }
-
-  const handleSendMail = (distributorCode: string, invoiceNumber: number) => {
-    toast.success(
-      'Email is successfully sent. Distributor Code: ' +
-        distributorCode +
-        ', Invoice Number: ' +
-        invoiceNumber
-    )
-  }
-
-  const handleCancel = () => {
-    setFile(null)
-    if (inputRef.current) inputRef.current.value = ''
-  }
-  const handleClearFilter = () => {
-    setFilters({
-      companyName: '',
-      distributorCode: '',
-    })
-    setPage(1)
-  }
-
   useEffect(() => {
     setPage(1)
   }, [debouncedFilters.companyName, debouncedFilters.distributorCode])
@@ -138,7 +61,7 @@ export default function Invoice() {
       </div>
     )
   }
-  console.log(data?.data[0]?.invoiceNumbers)
+  // console.log(data?.data[0]?.invoiceNumbers)
   return (
     <>
       <Card>
