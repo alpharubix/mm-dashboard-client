@@ -48,7 +48,8 @@ export type InvoiceType = {
   bankName: string
   ifscCode: string
   branch: string
-  invoiceNumber: number
+  invoiceNumbers?: number
+  invoiceNumber?: number
   invoiceAmount: number
   invoiceDate: string
   loanAmount: number
@@ -59,6 +60,7 @@ export type InvoiceType = {
   invoicePdfUrl: string
   createdAt: string
   updatedAt: string
+  totalEligibleInvoiceCount: number
 }
 
 export type UserType = {

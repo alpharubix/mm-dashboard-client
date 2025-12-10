@@ -108,11 +108,6 @@ export default function CreditLimit() {
     if (inputRef.current) inputRef.current.value = ''
   }
 
-  const handleClearFilter = () => {
-    setFilters({ companyName: '', distributorCode: '' })
-    setPage(1)
-  }
-
   useEffect(() => {
     setPage(1)
   }, [debouncedFilters.companyName, debouncedFilters.distributorCode])

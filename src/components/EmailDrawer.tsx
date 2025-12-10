@@ -24,8 +24,9 @@ import {
 
 export default function EmailContainer({
   distributorCode,
-  invoiceNumber,
+  invoiceNumbers,
   onStatusUpdated,
+  totalEligibleInvoiceCount,
 }: any) {
   const [open, setOpen] = useState(false)
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false)
@@ -39,6 +40,7 @@ export default function EmailContainer({
     subject: '',
     body: '',
   })
+  const [isSendMailLoading, setIsSendMailLoading] = useState(false)
   const [formPayload, setFormPayload] = useState<any>(null)
   const editor = useEditor({
     extensions: [
@@ -57,35 +59,12 @@ export default function EmailContainer({
   }, [editor])
 
   const fetchTemplate = async () => {
-    const url = `/email-template?distributorCode=${distributorCode}&invoiceNumber=${invoiceNumber}`
+    const url = `/email-template?distributorCode=${distributorCode}`
     const res = await api.get(url)
     return res.data.data
   }
 
-  const checkEligibility = async () => {
-    try {
-      const res = await api.post('/email-eligibility-check', {
-        distributorCode,
-        invoiceNumber,
-      })
-      toast.success(res.data.message)
-      return res.data
-    } catch (err: any) {
-      toast.error(err.response.data.message)
-      return { isEligible: false }
-    }
-  }
-
   const handleMailCheckAndSubmit = async () => {
-    const eligibility = await checkEligibility()
-    if (!eligibility.isEligible) {
-      setOpen(false)
-      onStatusUpdated?.()
-      return
-    }
-
-    setOpen(true)
-
     try {
       const tpl = await fetchTemplate()
       setEmailDetails(tpl)
@@ -114,27 +93,32 @@ export default function EmailContainer({
     setFormPayload({
       ...Object.fromEntries(formData.entries()),
       distributorCode,
-      invoiceNumber,
+      invoiceNumbers,
       body,
-      csv: attachments?.csv,
-      pdfUrl: attachments?.pdf?.url,
+      attachments,
     })
 
     setConfirmDialogOpen(true)
   }
 
   const handleSubmit = async () => {
+    setIsSendMailLoading(true)
     setConfirmDialogOpen(false)
     setOpen(false)
-    if (!formPayload) return
+    if (!formPayload) {
+      setIsSendMailLoading(false)
+      return
+    }
 
     try {
       const res = await api.post('/send-mail', formPayload)
-      // refetch()
-      onStatusUpdated?.()
+      await onStatusUpdated?.()
       toast.success(res.data.message)
     } catch (err: any) {
+      setIsSendMailLoading(false)
       toast.error(err.response.data.message)
+    } finally {
+      setIsSendMailLoading(false)
     }
   }
 
@@ -149,6 +133,8 @@ export default function EmailContainer({
         emailDetails={emailDetails}
         attachments={attachments}
         handleSendButton={handleSendButton}
+        totalEligibleInvoiceCount={totalEligibleInvoiceCount}
+        isSendMailLoading={isSendMailLoading}
       />
 
       <Dialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>

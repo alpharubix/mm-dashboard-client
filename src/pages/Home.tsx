@@ -10,6 +10,7 @@ export default function Home() {
     { to: 'onboard-customer', label: 'Onboard Customer' },
     { to: 'credit-limit', label: 'Credit Limit' },
     { to: 'invoice-utr', label: 'Invoice UTR' },
+    { to: 'disbursement', label: 'Disbursement' },
     { to: 'email', label: 'Email' },
     { to: 'users', label: 'Users' },
     { to: 'viewer', label: 'Viewer' },

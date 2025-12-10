@@ -22,21 +22,38 @@ export default function EmailDrawerView({
   handleMailCheck,
   emailDetails,
   handleSendButton,
-  attachments,
-  eligiblityStatus,
+  attachments, // This is now an Array [{filename, content, contentType}, ...]
+  isSendMailLoading,
+  totalEligibleInvoiceCount,
 }: any) {
-  // TODO Show the spinner based on the email status
-  console.log({ eligiblityStatus })
+  const isEligible =
+    totalEligibleInvoiceCount === undefined || totalEligibleInvoiceCount > 0
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <span
-          className='cursor-pointer font-medium text-blue-600'
-          onClick={() => handleMailCheck()}
-        >
-          Send Mail
-        </span>
-      </DialogTrigger>
+      {isEligible ? (
+        <DialogTrigger asChild>
+          <div>
+            <Button
+              variant='outline'
+              className='w-24 relative cursor-pointer hover:border-ring hover:ring-ring/50 hover:ring-[3px]'
+              onClick={() => handleMailCheck()}
+              disabled={isSendMailLoading}
+            >
+              {isSendMailLoading ? 'Sending...' : 'Send'}
+              {totalEligibleInvoiceCount > 0 && !isSendMailLoading ? (
+                <span className='absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-green-400 text-xs text-white'>
+                  {totalEligibleInvoiceCount}
+                </span>
+              ) : null}
+            </Button>
+          </div>
+        </DialogTrigger>
+      ) : (
+        <Button variant='outline' className='w-24' disabled>
+          No Invoices
+        </Button>
+      )}
 
       <DialogContent
         onOpenAutoFocus={(e) => {
@@ -88,36 +105,43 @@ export default function EmailDrawerView({
                   defaultValue={emailDetails.subject}
                 />
               </div>
-              {/* ✅ Attachments section */}
-              <div className='flex items-center gap-2'>
-                {attachments?.csv && (
-                  <span>
-                    <a
-                      download={attachments.csv.filename}
-                      href={`data:${attachments.csv.mime};base64,${attachments.csv.base64}`}
-                      className='inline underline text-blue-500'
-                    >
-                      Download CSV
-                    </a>
-                  </span>
-                )}
 
-                {attachments?.pdf && (
-                  <span>
-                    <a
-                      href={attachments.pdf.url}
-                      target='_blank'
-                      rel='noreferrer'
-                      className='inline underline text-blue-500'
-                    >
-                      View PDF
-                    </a>
-                  </span>
-                )}
+              {/* ✅ UPDATED: Attachments section for Array */}
+              <div className='grid gap-1'>
+                <Label>Attachments</Label>
+                <div className='flex flex-wrap items-center gap-3'>
+                  {Array.isArray(attachments) && attachments.length > 0 ? (
+                    attachments.map((att: any, index: number) => {
+                      // Handle fallback for keys depending on your exact backend response
+                      const mime =
+                        att.contentType ||
+                        att.mime ||
+                        'application/octet-stream'
+                      const content = att.content || att.base64
+
+                      return (
+                        <a
+                          key={index}
+                          // Create data URI for download
+                          href={`data:${mime};base64,${content}`}
+                          download={att.filename}
+                          className='text-sm text-blue-600 underline hover:text-blue-800 flex items-center gap-1'
+                        >
+                          {/* Display Filename */}
+                          📄 {att.filename}
+                        </a>
+                      )
+                    })
+                  ) : (
+                    <span className='text-sm text-gray-400'>
+                      No attachments found
+                    </span>
+                  )}
+                </div>
               </div>
 
               {editor && (
-                <div className='editor-wrapper'>
+                <div className='editor-wrapper mt-2'>
                   <Toolbar editor={editor} />
                   <div className='overflow-scroll'>
                     <EditorContent editor={editor} className='min-w-[900px]' />
