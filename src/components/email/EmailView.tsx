@@ -28,7 +28,6 @@ export default function EmailDrawerView({
 }: any) {
   const isEligible =
     totalEligibleInvoiceCount === undefined || totalEligibleInvoiceCount > 0
-  console.log(isSendMailLoading, ' EmailDrawerView')
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

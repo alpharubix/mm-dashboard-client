@@ -121,7 +121,7 @@ export default function EmailContainer({
       setIsSendMailLoading(false)
     }
   }
-  console.log(isSendMailLoading, ' EmailDrawer')
+
   return (
     <>
       <EmailDrawerView
