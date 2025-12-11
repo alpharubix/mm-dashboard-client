@@ -4,11 +4,17 @@ export const ENV = {
 
 export const PERMISSIONS = {
   superAdmin: {
-    routes: ['onboard-customer', 'credit-limit', 'invoice-utr', 'disbursement', 'users'],
+    routes: [
+      'onboard-customer',
+      'credit-limit',
+      'invoice-utr',
+      'disbursement',
+      'users',
+    ],
     actions: ['create', 'edit', 'delete', 'view', 'upload', 'download'],
   },
   admin: {
-    routes: ['onboard-customer', 'credit-limit', 'invoice-utr', 'disbursement'],
+    routes: ['onboard-customer', 'credit-limit', 'invoice-utr'],
     actions: ['view', 'download'],
   },
   viewer: {
