@@ -40,6 +40,7 @@ import {
 import { useApiQuery } from '../api/hooks'
 import useDebounce from '../hooks/use-debounce'
 
+import { useAnchorIdStore } from '@/store/anchoIdStore'
 import type { InvoiceType } from '../types'
 
 const showError = (error: any) => {
@@ -60,7 +61,7 @@ export default function Invoice() {
   const inputRef = useRef<HTMLInputElement>(null)
   const user = getUserFromToken()
   const [page, setPage] = useState(1)
-
+  const { anchorId } = useAnchorIdStore()
   const [filters, setFilters] = useState<{
     companyName: string
     distributorCode: string
@@ -302,7 +303,7 @@ export default function Invoice() {
           {user?.role === 'superAdmin' && (
             <div className='space-y-2'>
               <Button
-                onClick={() => handleExport(queryParams)}
+                onClick={() => handleExport({ ...queryParams, anchorId })}
                 variant='outline'
                 size='sm'
                 className='h-10 w-full cursor-pointer mt-6 font-normal text-sm text-gray-600'
@@ -612,7 +613,7 @@ export default function Invoice() {
                                 )}
                               </span>
                             </TableCell>
-                            
+
                             <TableCell
                               className={cn(
                                 item.status === INV_STATUS.NOT_PROCESSED
