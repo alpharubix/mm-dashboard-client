@@ -135,7 +135,7 @@ export const handleExport = async (queryParams: any) => {
     link.href = url
     link.setAttribute(
       'download',
-      `anchor_input_${format(new Date(), 'dd-MM-yy')}.csv`
+      `anchor_${queryParams.anchorId}_invoices_${format(new Date(), 'dd-MM-yy')}.csv`
     )
     document.body.appendChild(link)
     link.click()
