@@ -26,7 +26,7 @@ import {
   TableHeader,
   TableRow,
 } from '../components/ui/table'
-import { ENV, INV_STATUS } from '../conf'
+import { EMAIL_STATUS, ENV, INV_STATUS } from '../conf'
 import {
   camelCaseToWords,
   cn,
@@ -419,6 +419,9 @@ export default function Invoice() {
                   </TableHead>
                   {user?.role === 'superAdmin' && (
                     <>
+                      <TableHead className='font-bold  text-gray-700 min-w-28 w-[200px] '>
+                        Disbursement Status
+                      </TableHead>
                       <TableHead className='font-bold  text-gray-700 min-w-28 w-[120px] '>
                         Invoice File
                       </TableHead>
@@ -478,6 +481,9 @@ export default function Invoice() {
                         </TableCell>
                         <TableCell>
                           <Skeleton className='h-4 w-20' />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className='h-4 w-16' />
                         </TableCell>
                         <TableCell>
                           <Skeleton className='h-4 w-16' />
@@ -590,6 +596,42 @@ export default function Invoice() {
 
                         {user?.role === 'superAdmin' && (
                           <>
+                            <TableCell
+                              className={cn(
+                                item.status === INV_STATUS.NOT_PROCESSED
+                                  ? 'bg-red-50 group-hover:bg-red-100'
+                                  : 'bg-white group-hover:bg-muted'
+                              )}
+                            >
+                              {item.emailStatus === EMAIL_STATUS.ELIGIBLE && (
+                                <span className='text-green-400  font-medium'>
+                                  Eligible
+                                </span>
+                              )}
+
+                              {item.emailStatus ===
+                                EMAIL_STATUS.NOT_ELIGIBLE && (
+                                <span className='text-red-500 font-medium'>
+                                  Not Eligible
+                                </span>
+                              )}
+                              {item.emailStatus === EMAIL_STATUS.OVERDUE && (
+                                <span className='text-orange-400  font-medium'>
+                                  Overdue
+                                </span>
+                              )}
+                              {item.emailStatus ===
+                                EMAIL_STATUS.INSUFF_AVAIL_LIMIT && (
+                                <span className='text-yellow-600 font-medium'>
+                                  Insufficient Available Limit
+                                </span>
+                              )}
+                              {item.emailStatus === EMAIL_STATUS.SENT && (
+                                <span className='text-blue-500 font-medium'>
+                                  Sent
+                                </span>
+                              )}
+                            </TableCell>
                             <TableCell
                               className={cn(
                                 'flex justify-center items-center',
