@@ -20,18 +20,22 @@ import { useApiQuery } from '../api/hooks'
 import useDebounce from '../hooks/use-debounce'
 
 import EmailContainer from '@/components/EmailDrawer'
+import { useAnchorIdStore } from '@/store/anchoIdStore'
 import type { InvoiceType } from '../types'
 
 export default function Invoice() {
   const user = getUserFromToken()
   const [page, setPage] = useState(1)
+  const { anchorId } = useAnchorIdStore()
 
   const [filters, setFilters] = useState<{
     companyName: string
     distributorCode: string
+    anchorId: string
   }>({
     companyName: '',
     distributorCode: '',
+    anchorId: anchorId,
   })
   const debouncedFilters = useDebounce(filters, 500)
   const queryParams = useMemo(() => {
@@ -40,6 +44,7 @@ export default function Invoice() {
       params.companyName = debouncedFilters.companyName
     if (debouncedFilters.distributorCode)
       params.distributorCode = debouncedFilters.distributorCode
+    if (debouncedFilters.anchorId) params.anchorId = debouncedFilters.anchorId
     return params
   }, [debouncedFilters, page])
 
