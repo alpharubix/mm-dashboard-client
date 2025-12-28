@@ -22,7 +22,7 @@ import {
 } from '../components/ui/table'
 import type { OnboardType } from '../types'
 import { Card, CardContent } from '../components/ui/card'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react'
 import { Label } from '../components/ui/label'
 import { useApiQuery } from '../api/hooks'
 import useDebounce from '../hooks/use-debounce'
@@ -34,6 +34,7 @@ export default function Onboard() {
     distributorCode: '',
   })
   const [page, setPage] = useState(1)
+  const [isFileUploading, setIsFileUploading] = useState(false)
 
   const user = getUserFromToken()
   const inputRef = useRef<HTMLInputElement>(null)
@@ -75,6 +76,7 @@ export default function Onboard() {
 
   const handleUpload = async () => {
     if (!file) return
+    setIsFileUploading(true)
 
     const formData = new FormData()
     formData.append('csvfile', file)
@@ -89,6 +91,7 @@ export default function Onboard() {
       )
 
       toast.success(res.data.message || 'Upload successful')
+      setIsFileUploading(false)
 
       // fetchData()
       refetch()
@@ -96,17 +99,33 @@ export default function Onboard() {
       if (inputRef.current) inputRef.current.value = ''
     } catch (err) {
       // @ts-ignore
-      const { message, duplicates } = err.response?.data || {}
+      const data = err.response?.data
 
-      const duplicateInfo = duplicates?.length
-        ? ` (${duplicates.join(', ')})`
-        : ''
-      toast.error(
-        // @ts-ignore
-        `${message || `Upload failed ${err.message}`}${duplicateInfo}`
-      )
+      let errorMessage = 'Upload failed'
 
-      console.error('Upload failed', err)
+      if (!data) {
+        errorMessage = 'Network error'
+      } else if (data.message === 'CSV header mismatch') {
+        const missing = data.missingFields?.length
+          ? `Missing: ${data.missingFields.join(', ')}`
+          : ''
+        const extra = data.extraFields?.length
+          ? `Extra: ${data.extraFields.join(', ')}`
+          : ''
+
+        errorMessage = [data.message, missing, extra]
+          .filter(Boolean)
+          .join(' | ')
+      } else if (data.message && data.error) {
+        errorMessage = `${data.message}: ${data.error}`
+      } else if (data.message) {
+        errorMessage = data.message
+      }
+
+      toast.error(errorMessage)
+      console.error(err)
+    } finally {
+      setIsFileUploading(false)
     }
   }
 
@@ -183,13 +202,25 @@ export default function Onboard() {
                   />
                   {file && (
                     <div className='flex gap-2'>
-                      <Button onClick={handleUpload} disabled={!file}>
-                        Upload CSV
+                      <Button
+                        onClick={handleUpload}
+                        disabled={!file || isFileUploading}
+                        className='cursor-pointer'
+                      >
+                        {isFileUploading ? (
+                          <>
+                            <span className='text-xs'>Uploading...</span>{' '}
+                            <Loader2 className='animate-spin' />
+                          </>
+                        ) : (
+                          'Upload CSV'
+                        )}
                       </Button>
                       <Button
                         onClick={handleCancel}
                         variant='ghost'
                         className='text-red-500'
+                        disabled={isFileUploading}
                       >
                         Cancel
                       </Button>

@@ -9,7 +9,7 @@ import {
   formatDate,
   getUserFromToken,
 } from '../lib/utils'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Loader, Loader2 } from 'lucide-react'
 
 import useDebounce from '../hooks/use-debounce'
 import { useApiQuery } from '../api/hooks'
@@ -39,6 +39,7 @@ export default function CreditLimit() {
   const inputRef = useRef<HTMLInputElement>(null)
   const user = getUserFromToken()
   const debouncedFilters = useDebounce(filters, 500)
+  const [isFileUploading, setIsFileUploading] = useState(false)
 
   const queryParams = useMemo(() => {
     const params: any = { page, limit: 10 }
@@ -67,6 +68,7 @@ export default function CreditLimit() {
 
   const handleUpload = async () => {
     if (!file) return
+    setIsFileUploading(true)
 
     const form = new FormData()
     form.append('csvfile', file)
@@ -82,24 +84,41 @@ export default function CreditLimit() {
       const responseMessage =
         `${res.data.insertedCount} ${res.data.message}` || 'Upload successful'
       toast.success(responseMessage)
-
+      setIsFileUploading(false)
       setFile(null)
       if (inputRef.current) inputRef.current.value = ''
       setPage(1)
       refetch()
     } catch (err) {
+      setIsFileUploading(false)
       // @ts-ignore
-      const { message, duplicates } = err.response?.data || {}
+      const data = err.response?.data
 
-      const duplicateInfo = duplicates?.length
-        ? ` (${duplicates.join(', ')})`
-        : ''
+      let errorMessage = 'Upload failed'
 
-      toast.error(
-        // @ts-ignore
-        `${message || `Upload failed ${message}`}${duplicateInfo}`
-      )
+      if (!data) {
+        errorMessage = 'Network error'
+      } else if (data.message === 'CSV header mismatch') {
+        const missing = data.missingFields?.length
+          ? `Missing: ${data.missingFields.join(', ')}`
+          : ''
+        const extra = data.extraFields?.length
+          ? `Extra: ${data.extraFields.join(', ')}`
+          : ''
+
+        errorMessage = [data.message, missing, extra]
+          .filter(Boolean)
+          .join(' | ')
+      } else if (data.message && data.error) {
+        errorMessage = `${data.message}: ${data.error}`
+      } else if (data.message) {
+        errorMessage = data.message
+      }
+
+      toast.error(errorMessage)
       console.error(err)
+    } finally {
+      setIsFileUploading(false)
     }
   }
 
@@ -171,13 +190,25 @@ export default function CreditLimit() {
                   />
                   {file && (
                     <div className='flex gap-2'>
-                      <Button onClick={handleUpload} disabled={!file}>
-                        Upload CSV
+                      <Button
+                        onClick={handleUpload}
+                        disabled={!file || isFileUploading}
+                        className='cursor-pointer'
+                      >
+                        {isFileUploading ? (
+                          <>
+                            <span className='text-xs'>Uploading...</span>{' '}
+                            <Loader2 className='animate-spin' />
+                          </>
+                        ) : (
+                          'Upload CSV'
+                        )}
                       </Button>
                       <Button
                         onClick={handleCancel}
                         variant='ghost'
                         className='text-red-500'
+                        disabled={isFileUploading}
                       >
                         Cancel
                       </Button>
@@ -227,166 +258,166 @@ export default function CreditLimit() {
             <TableBody>
               {isPending
                 ? Array.from({ length: 10 }).map((_, i) => (
-                  <TableRow key={i}>
-                    {Array(15)
-                      .fill(0)
-                      .map((_, j) => (
-                        <TableCell key={j}>
-                          <Skeleton className='h-4 w-16' />
-                        </TableCell>
-                      ))}
-                  </TableRow>
-                ))
-
+                    <TableRow key={i}>
+                      {Array(15)
+                        .fill(0)
+                        .map((_, j) => (
+                          <TableCell key={j}>
+                            <Skeleton className='h-4 w-16' />
+                          </TableCell>
+                        ))}
+                    </TableRow>
+                  ))
                 : data?.data?.map((item: CreditLimitType) => (
-                  <TableRow
-                    key={item._id}
-                    className={cn(
-                      'group relative *:truncate *:overflow-hidden *:text-ellipsis transition-colors',
-                      item.billingStatus.toLowerCase() === 'negative'
-                        ? 'bg-red-50'
-                        : 'bg-white'
-                    )}
-                  >
-                    <TableCell
+                    <TableRow
+                      key={item._id}
                       className={cn(
-                        'sticky left-0 z-20 overflow-hidden',
+                        'group relative *:truncate *:overflow-hidden *:text-ellipsis transition-colors',
                         item.billingStatus.toLowerCase() === 'negative'
-                          ? 'bg-red-50 group-hover:bg-red-100'
-                          : 'bg-white group-hover:bg-muted' 
+                          ? 'bg-red-50'
+                          : 'bg-white'
                       )}
                     >
-                      {item.companyName}
-                    </TableCell>
+                      <TableCell
+                        className={cn(
+                          'sticky left-0 z-20 overflow-hidden',
+                          item.billingStatus.toLowerCase() === 'negative'
+                            ? 'bg-red-50 group-hover:bg-red-100'
+                            : 'bg-white group-hover:bg-muted'
+                        )}
+                      >
+                        {item.companyName}
+                      </TableCell>
 
-                    <TableCell
-                      className={cn(
-                        'sticky left-[190px] z-10 overflow-hidden',
-                        item.billingStatus.toLowerCase() === 'negative'
-                          ? 'bg-red-50 group-hover:bg-red-100'
-                          : 'bg-white group-hover:bg-muted' 
-                      )}
-                    >
-                      {item.distributorCode}
-                    </TableCell>
+                      <TableCell
+                        className={cn(
+                          'sticky left-[190px] z-10 overflow-hidden',
+                          item.billingStatus.toLowerCase() === 'negative'
+                            ? 'bg-red-50 group-hover:bg-red-100'
+                            : 'bg-white group-hover:bg-muted'
+                        )}
+                      >
+                        {item.distributorCode}
+                      </TableCell>
 
-                    <TableCell
-                      className={cn(
-                        item.billingStatus.toLowerCase() === 'negative'
-                          ? 'bg-red-50 group-hover:bg-red-100'
-                          : 'bg-white group-hover:bg-muted'
-                      )}
-                    >
-                      {item.city}
-                    </TableCell>
-                    <TableCell
-                      className={cn(
-                        item.billingStatus.toLowerCase() === 'negative'
-                          ? 'bg-red-50 group-hover:bg-red-100'
-                          : 'bg-white group-hover:bg-muted'
-                      )}
-                    >
-                      {item.state}
-                    </TableCell>
-                    <TableCell
-                      className={cn(
-                        item.billingStatus.toLowerCase() === 'negative'
-                          ? 'bg-red-50 group-hover:bg-red-100'
-                          : 'bg-white group-hover:bg-muted'
-                      )}
-                    >
-                      {item.lender}
-                    </TableCell>
-                    <TableCell
-                      className={cn(
-                        item.billingStatus.toLowerCase() === 'negative'
-                          ? 'bg-red-50 group-hover:bg-red-100'
-                          : 'bg-white group-hover:bg-muted'
-                      )}
-                    >
-                      {formatAmount(item.sanctionLimit)}
-                    </TableCell>
-                    <TableCell
-                      className={cn(
-                        item.billingStatus.toLowerCase() === 'negative'
-                          ? 'bg-red-50 group-hover:bg-red-100'
-                          : 'bg-white group-hover:bg-muted'
-                      )}
-                    >
-                      {formatAmount(item.operativeLimit)}
-                    </TableCell>
-                    <TableCell
-                      className={cn(
-                        item.billingStatus.toLowerCase() === 'negative'
-                          ? 'bg-red-50 group-hover:bg-red-100'
-                          : 'bg-white group-hover:bg-muted'
-                      )}
-                    >
-                      {formatAmount(item.utilisedLimit)}
-                    </TableCell>
-                    <TableCell
-                      className={cn(
-                        item.billingStatus.toLowerCase() === 'negative'
-                          ? 'bg-red-50 group-hover:bg-red-100'
-                          : 'bg-white group-hover:bg-muted'
-                      )}
-                    >
-                      {formatAmount(item.availableLimit)}
-                    </TableCell>
-                    <TableCell
-                      className={cn(
-                        item.billingStatus.toLowerCase() === 'negative'
-                          ? 'bg-red-50 group-hover:bg-red-100'
-                          : 'bg-white group-hover:bg-muted'
-                      )}
-                    >
-                      {formatAmount(item.pendingInvoices)}
-                    </TableCell>
-                    <TableCell
-                      className={cn(
-                        item.billingStatus.toLowerCase() === 'negative'
-                          ? 'bg-red-50 group-hover:bg-red-100'
-                          : 'bg-white group-hover:bg-muted'
-                      )}
-                    >
-                      {formatAmount(item.currentAvailable)}
-                    </TableCell>
-                    <TableCell
-                      className={cn(
-                        item.billingStatus.toLowerCase() === 'negative'
-                          ? 'bg-red-50 group-hover:bg-red-100'
-                          : 'bg-white group-hover:bg-muted'
-                      )}
-                    >
-                      {formatAmount(item.overdue)}
-                    </TableCell>
-                    <TableCell
-                      className={cn(
-                        item.billingStatus.toLowerCase() === 'negative'
-                          ? 'bg-red-50 group-hover:bg-red-100'
-                          : 'bg-white group-hover:bg-muted'
-                      )}
-                    >
-                      {item.limitExpiryDate ? formatDate(item.limitExpiryDate) : null}
-                    </TableCell>
+                      <TableCell
+                        className={cn(
+                          item.billingStatus.toLowerCase() === 'negative'
+                            ? 'bg-red-50 group-hover:bg-red-100'
+                            : 'bg-white group-hover:bg-muted'
+                        )}
+                      >
+                        {item.city}
+                      </TableCell>
+                      <TableCell
+                        className={cn(
+                          item.billingStatus.toLowerCase() === 'negative'
+                            ? 'bg-red-50 group-hover:bg-red-100'
+                            : 'bg-white group-hover:bg-muted'
+                        )}
+                      >
+                        {item.state}
+                      </TableCell>
+                      <TableCell
+                        className={cn(
+                          item.billingStatus.toLowerCase() === 'negative'
+                            ? 'bg-red-50 group-hover:bg-red-100'
+                            : 'bg-white group-hover:bg-muted'
+                        )}
+                      >
+                        {item.lender}
+                      </TableCell>
+                      <TableCell
+                        className={cn(
+                          item.billingStatus.toLowerCase() === 'negative'
+                            ? 'bg-red-50 group-hover:bg-red-100'
+                            : 'bg-white group-hover:bg-muted'
+                        )}
+                      >
+                        {formatAmount(item.sanctionLimit)}
+                      </TableCell>
+                      <TableCell
+                        className={cn(
+                          item.billingStatus.toLowerCase() === 'negative'
+                            ? 'bg-red-50 group-hover:bg-red-100'
+                            : 'bg-white group-hover:bg-muted'
+                        )}
+                      >
+                        {formatAmount(item.operativeLimit)}
+                      </TableCell>
+                      <TableCell
+                        className={cn(
+                          item.billingStatus.toLowerCase() === 'negative'
+                            ? 'bg-red-50 group-hover:bg-red-100'
+                            : 'bg-white group-hover:bg-muted'
+                        )}
+                      >
+                        {formatAmount(item.utilisedLimit)}
+                      </TableCell>
+                      <TableCell
+                        className={cn(
+                          item.billingStatus.toLowerCase() === 'negative'
+                            ? 'bg-red-50 group-hover:bg-red-100'
+                            : 'bg-white group-hover:bg-muted'
+                        )}
+                      >
+                        {formatAmount(item.availableLimit)}
+                      </TableCell>
+                      <TableCell
+                        className={cn(
+                          item.billingStatus.toLowerCase() === 'negative'
+                            ? 'bg-red-50 group-hover:bg-red-100'
+                            : 'bg-white group-hover:bg-muted'
+                        )}
+                      >
+                        {formatAmount(item.pendingInvoices)}
+                      </TableCell>
+                      <TableCell
+                        className={cn(
+                          item.billingStatus.toLowerCase() === 'negative'
+                            ? 'bg-red-50 group-hover:bg-red-100'
+                            : 'bg-white group-hover:bg-muted'
+                        )}
+                      >
+                        {formatAmount(item.currentAvailable)}
+                      </TableCell>
+                      <TableCell
+                        className={cn(
+                          item.billingStatus.toLowerCase() === 'negative'
+                            ? 'bg-red-50 group-hover:bg-red-100'
+                            : 'bg-white group-hover:bg-muted'
+                        )}
+                      >
+                        {formatAmount(item.overdue)}
+                      </TableCell>
+                      <TableCell
+                        className={cn(
+                          item.billingStatus.toLowerCase() === 'negative'
+                            ? 'bg-red-50 group-hover:bg-red-100'
+                            : 'bg-white group-hover:bg-muted'
+                        )}
+                      >
+                        {item.limitExpiryDate
+                          ? formatDate(item.limitExpiryDate)
+                          : null}
+                      </TableCell>
 
-                    {/* This cell already had a cn, so we just add the new logic */}
-                    <TableCell
-                      className={cn(
-                        item.billingStatus.toLowerCase() === 'positive'
-                          ? 'text-green-500'
-                          : 'text-orange-500',
-                        item.billingStatus.toLowerCase() === 'negative'
-                          ? 'bg-red-50 group-hover:bg-red-100'
-                          : 'bg-white group-hover:bg-muted'
-                      )}
-                      title={camelCaseToWords(item.billingStatus)}
-                    >
-                      {camelCaseToWords(item.billingStatus)}
-                    </TableCell>
-                  </TableRow>
-                ))
-              }
+                      {/* This cell already had a cn, so we just add the new logic */}
+                      <TableCell
+                        className={cn(
+                          item.billingStatus.toLowerCase() === 'positive'
+                            ? 'text-green-500'
+                            : 'text-orange-500',
+                          item.billingStatus.toLowerCase() === 'negative'
+                            ? 'bg-red-50 group-hover:bg-red-100'
+                            : 'bg-white group-hover:bg-muted'
+                        )}
+                        title={camelCaseToWords(item.billingStatus)}
+                      >
+                        {camelCaseToWords(item.billingStatus)}
+                      </TableCell>
+                    </TableRow>
+                  ))}
             </TableBody>
           </Table>
           {data?.data?.length !== 0 ? (

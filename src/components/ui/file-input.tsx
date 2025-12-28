@@ -19,7 +19,7 @@ export const InputFile = forwardRef<HTMLInputElement, Props>(
       <div className='flex items-center gap-2 border border-gray-300 rounded-sm bg-white hover:bg-gray-50 transition-colors py-[.61rem] px-3'>
         <Upload className='h-3 w-3 text-gray-500' />
         <span className='text-sm text-gray-600'>
-          {file ? file.name : 'No File Chosen'}
+          {file ? file.name : 'No file chosen'}
         </span>
       </div>
     </div>
