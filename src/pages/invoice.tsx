@@ -1,6 +1,12 @@
 import axios from 'axios'
 import { format } from 'date-fns'
-import { ChevronLeft, ChevronRight, Download, FileDown } from 'lucide-react'
+import {
+  ChevronLeft,
+  ChevronRight,
+  Download,
+  FileDown,
+  Loader2,
+} from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { DateRange } from 'react-day-picker'
 import { toast } from 'sonner'
@@ -77,6 +83,8 @@ export default function Invoice() {
     date: undefined,
     status: '',
   })
+  const [isFileUploading, setIsFileUploading] = useState(false)
+
   const debouncedFilters = useDebounce(filters, 500)
   const queryParams = useMemo(() => {
     const params: any = { page, limit: 10 }
@@ -114,6 +122,7 @@ export default function Invoice() {
 
   const handleUpload = async () => {
     if (!file) return
+    setIsFileUploading(true)
 
     const form = new FormData()
     form.append('csvfile', file)
@@ -128,11 +137,13 @@ export default function Invoice() {
       )
 
       toast.success(res.data.message || 'Upload successful')
+      setIsFileUploading(false)
 
       refetch()
       setFile(null)
       if (inputRef.current) inputRef.current.value = ''
     } catch (err) {
+      setIsFileUploading(false)
       // @ts-ignore
       // const { message, duplicates } = err.response?.data || {}
 
@@ -144,6 +155,8 @@ export default function Invoice() {
       // @ts-ignore
       showError(err.response.data || {})
       console.error('Upload failed', err)
+    } finally {
+      setIsFileUploading(false)
     }
   }
 
@@ -344,13 +357,25 @@ export default function Invoice() {
                 />
                 {file && (
                   <div className='flex gap-2'>
-                    <Button onClick={handleUpload} disabled={!file}>
-                      Upload CSV
+                    <Button
+                      onClick={handleUpload}
+                      disabled={!file || isFileUploading}
+                      className='cursor-pointer'
+                    >
+                      {isFileUploading ? (
+                        <>
+                          <span className='text-xs'>Uploading...</span>{' '}
+                          <Loader2 className='animate-spin' />
+                        </>
+                      ) : (
+                        'Upload CSV'
+                      )}
                     </Button>
                     <Button
                       onClick={handleCancel}
                       variant='ghost'
                       className='text-red-500'
+                      disabled={isFileUploading}
                     >
                       Cancel
                     </Button>
@@ -406,10 +431,10 @@ export default function Invoice() {
                     Loan Amount
                   </TableHead>
                   <TableHead
-                    title='Limit Live Date'
-                    className='font-bold  text-gray-700 w-[100px] '
+                    title='Loan Disbursement Date'
+                    className='font-bold  text-gray-700 w-[100px] cursor-help'
                   >
-                    LLD
+                    LDD
                   </TableHead>
                   <TableHead className='font-bold  text-gray-700 w-[200px] '>
                     UTR
