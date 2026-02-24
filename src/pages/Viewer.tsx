@@ -94,9 +94,12 @@ export default function Viewer() {
 
   const sanctionLimit = onboard?.sanctionLimit || 0
   const limitLiveDate = onboard?.limitLiveDate || null
+  const limitExpiryDate = credit?.limitExpiryDate || null
   const utilisedLimit = credit?.utilisedLimit || 0
+  const operativeLimit = credit?.operativeLimit || 0
   const overdue = credit?.overdue || 0
-  const availableLimit = sanctionLimit - utilisedLimit
+  const availableLimit = operativeLimit - utilisedLimit
+  const currentAvailable = availableLimit - credit?.pendingInvoices || null
 
   return (
     <div className='min-h-screen bg-gray-50'>
@@ -167,6 +170,14 @@ export default function Viewer() {
                         {formatDate(limitLiveDate) || 'NA'}
                       </span>
                     </div>
+                    <div>
+                      <span className='text-lg text-blue-900 font-bold'>
+                        Limit Expiry Date:
+                      </span>{' '}
+                      <span className='text-lg text-blue-900 tracking-wider'>
+                        {formatDate(limitExpiryDate) || 'NA'}
+                      </span>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -192,6 +203,16 @@ export default function Viewer() {
                       <span className='text-lg text-amber-900 tracking-wider'>
                         {availableLimit >= 0
                           ? formatAmount(availableLimit) + '/-'
+                          : 'NA'}
+                      </span>
+                    </div>
+                    <div>
+                      <span className='text-lg text-amber-900 font-bold'>
+                        Current Available Limit:
+                      </span>{' '}
+                      <span className='text-lg text-amber-900 tracking-wider'>
+                        {currentAvailable && currentAvailable >= 0
+                          ? formatAmount(currentAvailable) + '/-'
                           : 'NA'}
                       </span>
                     </div>
@@ -291,7 +312,7 @@ export default function Viewer() {
                             className={cn(
                               '*:truncate *:overflow-hidden *:text-ellipsis',
                               inv.status === 'notProcessed' &&
-                                'bg-red-50 hover:bg-red-0'
+                              'bg-red-50 hover:bg-red-0'
                             )}
                           >
                             <TableCell>{inv.invoiceNumber}</TableCell>
