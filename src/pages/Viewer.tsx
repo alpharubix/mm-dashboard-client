@@ -145,6 +145,7 @@ export default function Viewer() {
                 <CardContent className='pt-6'>
                   <div className='space-y-3'>
                     <div><span className='text-lg font-bold text-blue-900'>Sanction Limit:</span> <span className='text-lg text-blue-900 tracking-wider'>{sanctionLimit ? formatAmount(sanctionLimit) + '/-' : 'NA'}</span></div>
+                    <div><span className='text-lg text-blue-900 font-bold'>Operative Limit:</span> <span className='text-lg text-blue-900 tracking-wider'>{operativeLimit ? formatAmount(operativeLimit) + '/-' : 'NA'}</span></div>
                     <div><span className='text-lg text-blue-900 font-bold'>Limit Live Date:</span> <span className='text-lg text-blue-900 tracking-wider'>{formatDate(limitLiveDate) || 'NA'}</span></div>
                     <div><span className='text-lg text-blue-900 font-bold'>Limit Expiry Date:</span> <span className='text-lg text-blue-900 tracking-wider'>{formatDate(limitExpiryDate) || 'NA'}</span></div>
                   </div>
@@ -156,14 +157,38 @@ export default function Viewer() {
                   <div className='space-y-3'>
                     <div><span className='text-lg text-amber-900 font-bold'>Utilised Limit:</span> <span className='text-lg text-amber-900 tracking-wider'>{utilisedLimit ? formatAmount(utilisedLimit) + '/-' : 'NA'}</span></div>
                     <div><span className='text-lg text-amber-900 font-bold'>Available Limit:</span> <span className='text-lg text-amber-900 tracking-wider'>{availableLimit >= 0 ? formatAmount(availableLimit) + '/-' : 'NA'}</span></div>
-                    <div><span className='text-lg text-amber-900 font-bold'>Current Available:</span> <span className='text-lg text-amber-900 tracking-wider'>{currentAvailable && currentAvailable >= 0 ? formatAmount(currentAvailable) + '/-' : 'NA'}</span></div>
+                    <div>
+                      <span className="text-lg text-amber-900 font-bold">
+                        Current Available: {" "}
+                      </span>
+                      <span
+                        className={`text-lg tracking-wider ${currentAvailable < 0
+                          ? "text-red-700 font-bold"
+                          : "text-amber-900"
+                          }`}
+                      >
+                        {currentAvailable != null
+                          ? formatAmount(currentAvailable) + "/-"
+                          : "NA"}
+                      </span>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
 
               <Card className='bg-red-50 border-red-200'>
                 <CardContent className='pt-6'>
-                  <div><span className='text-lg font-bold text-red-900'>Overdue:</span> <span className='text-lg text-red-900 tracking-wider'>{overdue ? formatAmount(overdue) + '/-' : '0'}</span></div>
+                  <div>
+                    <span className="text-lg font-bold text-red-900">
+                      Overdue: {" "}
+                    </span>
+                    <span
+                      className={`text-lg tracking-wider ${overdue > 0 ? "text-red-700 font-semibold" : "text-amber-900"
+                        }`}
+                    >
+                      {overdue ? formatAmount(overdue) + "/-" : "0"}
+                    </span>
+                  </div>
                 </CardContent>
               </Card>
             </div>
@@ -191,7 +216,7 @@ export default function Viewer() {
                         <TableHead className='font-bold text-gray-700'>Disbursement</TableHead>
                         <TableHead className='font-bold text-gray-700'>UTR</TableHead>
                         <TableHead className='font-bold text-gray-700'>Status</TableHead>
-                        <TableHead className='font-bold text-gray-700'>PDF</TableHead>
+                        {/*<TableHead className='font-bold text-gray-700'>PDF</TableHead>*/}
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -209,13 +234,13 @@ export default function Viewer() {
                             <TableCell>{formatDate(inv.loanDisbursementDate) || 'NA'}</TableCell>
                             <TableCell>{inv.utr || 'NA'}</TableCell>
                             <TableCell>{camelCaseToWords(inv.status)}</TableCell>
-                            <TableCell>
+                            {/*<TableCell>
                               {inv.invoicePdfUrl && (
                                 <a href={inv.invoicePdfUrl} target='_blank' rel='noopener noreferrer'>
                                   <FileDown className='h-4 w-4 text-blue-600' />
                                 </a>
                               )}
-                            </TableCell>
+                            </TableCell>*/}
                           </TableRow>
                         ))
                       ) : (
