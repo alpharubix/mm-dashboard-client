@@ -1,7 +1,11 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { api } from './index'
 
-export const useApiQuery = (endpoint: string, params: any = {}) => {
+export const useApiQuery = (
+  endpoint: string,
+  params: any = {},
+  queryOptions: any = {},
+) => {
   const anchorId = localStorage.getItem('mm_anchor')
 
   const { enabled = true, ...rest } = params
@@ -15,6 +19,7 @@ export const useApiQuery = (endpoint: string, params: any = {}) => {
       return res.data
     },
     enabled, // ✅ forward enabled
+    ...queryOptions,
   })
 }
 
