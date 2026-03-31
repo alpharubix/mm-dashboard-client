@@ -8,16 +8,16 @@ export default function HolidayBanner() {
         <div className='space-y-2'>
           <p>
             Disbursement Closed –{' '}
-            <span className='font-semibold'> 21st March 2026</span>
+            <span className='font-semibold'> 1st Apr 2026</span>
           </p>
           <p>
-            All lenders will remain closed on 21-03-2026 on account of
-            Eid-ul-Fitr (Ramzan-Id)
+            All lenders will remain closed on 01-04-2026 due to system migration
+            (EOM).
           </p>
           <p>
-            Invoices received after the cut-off on 20-03-2026 will be processed
-            on next working day (23-03-2026). The updated Limit Report will be
-            shared on 23-03-2026.
+            Invoices received after the cut-off on 31-03-2026 will be processed
+            on the next working day (02-04-2026). <br /> The Limit Report will
+            be updated on 02-04-2026.
           </p>
         </div>
       </div>
