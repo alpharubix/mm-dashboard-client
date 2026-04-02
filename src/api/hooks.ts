@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { api } from './index'
 
-export const useApiQuery = (
+export const useApiQuery = <T = any>(
   endpoint: string,
   params: any = {},
   queryOptions: any = {},
@@ -12,7 +12,7 @@ export const useApiQuery = (
 
   rest.anchorId = anchorId
 
-  return useQuery({
+  return useQuery<T>({
     queryKey: [endpoint, rest, anchorId],
     queryFn: async () => {
       const res = await api.get(endpoint, { params: rest })
