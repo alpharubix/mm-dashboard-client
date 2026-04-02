@@ -24,6 +24,7 @@ export default function Home() {
     <main className='min-h-screen bg-gray-50'>
       <Header />
       <HolidayBanner />
+
       <div className='container mx-auto px-4 sm:px-6 lg:px-8'>
         <div className=''>
           <div className='flex space-x-2 whitespace-nowrap overflow-auto w-full mt-4 p-1'>
