@@ -17,7 +17,7 @@ export default function HolidayBanner() {
     isError,
   } = useApiQuery('/banner', { enabled: true }, { retry: false })
 
-  const deactivateMutation = useApiPut('/banner/deactivate')
+  const deactivateMutation: any = useApiPut('/banner/deactivate')
 
   const banner = (bannerData as Record<string, any>)?.data
 

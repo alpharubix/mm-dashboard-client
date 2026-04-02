@@ -75,7 +75,7 @@ export default function CreateBannerModal({
   const [endAmpm, setEndAmpm] = useState('PM') // default to PM for end time
 
   const createMutation = useApiPost('/banner')
-  const updateMutation = useApiPut('/banner')
+  const updateMutation: any = useApiPut('/banner')
 
   useEffect(() => {
     if (initialData) {
