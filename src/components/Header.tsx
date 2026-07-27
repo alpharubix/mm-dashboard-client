@@ -1,5 +1,6 @@
-import { Menu, Plus } from 'lucide-react'
+import { Menu, Plus, HelpCircle } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { camelCaseToWords, getUserFromToken } from '../lib/utils'
 import logo from '../assets/logo.png'
 import HolidayBanner from './HolidayBanner'
@@ -35,8 +36,10 @@ import {
 } from './ui/select'
 
 export default function Header() {
+  const navigate = useNavigate()
   const user = getUserFromToken()
   const isSuperAdmin = user?.role === 'superAdmin' || false
+  const isAdminOrSuperAdmin = user?.role === 'superAdmin' || user?.role === 'admin'
   const [showLoader, setShowLoader] = useState(false)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const queryClient = useQueryClient()
@@ -141,6 +144,18 @@ export default function Header() {
               </>
             ) : null}
 
+            {isAdminOrSuperAdmin && (
+              <Button
+                size='icon'
+                variant='outline'
+                className='h-10 w-10 text-blue-600 border-blue-200 hover:bg-blue-50 cursor-pointer shadow-none rounded-lg'
+                title='Support Desk & Bug Tickets'
+                onClick={() => navigate('/support-tickets')}
+              >
+                <HelpCircle className='h-5 w-5' />
+              </Button>
+            )}
+
             <span className='text-sm text-gray-600'>{user?.companyName}</span>
             <Badge
               variant='outline'
@@ -209,6 +224,17 @@ export default function Header() {
                           </SelectContent>
                         </Select>
                       ) : null}
+                      {isAdminOrSuperAdmin && (
+                        <Button
+                          size='sm'
+                          variant='outline'
+                          className='text-blue-600 border-blue-200 cursor-pointer'
+                          onClick={() => navigate('/support-tickets')}
+                        >
+                          <HelpCircle className='h-4 w-4 mr-1' />
+                          Support Desk
+                        </Button>
+                      )}
                       <span className='text-lg font-bold'>
                         {user?.username}
                       </span>

@@ -26,6 +26,7 @@ export default function Login() {
     e.preventDefault()
     try {
       setIsLoading(true)
+      console.log(ENV.BACKEND_URL)
       const res = await axios.post(`${ENV.BACKEND_URL}/login`, form)
       localStorage.setItem('mm_auth_token', res.data.token)
       setAuthToken()
