@@ -14,6 +14,7 @@ export default function Home() {
     { to: 'disbursement', label: 'Disbursement' },
     { to: 'email', label: 'Email' },
     { to: 'users', label: 'Users' },
+    { to: 'support-tickets', label: 'Support Desk' },
     { to: 'viewer', label: 'Viewer' },
   ]
 
