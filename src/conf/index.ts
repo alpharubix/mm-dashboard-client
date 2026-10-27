@@ -50,3 +50,9 @@ export const STATUS_ACTIONS = {
   eligible: { text: '', canSend: true },
   sent: { text: 'Sent', canSend: false },
 }
+
+export const INVOICE_PAYMENT_STATUS = {
+  PENDING_PAYMENT: 'Pending Payment',
+  PAID: 'Paid',
+  OVERDUE: 'Overdue',
+} as const

@@ -436,11 +436,29 @@ export default function Invoice() {
                   >
                     LDD
                   </TableHead>
-                  <TableHead className='font-bold  text-gray-700 w-[200px] '>
+                  <TableHead className='font-bold  text-gray-700 w-[220px] '>
                     UTR
                   </TableHead>
                   <TableHead className='font-bold  text-gray-700 w-[200px]'>
                     Status
+                  </TableHead>
+                  <TableHead className='font-bold  text-gray-700 min-w-36 w-[160px]'>
+                    Lender Name
+                  </TableHead>
+                  <TableHead className='font-bold  text-gray-700 min-w-44 w-[220px]'>
+                    Invoice Payment Status
+                  </TableHead>
+                  <TableHead className='font-bold  text-gray-700 min-w-44 w-[270px]'>
+                    Payment Due Days (No. of Days)
+                  </TableHead>
+                  <TableHead className='font-bold  text-gray-700 min-w-36 w-[160px]'>
+                    Payment Due Date
+                  </TableHead>
+                  <TableHead className='font-bold  text-gray-700 min-w-40 w-[200px]'>
+                    Payment Received Date
+                  </TableHead>
+                  <TableHead className='font-bold  text-gray-700 min-w-40 w-[180px]'>
+                    Current Ageing Days
                   </TableHead>
                   {user?.role === 'superAdmin' && (
                     <>
@@ -506,6 +524,25 @@ export default function Invoice() {
                         </TableCell>
                         <TableCell>
                           <Skeleton className='h-4 w-20' />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className='h-4 w-16' />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className='h-4 w-16' />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className='h-4 w-16' />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className='h-4 w-16' />
+                        </TableCell>
+                        {/* 6 new columns */}
+                        <TableCell>
+                          <Skeleton className='h-4 w-16' />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className='h-4 w-16' />
                         </TableCell>
                         <TableCell>
                           <Skeleton className='h-4 w-16' />
@@ -617,6 +654,85 @@ export default function Invoice() {
                           )}
                         >
                           {camelCaseToWords(item.status)}
+                        </TableCell>
+
+                        {/* Lender Name */}
+                        <TableCell
+                          className={cn(
+                            item.status === INV_STATUS.NOT_PROCESSED
+                              ? 'bg-red-50 group-hover:bg-red-100'
+                              : 'bg-white group-hover:bg-muted'
+                          )}
+                        >
+                          {item.lenderName || 'NA'}
+                        </TableCell>
+
+                        {/* Invoice Payment Status */}
+                        <TableCell
+                          className={cn(
+                            item.status === INV_STATUS.NOT_PROCESSED
+                              ? 'bg-red-50 group-hover:bg-red-100'
+                              : 'bg-white group-hover:bg-muted'
+                          )}
+                        >
+                          {item.invoicePaymentStatus === 'Paid' && (
+                            <span className='text-green-600 font-semibold'>Paid</span>
+                          )}
+                          {item.invoicePaymentStatus === 'Overdue' && (
+                            <span className='text-red-500 font-semibold'>Overdue</span>
+                          )}
+                          {item.invoicePaymentStatus === 'Pending Payment' && (
+                            <span className='text-amber-500 font-semibold'>Pending Payment</span>
+                          )}
+                          {!item.invoicePaymentStatus && 'NA'}
+                        </TableCell>
+
+                        {/* Payment Due Days (No.of Days) */}
+                        <TableCell
+                          className={cn(
+                            item.status === INV_STATUS.NOT_PROCESSED
+                              ? 'bg-red-50 group-hover:bg-red-100'
+                              : 'bg-white group-hover:bg-muted'
+                          )}
+                        >
+                          {item.paymentDueDays !== undefined && item.paymentDueDays !== null
+                            ? `${item.paymentDueDays} Days`
+                            : 'NA'}
+                        </TableCell>
+
+                        {/* Payment Due Date */}
+                        <TableCell
+                          className={cn(
+                            item.status === INV_STATUS.NOT_PROCESSED
+                              ? 'bg-red-50 group-hover:bg-red-100'
+                              : 'bg-white group-hover:bg-muted'
+                          )}
+                        >
+                          {item.paymentDueDate ? formatDate(item.paymentDueDate) : 'NA'}
+                        </TableCell>
+
+                        {/* Payment Received Date */}
+                        <TableCell
+                          className={cn(
+                            item.status === INV_STATUS.NOT_PROCESSED
+                              ? 'bg-red-50 group-hover:bg-red-100'
+                              : 'bg-white group-hover:bg-muted'
+                          )}
+                        >
+                          {item.paymentReceivedDate ? formatDate(item.paymentReceivedDate) : 'NA'}
+                        </TableCell>
+
+                        {/* Current Ageing Days */}
+                        <TableCell
+                          className={cn(
+                            item.status === INV_STATUS.NOT_PROCESSED
+                              ? 'bg-red-50 group-hover:bg-red-100'
+                              : 'bg-white group-hover:bg-muted'
+                          )}
+                        >
+                          {item.currentAgeingDays !== undefined && item.currentAgeingDays !== null
+                            ? `${item.currentAgeingDays} Days`
+                            : 'NA'}
                         </TableCell>
 
                         {user?.role === 'superAdmin' && (
