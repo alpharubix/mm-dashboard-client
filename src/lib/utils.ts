@@ -118,9 +118,23 @@ export const handleExport = async (queryParams: any) => {
         ? format(new Date(rest.loanDisbursementDate), 'dd-MM-yy')
         : 'NA',
       UTR: rest.utr || 'NA',
-      'Anchor ID': rest.anchorId,
-      'Funding Type': rest.fundingType,
       Status: camelCaseToWords(rest.status),
+      'Lender Name': rest.lenderName || 'NA',
+      'Invoice Payment Status': rest.invoicePaymentStatus || 'NA',
+      'Payment Due Days (No.of Days)':
+        rest.paymentDueDays !== undefined && rest.paymentDueDays !== null
+          ? rest.paymentDueDays
+          : 'NA',
+      'Payment Due Date': rest.paymentDueDate
+        ? format(new Date(rest.paymentDueDate), 'dd-MM-yy')
+        : 'NA',
+      'Payment Received Date': rest.paymentReceivedDate
+        ? format(new Date(rest.paymentReceivedDate), 'dd-MM-yy')
+        : 'NA',
+      'Current Ageing Days':
+        rest.currentAgeingDays !== undefined && rest.currentAgeingDays !== null
+          ? rest.currentAgeingDays
+          : 'NA',
       'Distributor Phone': rest.distributorPhone,
       'Distributor Email': rest.distributorEmail,
       'Created At': formatDateHourMinute(rest.createdAt),
