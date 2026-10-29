@@ -1,3 +1,4 @@
+import { api } from '@/api'
 import { ENV } from '@/conf'
 import axios from 'axios'
 import { clsx, type ClassValue } from 'clsx'
@@ -34,7 +35,7 @@ export const formatAmount = (amount: number): string => {
 
 export const formatDateHourMinute = (
   dateString: string,
-  pattern = 'dd-MM-yyyy hh:mm a'
+  pattern = 'dd-MM-yyyy hh:mm a',
 ) => {
   if (!dateString) return ''
   try {
@@ -93,7 +94,9 @@ export const handleExport = async (queryParams: any) => {
   try {
     toastId = toast.loading('Processing CSV export...')
     const exportParams = { ...queryParams, export: 'true' }
-    const res = await axios.get(`${ENV.BACKEND_URL}/invoice-input`, {
+
+    // Bug fix: use the configured `api` instance (includes auth token) instead of raw axios
+    const res = await api.get('/invoice-input', {
       params: exportParams,
     })
     const data = res.data.data
@@ -105,11 +108,11 @@ export const handleExport = async (queryParams: any) => {
     const transformed = data?.map(({ _id, ...rest }: any) => ({
       'Company Name': rest.companyName,
       'Distributor Code': rest.distributorCode,
-      'Beneficiary Name': rest.beneficiaryName,
-      'Beneficiary Acc No': rest.beneficiaryAccNo,
-      'Bank Name': rest.bankName,
-      'IFSC Code': rest.ifscCode,
-      Branch: rest.branch,
+      'Beneficiary Name': rest.beneficiaryName || 'NA',
+      'Beneficiary Acc No': rest.beneficiaryAccNo || 'NA',
+      'Bank Name': rest.bankName || 'NA',
+      'IFSC Code': rest.ifscCode || 'NA',
+      Branch: rest.branch || 'NA',
       'Invoice Number': rest.invoiceNumber,
       'Invoice Amount': rest.invoiceAmount,
       'Invoice Date': format(new Date(rest.invoiceDate), 'dd-MM-yy'),
@@ -118,6 +121,8 @@ export const handleExport = async (queryParams: any) => {
         ? format(new Date(rest.loanDisbursementDate), 'dd-MM-yy')
         : 'NA',
       UTR: rest.utr || 'NA',
+      'Anchor ID': rest.anchorId || 'NA',
+      'Funding Type': rest.fundingType || 'NA',
       Status: camelCaseToWords(rest.status),
       'Lender Name': rest.lenderName || 'NA',
       'Invoice Payment Status': rest.invoicePaymentStatus || 'NA',
@@ -135,8 +140,8 @@ export const handleExport = async (queryParams: any) => {
         rest.currentAgeingDays !== undefined && rest.currentAgeingDays !== null
           ? rest.currentAgeingDays
           : 'NA',
-      'Distributor Phone': rest.distributorPhone,
-      'Distributor Email': rest.distributorEmail,
+      'Distributor Phone': rest.distributorPhone || 'NA',
+      'Distributor Email': rest.distributorEmail || 'NA',
       'Created At': formatDateHourMinute(rest.createdAt),
       'Updated At': formatDateHourMinute(rest.updatedAt),
     }))
@@ -149,7 +154,7 @@ export const handleExport = async (queryParams: any) => {
     link.href = url
     link.setAttribute(
       'download',
-      `anchor_${queryParams.anchorId}_invoices_${format(new Date(), 'dd-MM-yy')}.csv`
+      `anchor_${queryParams.anchorId}_invoices_${format(new Date(), 'dd-MM-yy')}.csv`,
     )
     document.body.appendChild(link)
     link.click()
