@@ -1,20 +1,25 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { api } from './index'
 
-export const useApiQuery = (endpoint: string, params: any = {}) => {
+export const useApiQuery = <T = any>(
+  endpoint: string,
+  params: any = {},
+  queryOptions: any = {},
+) => {
   const anchorId = localStorage.getItem('mm_anchor')
 
   const { enabled = true, ...rest } = params
 
   rest.anchorId = anchorId
 
-  return useQuery({
+  return useQuery<T>({
     queryKey: [endpoint, rest, anchorId],
     queryFn: async () => {
       const res = await api.get(endpoint, { params: rest })
       return res.data
     },
     enabled, // ✅ forward enabled
+    ...queryOptions,
   })
 }
 

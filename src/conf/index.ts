@@ -10,11 +10,12 @@ export const PERMISSIONS = {
       'invoice-utr',
       'disbursement',
       'users',
+      'support-tickets',
     ],
     actions: ['create', 'edit', 'delete', 'view', 'upload', 'download'],
   },
   admin: {
-    routes: ['onboard-customer', 'credit-limit', 'invoice-utr'],
+    routes: ['onboard-customer', 'credit-limit', 'invoice-utr', 'support-tickets'],
     actions: ['view', 'download'],
   },
   viewer: {

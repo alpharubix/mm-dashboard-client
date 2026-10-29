@@ -2,6 +2,7 @@ import { NavLink, Outlet } from 'react-router-dom'
 import Header from '../components/Header'
 import { usePermissions } from '../hooks/use-permissions'
 import { getUserFromToken } from '../lib/utils'
+import HolidayBanner from '@/components/HolidayBanner'
 
 export default function Home() {
   const { hasRouteAccess } = usePermissions()
@@ -13,6 +14,7 @@ export default function Home() {
     { to: 'disbursement', label: 'Disbursement' },
     { to: 'email', label: 'Email' },
     { to: 'users', label: 'Users' },
+    { to: 'support-tickets', label: 'Support Desk' },
     { to: 'viewer', label: 'Viewer' },
   ]
 
@@ -22,6 +24,7 @@ export default function Home() {
   return (
     <main className='min-h-screen bg-gray-50'>
       <Header />
+      <HolidayBanner />
 
       <div className='container mx-auto px-4 sm:px-6 lg:px-8'>
         <div className=''>
