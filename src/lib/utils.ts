@@ -121,8 +121,6 @@ export const handleExport = async (queryParams: any) => {
         ? format(new Date(rest.loanDisbursementDate), 'dd-MM-yy')
         : 'NA',
       UTR: rest.utr || 'NA',
-      'Anchor ID': rest.anchorId || 'NA',
-      'Funding Type': rest.fundingType || 'NA',
       Status: camelCaseToWords(rest.status),
       'Lender Name': rest.lenderName || 'NA',
       'Invoice Payment Status': rest.invoicePaymentStatus || 'NA',
@@ -140,6 +138,8 @@ export const handleExport = async (queryParams: any) => {
         rest.currentAgeingDays !== undefined && rest.currentAgeingDays !== null
           ? rest.currentAgeingDays
           : 'NA',
+      'Anchor ID': rest.anchorId || 'NA',
+      'Funding Type': rest.fundingType || 'NA',
       'Distributor Phone': rest.distributorPhone || 'NA',
       'Distributor Email': rest.distributorEmail || 'NA',
       'Created At': formatDateHourMinute(rest.createdAt),
